@@ -1,0 +1,7 @@
+{
+  "name": "MochiDfPlayer",
+  "version": "0.5.6",
+  "description": "DFPlayer Mini MP3 backend. Same call surface as the MAX98357 firmware, UART instead of I2S.",
+  "frameworks": "arduino",
+  "platforms": "espressif32"
+}

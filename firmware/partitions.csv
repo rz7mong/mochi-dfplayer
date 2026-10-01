@@ -1,0 +1,7 @@
+# Single factory app — OTA dual-slot NOT supported (no app1).
+# otadata kept for Arduino boot layout / merge_bin boot_app0 at 0xe000.
+# Name,   Type, SubType, Offset,  Size, Flags
+nvs,      data, nvs,     0x9000,  0x5000,
+otadata,  data, ota,     0xe000,  0x2000,
+app0,     app,  factory, 0x10000, 0x300000,
+spiffs,   data, spiffs,  0x310000,0xF0000,
