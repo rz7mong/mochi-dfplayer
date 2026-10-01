@@ -87,23 +87,23 @@ void onChronosConn(bool state){
   chronoConn=state;
   Serial.printf("[chronos] %s\n", state?"connected":"disconnected");
   if(state) watch.setBattery(100, false);
-  if(!state){ navActive=false; ringerOn=false; }
+  if(!state){ navActive=false; ringerOn=false; mochiDfPlayRinger(false); }
 }
 void onChronosNotif(Notification n){
   notifApp=n.app; if(notifApp.length()>22) notifApp=notifApp.substring(0,22);
   notifTitle=n.title; if(notifTitle.length()>28) notifTitle=notifTitle.substring(0,28);
   notifMsg=n.message; if(notifMsg.length()>72) notifMsg=notifMsg.substring(0,72);
   notifUntil=millis()+6000;
-  playJingleMs(180);
+  mochiDfPlayNotif();
 }
 void onChronosRinger(String caller, bool state){
   ringerOn=state;
   ringerName=caller; if(ringerName.length()>24) ringerName=ringerName.substring(0,24);
-  if(state) playJingleMs(500);
+  mochiDfPlayRinger(state);
 }
 void onChronosConfig(Config config, uint32_t a, uint32_t b){
   if(config==CF_FIND){
-    playJingleMs(700);
+    mochiDfPlayNotif();
     findUntil = millis()+700;
   } else if(config==CF_TIME){
     Serial.printf("[chronos] time %s\n", watch.getTimeDate().c_str());

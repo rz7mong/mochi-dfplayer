@@ -4,6 +4,8 @@ Varian **ESP32-C3 Super Mini + ST7789 1.3" 240×240** yang suaranya lewat **DFPl
 
 **MIT © rzmong**
 
+Halaman rakitan: [docs/index.html](docs/index.html).
+
 ## Build
 
 ```bash

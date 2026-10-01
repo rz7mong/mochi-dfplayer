@@ -29,6 +29,7 @@ static DFRobotDFPlayerMini dfPlayer;
 static bool dfOk = false;
 static bool musicOn = false;
 static bool ringOn = false;
+static int musicFile = 1;
 static uint32_t dfLastCmd = 0;
 
 static void dfGap() {
@@ -158,27 +159,22 @@ bool mochiDfMusicStart() {
   if (!dfOk) return false;
   ringOn = false;
   musicOn = true;
-  dfGap();
-  dfPlayer.loopFolder(DF_FOLDER_MUSIC);
+  if (musicFile < 1) musicFile = 1;
+  dfPlay(DF_FOLDER_MUSIC, musicFile);
+  musicOn = true;
   return true;
 }
 
 bool mochiDfMusicNext() {
   if (!dfOk) return false;
-  musicOn = true;
-  ringOn = false;
-  dfGap();
-  dfPlayer.next();
-  return true;
+  musicFile++;
+  return mochiDfMusicStart();
 }
 
 bool mochiDfMusicPrev() {
   if (!dfOk) return false;
-  musicOn = true;
-  ringOn = false;
-  dfGap();
-  dfPlayer.previous();
-  return true;
+  if (musicFile > 1) musicFile--;
+  return mochiDfMusicStart();
 }
 
 void mochiDfMusicToggle() {

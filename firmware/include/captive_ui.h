@@ -17,7 +17,7 @@ button{width:100%;padding:12px;margin:6px 0;border:0;border-radius:10px;font-wei
 </style></head><body>
 <h1>🍡 Mochi · rzmong</h1>
 <p class=hint>v0.5.6 · offline · http://192.168.4.1/</p>
-<p class=hint>😶 wajah · 🤖 gundam · 🚗 mobil · 🚓 polisi · 🎵 musik · 💜 neon · 🌸 anime · 🍜 makanan · ✨ intro</p>
+<p class=hint>Suara MP3 ada di kartu DFPlayer (01 reaksi, 02 ekspresi, 03 notif, 04 dering, 05 lagu, 06 tema), bukan di SD ESP. 😶 wajah · 🤖 gundam · 🚗 mobil · 🚓 polisi · 🎵 musik · 💜 neon · 🌸 anime · 🍜 makanan · ✨ intro</p>
 <div class=box>
 <label>Tema</label><select id=theme></select>
 <label>Sumber</label><select id=storage><option value=sd>SD</option><option value=flash>Flash</option></select>
@@ -37,10 +37,10 @@ button{width:100%;padding:12px;margin:6px 0;border:0;border-radius:10px;font-wei
 <div class=box>
 <h2>💾 Upload ke SD</h2>
 <p class=hint>Convert di Studio (online) dulu, unduh file, lalu upload di sini (same-origin).</p>
-<label>Jenis</label><select id=utype><option value=gif>GIF</option><option value=wav>WAV</option></select>
+<label>Jenis</label><select id=utype><option value=gif>GIF layar</option></select>
 <label>Tema folder</label><select id=utema></select>
 <label>Stem (tanpa ekstensi)</label><input type=text id=ustem placeholder=raspberry>
-<label>File</label><input type=file id=ufile accept=".gif,.wav,image/gif,audio/wav">
+<label>File</label><input type=file id=ufile accept=".gif,image/gif">
 <button class=u type=button onclick=upload()>Upload</button>
 </div>
 <button class=p onclick=save()>Simpan ke Mochi</button>
