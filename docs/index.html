@@ -26,26 +26,27 @@ pio run -e esp32-c3-dfplayer -t upload</pre>
 <li>Musik: menu di LCD, atau <code>POST /api/music</code> dengan <code>{"action":"play"}</code></li>
 </ol>
 <h2>Wiring</h2>
-<p>Layar, SD GIF, dan sentuh sama dengan firmware 0.5.6. Amplifier I2S tidak dipasang.</p>
+<p>Ini wiring repo DFPlayer. Jangan ikut diagram MAX98357 atau SD ESP.</p>
 <table>
-<tr><th>Net</th><th>GPIO</th></tr>
-<tr><td>TFT SCLK / SD SCK</td><td>4</td></tr>
-<tr><td>TFT MOSI / SD MOSI</td><td>6</td></tr>
-<tr><td>SD ESP</td><td>tidak dipakai</td></tr>
-<tr><td>TFT CS</td><td>7</td></tr>
-<tr><td>TFT DC</td><td>10</td></tr>
-<tr><td>TFT RST</td><td>0</td></tr>
-<tr><td>Sentuh</td><td>1</td></tr>
+<tr><th>Net</th><th>Sambungan</th></tr>
+<tr><td>TFT SCLK</td><td>GPIO4</td></tr>
+<tr><td>TFT MOSI</td><td>GPIO6</td></tr>
+<tr><td>TFT CS</td><td>GPIO7</td></tr>
+<tr><td>TFT DC</td><td>GPIO10</td></tr>
+<tr><td>TFT RST</td><td>GPIO0</td></tr>
 <tr><td>BLK layar</td><td>3V3</td></tr>
-<tr><td>DFPlayer RX</td><td>GPIO20 lewat ~1 kΩ</td></tr>
+<tr><td>Sentuh</td><td>GPIO1</td></tr>
+<tr><td>DFPlayer RX</td><td>GPIO20 lewat resistor sekitar 1 kΩ</td></tr>
 <tr><td>DFPlayer TX</td><td>GPIO21</td></tr>
 <tr><td>DFPlayer VCC</td><td>5 V</td></tr>
+<tr><td>GND</td><td>gabung semua</td></tr>
+<tr><td>SD ESP, GPIO2, GPIO8, GPIO9</td><td>kosong</td></tr>
 </table>
-<p>GPIO2 dan GPIO9 jangan disolder. GPIO8 kosong.</p>
-<h2>Dua kartu</h2>
+<h2>Kartu DFPlayer</h2>
 <ul>
-<li>ESP32: 30 GIF di flash, tanpa modul SD</li>
-<li>SD DFPlayer: <code>01</code> reaksi, <code>02</code> ekspresi, <code>03</code> notifikasi, <code>04</code> dering, <code>05</code> lagu, <code>06</code> tema</li>
+<li>Gambar ada di flash ESP: 18 klip JPEG, tema wajah, gundam, mobil</li>
+<li><code>02/001.mp3</code> sampai <code>02/018.mp3</code> mengikuti urutan klip</li>
+<li><code>03</code> notifikasi, <code>04</code> dering, <code>05</code> lagu, <code>06</code> tema</li>
 </ul>
 <p>Sumber layar lama: <a href="https://github.com/rz7mong/mochi-rzmong">mochi-rzmong</a>. Jangan flash installer situs itu ke papan DFPlayer.</p>
 </main>

@@ -436,7 +436,7 @@ void handleStatus(){
   d["mode"]=playMode; d["react_mode"]=reactMode; d["react"]=MOCHI_REACT[reactIdx].name;
   d["react_idx"]=reactIdx;
   d["react_gif"]=String("/gif/")+MOCHI_REACT[reactIdx].theme+"/"+MOCHI_REACT[reactIdx].stem+".gif";
-  d["sound"]=soundOn; d["vol"]=volume; d["rot"]=rot; d["storage"]=(useSd&&sdOk)?"sd":"flash"; d["sd"]=sdOk;
+  d["sound"]=soundOn; d["vol"]=volume; d["rot"]=rot; d["storage"]="flash"; d["sd"]=false; d["format"]="jpeg"; d["clips"]=JPEG_CLIP_COUNT;
   d["sfx"]="dfplayer_mp3"; d["music"]=mochiDfMusicPlaying(); d["def"]=defIdx; d["gif_count"]=nparts;
   d["ap_ssid"]=MOCHI_AP_NAME; d["sd_busy"]=sdBusy;
   d["chronos"]=chronosOn;

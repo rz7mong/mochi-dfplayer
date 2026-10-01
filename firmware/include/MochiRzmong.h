@@ -17,12 +17,21 @@
 #endif
 #define MOCHI_ROT_LAYOUT 1  /* versi arah pasang LCD di NVS ("rotv"); naikkan jika default rotasi berubah lagi */
 #define MOCHI_PIN_TOUCH 1
-#define MOCHI_PIN_SD_SCK 4
+#define MOCHI_PIN_TFT_SCLK 4
+#define MOCHI_PIN_TFT_MOSI 6
+#define MOCHI_PIN_TFT_CS 7
+#define MOCHI_PIN_TFT_DC 10
+#define MOCHI_PIN_TFT_RST 0
+/* DFPlayer: ESP TX GPIO20 -> RX modul lewat 1k. ESP RX GPIO21 <- TX modul. */
+#define MOCHI_PIN_DF_TX 20
+#define MOCHI_PIN_DF_RX 21
+/* Tidak disambung: SD MISO 3, SD CS 5, I2S DIN 8, GPIO2, GPIO9. */
+#define MOCHI_PIN_SD_SCK MOCHI_PIN_TFT_SCLK
 #define MOCHI_PIN_SD_MISO 3
-#define MOCHI_PIN_SD_MOSI 6
+#define MOCHI_PIN_SD_MOSI MOCHI_PIN_TFT_MOSI
 #define MOCHI_PIN_SD_CS 5
-#define MOCHI_PIN_I2S_BCLK 21
-#define MOCHI_PIN_I2S_LRC 20
+#define MOCHI_PIN_I2S_BCLK MOCHI_PIN_DF_RX
+#define MOCHI_PIN_I2S_LRC MOCHI_PIN_DF_TX
 #define MOCHI_PIN_I2S_DIN 8
 struct MochiPart { const char *theme; const char *stem; };
 struct MochiReact { const char *name; const char *theme; const char *stem; };

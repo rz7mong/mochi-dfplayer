@@ -15,8 +15,8 @@
  *   04/001       dering Chronos (diulang)
  *   05/001..     lagu pemutar MP3
  */
-static const int DF_RX = 21;
-static const int DF_TX = 20;
+static const int DF_RX = MOCHI_PIN_DF_RX;
+static const int DF_TX = MOCHI_PIN_DF_TX;
 static const int DF_FOLDER_REACT = 1;
 static const int DF_FOLDER_FACE = 2;
 static const int DF_FOLDER_NOTIF = 3;
