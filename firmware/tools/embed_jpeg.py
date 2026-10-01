@@ -22,15 +22,15 @@ for i, (theme, stem) in enumerate(meta["builtins"]):
             im.seek(n)
         except EOFError:
             break
-    if len(frames) > 4:
-        step = max(1, len(frames) // 4)
-        frames = frames[::step][:4]
-        durs = durs[::step][:4]
+    if len(frames) > 6:
+        step = max(1, len(frames) // 6)
+        frames = frames[::step][:6]
+        durs = durs[::step][:6]
     delay = max(40, sum(durs) // len(durs))
     ptrs, sizes = [], []
     for fi, fr in enumerate(frames):
         buf = io.BytesIO()
-        fr.save(buf, format="JPEG", quality=32, optimize=True)
+        fr.save(buf, format="JPEG", quality=62, optimize=True)
         raw = buf.getvalue()
         total += len(raw)
         name = f"JPG_{i}_{fi}"

@@ -62,107 +62,43 @@
   "builtins": [
     [
       "wajah",
-      "default"
+      "vid_00"
     ],
     [
       "wajah",
-      "raspberry"
+      "vid_01"
     ],
     [
       "wajah",
-      "squint"
+      "vid_10"
     ],
     [
       "wajah",
-      "love_hearts_kiss"
+      "vid_11"
     ],
     [
       "wajah",
-      "angry_2"
+      "vid_20"
     ],
     [
       "wajah",
-      "smirk"
+      "vid_21"
     ],
     [
       "wajah",
-      "sleepy"
+      "vid_30"
     ],
     [
       "wajah",
-      "yawn_tired"
+      "vid_31"
     ],
     [
-      "musik",
-      "rainbow"
+      "wajah",
+      "vid_40"
     ],
     [
-      "musik",
-      "pong"
-    ],
-    [
-      "mobil",
-      "revs"
-    ],
-    [
-      "mobil",
-      "headlights"
-    ],
-    [
-      "mobil",
-      "accel"
-    ],
-    [
-      "mobil",
-      "gtr_rain"
-    ],
-    [
-      "mobil",
-      "road_rage"
-    ],
-    [
-      "mobil",
-      "rotation"
-    ],
-    [
-      "mobil",
-      "speed_2"
-    ],
-    [
-      "mobil",
-      "speed_3"
-    ],
-    [
-      "mobil",
-      "tsurikawa"
-    ],
-    [
-      "mobil",
-      "turbo"
-    ],
-    [
-      "mobil",
-      "car"
-    ],
-    [
-      "mobil",
-      "lb"
-    ],
-    [
-      "mobil",
-      "lb_intro"
-    ],
-    [
-      "mobil",
-      "lb_star"
-    ],
-    [
-      "gundam",
-      "hadouken_miss"
-    ],
-    [
-      "gundam",
-      "hadouken_hit"
+      "wajah",
+      "vid_41"
     ],
     [
       "gundam",
@@ -170,75 +106,31 @@
     ],
     [
       "gundam",
-      "mecha_doc"
-    ],
-    [
-      "gundam",
       "titan"
     ],
     [
       "gundam",
-      "equip"
+      "hadouken_hit"
     ],
     [
-      "intro",
-      "intro_3"
+      "gundam",
+      "mecha_doc"
     ],
     [
-      "wajah",
-      "yelling"
+      "mobil",
+      "car"
     ],
     [
-      "wajah",
-      "distracted_2"
+      "mobil",
+      "turbo"
     ],
     [
-      "intro",
-      "keep_it_up"
+      "mobil",
+      "headlights"
     ],
     [
-      "wajah",
-      "big_sneeze"
-    ],
-    [
-      "wajah",
-      "awkward_laugh"
-    ],
-    [
-      "anime",
-      "nezuko"
-    ],
-    [
-      "wajah",
-      "dumb_love"
-    ],
-    [
-      "anime",
-      "tanjiro"
-    ],
-    [
-      "intro",
-      "dasai"
-    ],
-    [
-      "makanan",
-      "sushi"
-    ],
-    [
-      "anime",
-      "pinky"
-    ],
-    [
-      "makanan",
-      "banana"
-    ],
-    [
-      "wajah",
-      "crying_smile"
-    ],
-    [
-      "neon",
-      "neon"
+      "mobil",
+      "speed_3"
     ]
   ]
 }
