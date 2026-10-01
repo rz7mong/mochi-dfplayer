@@ -236,7 +236,7 @@ void serviceNet(){
   yield();
 }
 void playReactGif(){
-  int r=pickReact(); playSfxForReact(r);
+  int r=pickReact();
   if(chronosNeedsScreen()){ chronosPreempt=true; return; }
   String path=String("/gif/")+MOCHI_REACT[r].theme+"/"+MOCHI_REACT[r].stem+".gif";
   bool ok=false;
