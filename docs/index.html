@@ -30,8 +30,7 @@ pio run -e esp32-c3-dfplayer -t upload</pre>
 <tr><th>Net</th><th>GPIO</th></tr>
 <tr><td>TFT SCLK / SD SCK</td><td>4</td></tr>
 <tr><td>TFT MOSI / SD MOSI</td><td>6</td></tr>
-<tr><td>SD MISO</td><td>3</td></tr>
-<tr><td>SD CS</td><td>5</td></tr>
+<tr><td>SD ESP</td><td>tidak dipakai</td></tr>
 <tr><td>TFT CS</td><td>7</td></tr>
 <tr><td>TFT DC</td><td>10</td></tr>
 <tr><td>TFT RST</td><td>0</td></tr>
@@ -44,7 +43,7 @@ pio run -e esp32-c3-dfplayer -t upload</pre>
 <p>GPIO2 dan GPIO9 jangan disolder. GPIO8 kosong.</p>
 <h2>Dua kartu</h2>
 <ul>
-<li>SD ESP: <code>/gif/<tema>/<nama>.gif</code></li>
+<li>ESP32: 30 GIF di flash, tanpa modul SD</li>
 <li>SD DFPlayer: <code>01</code> reaksi, <code>02</code> ekspresi, <code>03</code> notifikasi, <code>04</code> dering, <code>05</code> lagu, <code>06</code> tema</li>
 </ul>
 <p>Sumber layar lama: <a href="https://github.com/rz7mong/mochi-rzmong">mochi-rzmong</a>. Jangan flash installer situs itu ke papan DFPlayer.</p>

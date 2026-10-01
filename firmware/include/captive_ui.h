@@ -17,7 +17,7 @@ button{width:100%;padding:12px;margin:6px 0;border:0;border-radius:10px;font-wei
 </style></head><body>
 <h1>🍡 Mochi · rzmong</h1>
 <p class=hint>v0.5.6 · offline · http://192.168.4.1/</p>
-<p class=hint>Suara MP3 ada di kartu DFPlayer (01 reaksi, 02 ekspresi, 03 notif, 04 dering, 05 lagu, 06 tema), bukan di SD ESP. 😶 wajah · 🤖 gundam · 🚗 mobil · 🚓 polisi · 🎵 musik · 💜 neon · 🌸 anime · 🍜 makanan · ✨ intro</p>
+<p class=hint>Tidak ada SD di ESP. GIF dari flash. MP3 hanya di kartu DFPlayer (01 reaksi, 02 ekspresi, 03 notif, 04 dering, 05 lagu, 06 tema). 😶 wajah · 🤖 gundam · 🚗 mobil · 🚓 polisi · 🎵 musik · 💜 neon · 🌸 anime · 🍜 makanan · ✨ intro</p>
 <div class=box>
 <label>Tema</label><select id=theme></select>
 <label>Sumber</label><select id=storage><option value=sd>SD</option><option value=flash>Flash</option></select>

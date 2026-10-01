@@ -1,4 +1,4 @@
-// Mochi rzmong DFPlayer — salinan firmware MAX98357, suara lewat library MochiDfPlayer (MP3 di SD modul)
+// Mochi DFPlayer — GIF di flash ESP32, SFX hanya di kartu DFPlayer. Tidak ada SD ESP.
 // Nama AP dan sandi tetap MOCHI_AP_NAME / MOCHI_AP_PASS. Aset GIF tidak diubah.
 #include <Arduino.h>
 #include <TFT_eSPI.h>
@@ -37,7 +37,7 @@ struct MenuItem { const char *icon; const char *label; uint16_t col; };
 static const MenuItem MENU[] = {
   {">","GIF berikutnya",C_TEAL},{"T","Pilih tema",C_BAR},{"E","Ekspresi flash",C_PINK},
   {"M","Mode putar",C_YEL},{"R","Reaksi acak/tetap",C_BLUE},{"F","Model reaksi",C_PINK},
-  {"S","Sumber SD/Flash",C_BLUE},{"+","Volume +",C_TEAL},{"-","Volume -",C_TEAL},
+  {"S","Sumber flash",C_BLUE},{"+","Volume +",C_TEAL},{"-","Volume -",C_TEAL},
   {"x","Bisu / bunyi",C_RED},{"O","Rotasi layar",C_YEL},{"C","Chronos",C_TEAL},
   {"J","Jam HP",C_TEAL},{"W","Merek LCD",C_DIM},{"A","Info Wi-Fi AP",C_BLUE},{"i","Tentang rzmong",C_TEXT},
   {"P","Musik putar/jeda",C_TEAL},{"N","Lagu berikut",C_TEAL},{"B","Lagu sebelumnya",C_TEAL},{"<","Tutup",C_DIM}
@@ -95,7 +95,7 @@ static String safeName(String s){
   return s;
 }
 void scanTheme(const String &t){
-  nparts=0; if(!sdOk||sdBusy)return;
+  (void)t; nparts=0; return;
   String dir=String("/gif/")+t; File d=SD.open(dir); if(!d)return;
   while(true){File f=d.openNextFile(); if(!f)break; String n=f.name(); f.close();
     if(isGifName(n)&&nparts<32){int sl=n.lastIndexOf('/'); parts[nparts++]=dir+"/"+n.substring(sl<0?0:sl+1);}}
@@ -317,18 +317,16 @@ void applyMenu(){
   else if(menuRow==1){
     int i=0; for(;i<MOCHI_THEME_COUNT;i++) if(theme==MOCHI_THEMES[i]) break;
     theme=MOCHI_THEMES[(i+1)%MOCHI_THEME_COUNT];
-    if(sdOk){ useSd=true; scanTheme(theme); idx=0; } savePrefs();
+    useSd=false; savePrefs();
     if(soundOn) mochiDfPlayTheme(theme.c_str());
-    if(sdOk && nparts>0) showInfo(theme.c_str(), (String(nparts)+" GIF").c_str());
-    else if(sdOk) showInfo(theme.c_str(),"kosong di SD"); else showInfo(theme.c_str(),"default (no SD)");
+    showInfo(theme.c_str(),"flash ESP");
   }
   else if(menuRow==2){defIdx=(defIdx+1)%DEFAULT_GIF_COUNT; savePrefs(); if(soundOn){ mochiDfSetVolume(volume,true); mochiDfPlayFace(defIdx); } showInfo("ekspresi",DEFAULT_GIFS[defIdx].stem);}
   else if(menuRow==3){playMode=(playMode=="kategori")?"acak":(playMode=="acak"?"acak_tema":"kategori"); savePrefs(); showInfo("mode",playMode.c_str());}
   else if(menuRow==4){reactMode=(reactMode=="acak")?"tetap":"acak"; savePrefs(); showInfo("reaksi",reactMode.c_str());}
   else if(menuRow==5){reactIdx=(reactIdx+1)%MOCHI_REACT_COUNT; reactMode="tetap"; savePrefs(); if(soundOn) playSfxForReact(reactIdx); showInfo(MOCHI_REACT[reactIdx].name,MOCHI_REACT[reactIdx].stem);}
   else if(menuRow==6){
-    if(!sdOk){ useSd=false; savePrefs(); showInfo("sumber","SD tidak ada"); }
-    else { useSd=!useSd; if(useSd){ scanTheme(theme); idx=0; } savePrefs(); showInfo("sumber", useSd?(nparts?"SD":"SD kosong"):"flash"); }
+    useSd=false; savePrefs(); showInfo("sumber","flash ESP");
   }
   else if(menuRow==7){if(volume<21)volume++; savePrefs(); showInfo("volume",String(volume).c_str()); startJingleMs(120);}
   else if(menuRow==8){if(volume>0)volume--; savePrefs(); showInfo("volume",String(volume).c_str()); startJingleMs(120);}
@@ -490,6 +488,7 @@ static bool upOwnsBusy=false;
 static const size_t UPLOAD_MAX=600000;
 
 void handleUpload() {
+  upOk=false; upJson="{\"error\":\"no_esp_sd\"}"; return;
   HTTPUpload& upload=server.upload();
   if(upload.status==UPLOAD_FILE_START){
     upOk=false; upWritten=0; upPath=""; upHttp=400; upJson="{\"error\":\"upload_failed\"}";
@@ -543,15 +542,15 @@ void handleUploadDone(){
 }
 
 void setup(){
-  pinMode(MOCHI_PIN_SD_CS,OUTPUT); digitalWrite(MOCHI_PIN_SD_CS,HIGH);
+  pinMode(MOCHI_PIN_SD_CS,INPUT);
   Serial.begin(115200); pinMode(MOCHI_PIN_TOUCH,INPUT_PULLDOWN); loadPrefs();
   gif.begin(GIF_PALETTE_RGB565_BE);
   // Satu FSPI: klaim MISO SD dulu, TFT menyusul. CS SD tetap HIGH supaya modul tidak nimbrung.
-  SPI.begin(MOCHI_PIN_SD_SCK,MOCHI_PIN_SD_MISO,MOCHI_PIN_SD_MOSI,MOCHI_PIN_SD_CS);
+  SPI.begin(MOCHI_PIN_SD_SCK,-1,MOCHI_PIN_SD_MOSI,-1);
   tft.init(); tft.setRotation(rot); bootMark();
-  sdOk=SD.begin(MOCHI_PIN_SD_CS,SPI,4000000); if(sdOk) scanTheme(theme);
+  sdOk=false; useSd=false;
   tft.setRotation(rot);
-  if(useSd&&(!sdOk||nparts==0)) useSd=false;
+  useSd=false; sdOk=false;
   audioInit();
   apPass=MOCHI_AP_PASS;
   WiFi.mode(WIFI_AP);

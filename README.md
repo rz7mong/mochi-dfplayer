@@ -25,7 +25,7 @@ Lepas MAX98357. GPIO20/21 dipakai UART, bukan I2S.
 | TX | GPIO21 |
 | SPK+ / SPK− | speaker 8 Ω |
 
-TFT, SD GIF, dan sentuh sama dengan mochi-rzmong.
+TFT dan sentuh sama dengan mochi-rzmong. Modul SD ESP tidak dipakai; 30 GIF ada di flash. SFX hanya di kartu DFPlayer.
 
 ## SD modul (FAT32)
 
