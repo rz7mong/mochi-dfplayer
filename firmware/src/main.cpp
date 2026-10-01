@@ -1,8 +1,10 @@
-// Mochi DFPlayer — GIF di flash ESP32, SFX hanya di kartu DFPlayer. Tidak ada SD ESP.
+// Mochi DFPlayer — frame JPEG di flash (cara Dasai/Pikapet), SFX DFPlayer. Tidak ada SD ESP.
 // Nama AP dan sandi tetap MOCHI_AP_NAME / MOCHI_AP_PASS. Aset GIF tidak diubah.
 #include <Arduino.h>
 #include <TFT_eSPI.h>
 #include <AnimatedGIF.h>
+#include <TJpg_Decoder.h>
+#include "jpeg_clips.h"
 #include <SD.h>
 #include <SPI.h>
 #include <WiFi.h>
@@ -129,6 +131,43 @@ void gifClose(void*){if(gifFile)gifFile.close();}
 int32_t gifRead(GIFFILE *p,uint8_t *buf,int32_t len){int n=gifFile.read(buf,len); p->iPos=gifFile.position(); return n;}
 int32_t gifSeek(GIFFILE *p,int32_t pos){gifFile.seek(pos); p->iPos=gifFile.position(); return p->iPos;}
 
+
+static int jpegClip = 0, jpegFrame = 0;
+bool jpegPush(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t *bitmap){
+  if(y>=H) return 0;
+  tft.pushImage(x,y,w,h,bitmap);
+  return 1;
+}
+void jpegSetup(){
+  TJpgDec.setJpgScale(1);
+  TJpgDec.setSwapBytes(true);
+  TJpgDec.setCallback(jpegPush);
+}
+bool drawJpegClipFrame(int clip, int frame){
+  if(clip<0||clip>=JPEG_CLIP_COUNT) return false;
+  const JpegClip &c = JPEG_CLIPS[clip];
+  if(frame<0||frame>=c.n) return false;
+  return TJpgDec.drawJpg(0,0,c.frames[frame],c.sizes[frame])==JDR_OK;
+}
+void syncClipAudio(int clip){
+  if(!soundOn||clip<0) return;
+  mochiDfSetVolume(volume, true);
+  mochiDfPlayFace(clip);
+}
+bool playJpegClip(int clip, uint32_t maxMs){
+  if(clip<0||clip>=JPEG_CLIP_COUNT) return false;
+  jpegClip=clip; jpegFrame=0;
+  syncClipAudio(clip);
+  uint32_t t0=millis();
+  const JpegClip &c = JPEG_CLIPS[clip];
+  tft.fillScreen(TFT_BLACK);
+  while(true){
+    drawJpegClipFrame(clip, jpegFrame);
+    if(frameWait(c.delay, t0, maxMs)) return true;
+    jpegFrame=(jpegFrame+1)%c.n;
+    if(maxMs && (uint32_t)(millis()-t0)>=maxMs) return true;
+  }
+}
 void audioInit(){
   i2sOk = mochiDfInit();
 }
@@ -365,15 +404,7 @@ bool playCurrent(){
     else if(!defaultSfxDone){ playBuiltinSfx(0); defaultSfxDone=true; }
   }
   if(chronosNeedsScreen()){ chronosPreempt=true; return true; }
-  if(fromSd){ sdBusy=true; ok=playOpen(NULL,0,parts[idx].c_str()); }
-  else ok=playOpen(DEFAULT_GIFS[defIdx].data,DEFAULT_GIFS[defIdx].len,NULL);
-  if(!ok){
-    sdBusy=false;
-    ok=playOpen(DEFAULT_GIFS[defIdx].data,DEFAULT_GIFS[defIdx].len,NULL);
-    if(!ok){ delay(40); return false; }
-  }
-  tft.fillScreen(TFT_BLACK);
-  playFrames(0);
+  playJpegClip(defIdx, 0);
   gif.close(); sdBusy=false; brandMark();
   if(taps==0 && !chronosPreempt) nextPart();
   return true;
@@ -550,6 +581,7 @@ void setup(){
   sdOk=false; useSd=false;
   tft.setRotation(rot);
   useSd=false; sdOk=false;
+  jpegSetup();
   audioInit();
   apPass=MOCHI_AP_PASS;
   WiFi.mode(WIFI_AP);
@@ -617,16 +649,11 @@ void loop(){
     serviceNet();
     if(chronosNeedsScreen()){ if(clockGifOn){ gif.close(); clockGifOn=false; sdBusy=false; } delay(1); return; }
     if(!clockGifOn){
-      const char *path="/gif/wajah/default.gif";
-      bool ok=false;
-      if(sdOk && !sdBusy && SD.exists(path)){ sdBusy=true; ok=playOpen(NULL,0,path); if(!ok) sdBusy=false; }
-      if(!ok){ int bi=findBuiltin("wajah","default"); if(bi>=0) ok=playOpen(DEFAULT_GIFS[bi].data,DEFAULT_GIFS[bi].len,NULL); }
-      if(!ok && DEFAULT_GIF_COUNT>0) ok=playOpen(DEFAULT_GIFS[0].data,DEFAULT_GIFS[0].len,NULL);
-      clockGifOn=ok;
+      jpegClip=findBuiltin("wajah","default"); if(jpegClip<0) jpegClip=0; clockGifOn=true;
     }
     static uint32_t clockNext=0; int dly=30;
     if(clockGifOn && (int32_t)(millis()-clockNext)>=0){
-      if(!gif.playFrame(false,&dly)){ gif.close(); clockGifOn=false; sdBusy=false; dly=30; }
+      drawJpegClipFrame(jpegClip, jpegFrame); jpegFrame=(jpegFrame+1)%JPEG_CLIPS[jpegClip].n; dly=JPEG_CLIPS[jpegClip].delay;
       clockNext=millis()+(dly<10?10:dly);
     }
     drawClock();
