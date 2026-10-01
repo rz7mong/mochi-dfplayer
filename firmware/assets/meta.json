@@ -181,64 +181,64 @@
       "equip"
     ],
     [
-      "polisi",
-      "a"
+      "intro",
+      "intro_3"
     ],
     [
-      "polisi",
-      "b"
+      "wajah",
+      "yelling"
     ],
     [
-      "polisi",
-      "c"
-    ],
-    [
-      "neon",
-      "a"
-    ],
-    [
-      "neon",
-      "b"
-    ],
-    [
-      "neon",
-      "c"
-    ],
-    [
-      "anime",
-      "a"
-    ],
-    [
-      "anime",
-      "b"
-    ],
-    [
-      "anime",
-      "c"
-    ],
-    [
-      "makanan",
-      "a"
-    ],
-    [
-      "makanan",
-      "b"
-    ],
-    [
-      "makanan",
-      "c"
+      "wajah",
+      "distracted_2"
     ],
     [
       "intro",
-      "a"
+      "keep_it_up"
+    ],
+    [
+      "wajah",
+      "big_sneeze"
+    ],
+    [
+      "wajah",
+      "awkward_laugh"
+    ],
+    [
+      "anime",
+      "nezuko"
+    ],
+    [
+      "wajah",
+      "dumb_love"
+    ],
+    [
+      "anime",
+      "tanjiro"
     ],
     [
       "intro",
-      "b"
+      "dasai"
     ],
     [
-      "intro",
-      "c"
+      "makanan",
+      "sushi"
+    ],
+    [
+      "anime",
+      "pinky"
+    ],
+    [
+      "makanan",
+      "banana"
+    ],
+    [
+      "wajah",
+      "crying_smile"
+    ],
+    [
+      "neon",
+      "neon"
     ]
   ]
 }
