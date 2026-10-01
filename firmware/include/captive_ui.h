@@ -17,7 +17,7 @@ button{width:100%;padding:12px;margin:6px 0;border:0;border-radius:10px;font-wei
 </style></head><body>
 <h1>🍡 Mochi · rzmong</h1>
 <p class=hint>v0.5.6 · offline · http://192.168.4.1/</p>
-<p class=hint>Tema yang ada di flash: wajah, gundam, mobil, musik. Pilih tema di sini atau di menu LCD. MP3 tema ada di kartu DFPlayer folder 06.</p>
+<p class=hint>Sembilan tema ada di flash ESP: wajah, gundam, mobil, polisi, musik, neon, anime, makanan, intro. MP3 tema di kartu DFPlayer folder 06.</p>
 <div class=box>
 <label>Tema</label><select id=theme></select>
 <label>Sumber</label><select id=storage><option value=flash>Flash ESP</option></select>
@@ -47,7 +47,7 @@ button{width:100%;padding:12px;margin:6px 0;border:0;border-radius:10px;font-wei
 <button class=s onclick=load()>Muat status</button>
 <div id=st></div>
 <script>
-const T=['wajah','gundam','mobil','musik'];
+const T=['wajah','gundam','mobil','polisi','musik','neon','anime','makanan','intro'];
 const ts=document.getElementById('theme'), ut=document.getElementById('utema');
 T.forEach(t=>{[ts,ut].forEach(s=>{const o=document.createElement('option');o.value=t;o.textContent=t;s.appendChild(o);});});
 document.getElementById('vol').oninput=e=>document.getElementById('vv').textContent=e.target.value;
