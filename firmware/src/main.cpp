@@ -298,15 +298,16 @@ void drawMenu(){
   tft.drawString(foot,8,224,1);
 }
 void nextPart(){
-  if(useSd&&sdOk){
-    if(playMode=="acak"){
-      int st=random(MOCHI_THEME_COUNT);   // jangan timpa theme, supaya NVS tidak menyimpan tema acak
-      for(int k=0;k<MOCHI_THEME_COUNT;k++){ scanTheme(MOCHI_THEMES[(st+k)%MOCHI_THEME_COUNT]); if(nparts>0) break; }
-    } else if(nparts==0) scanTheme(theme);
-    if(nparts>0){ idx=(playMode=="acak"||playMode=="acak_tema")?random(nparts):(idx+1)%nparts; return; }
+  int hits[32]; int n=0;
+  for(int i=0;i<DEFAULT_GIF_COUNT && n<32;i++){
+    if(playMode=="acak" || strcmp(DEFAULT_GIFS[i].theme, theme.c_str())==0) hits[n++]=i;
   }
-  static int rotI=0;   // wajah default (slot 0) diselang tiap klip lain
-  if(DEFAULT_GIF_COUNT>1 && defIdx==0){ rotI=rotI%(DEFAULT_GIF_COUNT-1)+1; defIdx=rotI; } else defIdx=0;   // tidak savePrefs, tidak menimpa theme, tidak mematikan useSd
+  if(!n){ defIdx=0; return; }
+  if(playMode=="acak" || playMode=="acak_tema") defIdx=hits[random(n)];
+  else {
+    int at=0; for(int i=0;i<n;i++) if(hits[i]==defIdx) at=i;
+    defIdx=hits[(at+1)%n];
+  }
 }
 void showInfo(const char *a,const char *b){
   tft.fillScreen(C_BG); tft.fillRoundRect(16,70,208,100,14,C_SEL);
@@ -426,11 +427,9 @@ void handleThemes(){
   JsonDocument d; d["sd"]=sdOk; d["current"]=theme; d["storage"]=(useSd&&sdOk)?"sd":"flash";
   JsonArray arr=d["themes"].to<JsonArray>();
   for(int i=0;i<MOCHI_THEME_COUNT;i++){
-    JsonObject o=arr.add<JsonObject>(); o["id"]=MOCHI_THEMES[i]; int cnt=0;
-    if(sdOk){ String dir=String("/gif/")+MOCHI_THEMES[i]; File dd=SD.open(dir);
-      if(dd){ while(true){File f=dd.openNextFile(); if(!f)break; String n=f.name(); f.close(); if(isGifName(n)) cnt++; } dd.close(); }
-    }
-    o["gif_count"]=cnt; o["available"]=(cnt>0)||(!sdOk && i==0);
+    int cnt=0; for(int g=0;g<DEFAULT_GIF_COUNT;g++) if(strcmp(DEFAULT_GIFS[g].theme, MOCHI_THEMES[i])==0) cnt++;
+    if(!cnt) continue;
+    JsonObject o=arr.add<JsonObject>(); o["id"]=MOCHI_THEMES[i]; o["gif_count"]=cnt; o["available"]=true;
   }
   String s; serializeJson(d,s); sendCorsHeaders(); server.send(200,"application/json",s);
 }
@@ -452,7 +451,7 @@ void handleMusic(){
 
 void handleSettings(){
   JsonDocument d; if(deserializeJson(d,server.arg("plain"))){ server.send(400,"text/plain","bad"); return; }
-  if(d["theme"].is<const char*>()){ String t=(const char*)d["theme"]; if(validTheme(t)) theme=t; }
+  if(d["theme"].is<const char*>()){ String nt=(const char*)d["theme"]; if(validTheme(nt) && nt!=theme){ theme=nt; if(soundOn) mochiDfPlayTheme(theme.c_str()); } }
   if(d["play_mode"].is<const char*>()){ String v=(const char*)d["play_mode"]; if(validMode(v)) playMode=v; }
   if(d["react_mode"].is<const char*>()){ String v=(const char*)d["react_mode"]; if(validReact(v)) reactMode=v; }
   if(d["sound"].is<bool>()) soundOn=d["sound"];
@@ -460,7 +459,7 @@ void handleSettings(){
   if(d["chronos_nav"].is<bool>()){ chronosNav=d["chronos_nav"]; }
   if(d["clock"].is<bool>()){ clockOn=d["clock"]; if(clockOn && !chronosOn){ chronosOn=true; chronosApply(); } }
   if(d["watermark"].is<bool>()) showWm=d["watermark"];
-  if(d["storage"].is<const char*>()) useSd=(String((const char*)d["storage"])=="sd");
+  useSd=false;
   if(d["def"].is<int>()){ defIdx=d["def"]; if(defIdx<0||defIdx>=DEFAULT_GIF_COUNT) defIdx=0; }
   if(d["react"].is<int>()){ reactIdx=d["react"]; if(reactIdx<0||reactIdx>=MOCHI_REACT_COUNT) reactIdx=0; }
   if(d["volume"].is<int>()){ volume=d["volume"]; if(volume<0)volume=0; if(volume>21)volume=21; }
