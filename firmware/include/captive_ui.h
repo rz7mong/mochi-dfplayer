@@ -17,7 +17,7 @@ button{width:100%;padding:12px;margin:6px 0;border:0;border-radius:10px;font-wei
 </style></head><body>
 <h1>🍡 Mochi · rzmong</h1>
 <p class=hint>v0.5.6 · offline · http://192.168.4.1/</p>
-<p class=hint>Sembilan tema ada di flash ESP: wajah, gundam, mobil, polisi, musik, neon, anime, makanan, intro. MP3 tema di kartu DFPlayer folder 06.</p>
+<p class=hint>Gambar JPEG di flash: wajah 10, gundam 4, mobil 4. Web dan menu memakai daftar yang sama. Suara klip di DFPlayer folder 02, trek 1-18.</p>
 <div class=box>
 <label>Tema</label><select id=theme></select>
 <label>Sumber</label><select id=storage><option value=flash>Flash ESP</option></select>
@@ -47,11 +47,10 @@ button{width:100%;padding:12px;margin:6px 0;border:0;border-radius:10px;font-wei
 <button class=s onclick=load()>Muat status</button>
 <div id=st></div>
 <script>
-const T=['wajah','gundam','mobil','polisi','musik','neon','anime','makanan','intro'];
 const ts=document.getElementById('theme'), ut=document.getElementById('utema');
-T.forEach(t=>{[ts,ut].forEach(s=>{const o=document.createElement('option');o.value=t;o.textContent=t;s.appendChild(o);});});
+async function themes(){let T=['wajah','gundam','mobil']; try{const j=await(await fetch('/api/themes')).json(); if(j.themes) T=j.themes.filter(x=>x.available).map(x=>x.id);}catch(e){} ts.innerHTML=''; ut.innerHTML=''; T.forEach(t=>{[ts,ut].forEach(s=>{const o=document.createElement('option');o.value=t;o.textContent=t;s.appendChild(o);});});}
 document.getElementById('vol').oninput=e=>document.getElementById('vv').textContent=e.target.value;
-async function load(){try{const j=await(await fetch('/api/status')).json();
+async function load(){await themes(); try{const j=await(await fetch('/api/status')).json();
 if(j.theme)ts.value=j.theme;if(j.storage)document.getElementById('storage').value=j.storage;
 if(j.mode)document.getElementById('mode').value=j.mode;if(j.react_mode)document.getElementById('rmode').value=j.react_mode;
 if(typeof j.vol==='number'){document.getElementById('vol').value=j.vol;document.getElementById('vv').textContent=j.vol;}

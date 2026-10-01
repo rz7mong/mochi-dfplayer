@@ -25,7 +25,7 @@ Lepas MAX98357. GPIO20/21 dipakai UART, bukan I2S.
 | TX | GPIO21 |
 | SPK+ / SPK− | speaker 8 Ω |
 
-Gambar memakai frame JPEG di flash, seperti Dasai/Pikapet, bukan GIF saat diputar. SFX hanya di kartu DFPlayer, nomor trek folder 02 sama dengan indeks klip.
+Gambar memakai 18 klip JPEG di flash: 10 wajah, 4 gundam, 4 mobil. Web dan menu hanya menampilkan tema itu. Trek DFPlayer folder 02 nomor 1-18 sama dengan urutan klip.
 
 ## SD modul (FAT32)
 

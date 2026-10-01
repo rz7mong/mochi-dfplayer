@@ -356,7 +356,11 @@ void applyMenu(){
   if(menuRow==0){nextPart(); ui=UI_PLAY;}
   else if(menuRow==1){
     int i=0; for(;i<MOCHI_THEME_COUNT;i++) if(theme==MOCHI_THEMES[i]) break;
-    theme=MOCHI_THEMES[(i+1)%MOCHI_THEME_COUNT];
+    for(int k=0;k<MOCHI_THEME_COUNT;k++){
+      const char *cand=MOCHI_THEMES[(i+1+k)%MOCHI_THEME_COUNT];
+      bool has=false; for(int g=0;g<DEFAULT_GIF_COUNT;g++) if(strcmp(DEFAULT_GIFS[g].theme,cand)==0) has=true;
+      if(has){ theme=cand; break; }
+    }
     useSd=false; savePrefs();
     if(soundOn) mochiDfPlayTheme(theme.c_str());
     showInfo(theme.c_str(),"flash ESP");
