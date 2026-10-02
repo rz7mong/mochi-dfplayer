@@ -5,8 +5,9 @@
 #ifndef MOCHI_AP_PASS  /* override: build_flags = -DMOCHI_AP_PASS=\"sandibaru123\" */
 #define MOCHI_AP_PASS "rzmong123"
 #endif
-#define MOCHI_VERSION "0.6.2"
-/* v0.6.2: tema "mochi" 5 klip JPEG penuh (full1, chongmat1, video17, video18, xoadau1), model awal full1.
+#define MOCHI_VERSION "0.6.3"
+/* v0.6.3: gundam 12 klip penuh, dasai 160x80 (11 klip), tempo/trek per klip, app 0x3F0000 tanpa spiffs.
+ * v0.6.2: tema "mochi" 5 klip JPEG penuh (full1, chongmat1, video17, video18, xoadau1), model awal full1.
  * v0.6.1: dokumen dan pesan edisi bahasa Indonesia.
  * v0.6.0: 18 model JPEG milik repo, ketuk dua kali ganti model.\n * v0.5.9: perilaku pemutar disamakan dengan pikapet.
  * v0.5.8: backlight GPIO7 seperti pikapet, HIGH nyala, LOW mati saat jeda.

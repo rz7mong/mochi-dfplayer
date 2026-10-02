@@ -1,5 +1,6 @@
-// Mochi DFPlayer 0.6.2 — perilaku pemutar sama pikapet / bangdc90.
+// Mochi DFPlayer 0.6.3 — perilaku pemutar sama pikapet / bangdc90.
 // Tema "mochi": 5 klip JPEG penuh dari pemilik repo (full1 utama, chongmat1 goyang, xoadau1 tahan).
+// Gundam 12 klip penuh, dasai 160x80 di tengah layar. Tempo dan nomor trek per klip (jpeg_clips.h).
 #include <Arduino.h>
 #include <Wire.h>
 #include <SPI.h>
@@ -12,7 +13,6 @@
 
 TFT_eSPI tft;
 
-static const uint8_t FRAME_MS = 100;
 static const uint8_t HOLD_MS = 400;
 static const float SHAKE_G = 1.2f;
 static const uint32_t SHAKE_WINDOW_MS = 1000;
@@ -78,21 +78,32 @@ static int bootModel() {
 
 static void backlight(bool on) { digitalWrite(MOCHI_PIN_TFT_BL, on ? HIGH : LOW); }
 
+static int drawnClip = -1;
+static const uint8_t *drawnJpg = nullptr;
+
 static bool drawFrame(int c, int f) {
   if (c < 0 || c >= JPEG_CLIP_COUNT) return false;
   const JpegClip &clipInfo = JPEG_CLIPS[c];
   if (f < 0 || f >= clipInfo.n) return false;
-  return TJpgDec.drawJpg(0, 0, clipInfo.frames[f], clipInfo.sizes[f]) == JDR_OK;
+  if (c != drawnClip) {
+    // Klip lebih kecil dari layar (mis. 160x80 dasai) digambar di tengah, sisanya hitam.
+    if (clipInfo.x || clipInfo.y) tft.fillScreen(TFT_BLACK);
+    drawnClip = c;
+    drawnJpg = nullptr;
+  }
+  if (clipInfo.frames[f] == drawnJpg) return true;  // frame tahan: gambar sama, tidak perlu decode ulang
+  drawnJpg = clipInfo.frames[f];
+  return TJpgDec.drawJpg(clipInfo.x, clipInfo.y, clipInfo.frames[f], clipInfo.sizes[f]) == JDR_OK;
 }
 
 static void playAudio(int c) {
-  uint8_t track = (uint8_t)(c + 1);
-  mochiDfPlayTrack(track);
+  mochiDfPlayTrack(JPEG_CLIPS[c].track);
 }
 
 static void stopAll() {
   mochiDfStop();
   tft.fillScreen(TFT_BLACK);
+  drawnClip = -1;
   backlight(false);
   mode = Mode::Stopped;
   shakeClip = false;
@@ -110,7 +121,8 @@ static void startMain() {
   lastFrame = millis();
   backlight(true);
   playAudio(clip);
-  Serial.printf("model %d/%d %s/%s\n", model + 1, JPEG_CLIP_COUNT, JPEG_CLIPS[model].theme, JPEG_CLIPS[model].stem);
+  Serial.printf("model %d/%d %s/%s trek %d\n", model + 1, JPEG_CLIP_COUNT, JPEG_CLIPS[model].theme, JPEG_CLIPS[model].stem,
+                JPEG_CLIPS[model].track);
 }
 static void nextModel() {
   model = (model + 1) % JPEG_CLIP_COUNT;
@@ -246,7 +258,7 @@ void loop() {
     playAudio(clip);
   }
   if (mode != Mode::Playing) return;
-  if (millis() - lastFrame < FRAME_MS) return;
+  if (millis() - lastFrame < JPEG_CLIPS[clip].delay) return;
   lastFrame = millis();
   drawFrame(clip, frame);
   frame++;
