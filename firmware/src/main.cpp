@@ -211,7 +211,7 @@ void setup() {
   mochiDfSetVolume(20, true);
   mpuInit();
   startMain();
-  Serial.printf("pikapet mode, %d model\n", JPEG_CLIP_COUNT);
+  Serial.printf("edisi Indonesia, %d model\n", JPEG_CLIP_COUNT);
 }
 
 void loop() {

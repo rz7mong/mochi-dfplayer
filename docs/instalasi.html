@@ -15,7 +15,7 @@ a{color:#9cf}
 <main>
 <p><a href="index.html">Beranda</a></p>
 <h1>Instalasi</h1>
-<p>Belum ada pemasang lewat browser. Firmware DFPlayer belum dipaketkan sebagai berkas <code>.bin</code>. Jangan pakai installer <a href="https://rz7mong.github.io/mochi-rzmong/">mochi-rzmong</a>: itu firmware MAX98357.</p>
+<p>Edisi bahasa Indonesia. Belum ada pemasang lewat browser. Jangan pakai installer <a href="https://rz7mong.github.io/mochi-rzmong/">mochi-rzmong</a>: itu firmware amplifier I2S, bukan DFPlayer.</p>
 <h2>1. Rakit</h2>
 <table>
 <tr><th>Net</th><th>Sambungan</th></tr>
@@ -23,10 +23,10 @@ a{color:#9cf}
 <tr><td>TFT MOSI</td><td>GPIO6</td></tr>
 <tr><td>TFT DC</td><td>GPIO3</td></tr>
 <tr><td>TFT RST</td><td>GPIO10</td></tr>
-<tr><td>TFT CS</td><td>tidak disambung</td></tr>
-<tr><td>BLK</td><td>GPIO7</td></tr>
-<tr><td>Sentuh</td><td>GPIO1</td></tr>
-<tr><td>DFPlayer RX</td><td>GPIO20 lewat ~1 kΩ</td></tr>
+<tr><td>TFT CS</td><td>tidak disambung, kaki CS modul ke GND</td></tr>
+<tr><td>Lampu latar</td><td>GPIO7</td></tr>
+<tr><td>Sentuh</td><td>GPIO1, active-low</td></tr>
+<tr><td>DFPlayer RX</td><td>GPIO20 lewat sekitar 1 kΩ</td></tr>
 <tr><td>DFPlayer TX</td><td>GPIO21</td></tr>
 <tr><td>DFPlayer VCC</td><td>5 V</td></tr>
 <tr><td>GND</td><td>gabung</td></tr>
@@ -34,21 +34,17 @@ a{color:#9cf}
 <tr><td>MPU6050 SCL</td><td>GPIO9</td></tr>
 <tr><td>MPU6050 VCC</td><td>3V3</td></tr>
 </table>
-<p>Sama dengan kabel pikapet. MPU6050: SDA GPIO8, SCL GPIO9, VCC 3V3, GND gabung. Tambah resistor 4,7 kΩ dari SDA dan SCL ke 3V3. GPIO9 pin strap: jangan tarik ke GND saat boot.</p>
+<p>Tambah resistor 4,7 kΩ dari SDA dan SCL ke 3V3. GPIO9 pin strap: jangan tarik ke GND saat boot.</p>
 <h2>2. Kartu DFPlayer</h2>
-<ul>
-<li><code>02/001.mp3</code> sampai <code>02/018.mp3</code> untuk 18 klip JPEG</li>
-<li><code>03/001.mp3</code> notifikasi, <code>04/001.mp3</code> dering</li>
-<li><code>05</code> lagu, <code>06</code> suara tema</li>
-</ul>
+<p>FAT32. Berkas di root: <code>0001.mp3</code> sampai <code>0018.mp3</code>. Nomor 1–10 wajah, 11–14 gundam, 15–18 mobil.</p>
 <h2>3. Flash</h2>
 <pre>cd firmware
 pio run -e esp32-c3-dfplayer -t upload</pre>
 <p>Tahan BOOT saat colok USB-C jika unduhan gagal. Port serial memakai USB CDC, bukan UART0.</p>
 <h2>4. Setelah nyala</h2>
 <ol>
-<li>Sambungkan Wi-Fi <code>rzmong mochi</code> / <code>rzmong123</code></li>
-<li>Buka <a href="http://192.168.4.1/">http://192.168.4.1/</a></li>
-<li>Pilih tema wajah, gundam, atau mobil, lalu simpan</li>
+<li>Layar langsung memutar model pertama dan menyalakan lampu latar.</li>
+<li>Ketuk singkat untuk berhenti atau putar lagi.</li>
+<li>Ketuk dua kali untuk model berikutnya.</li>
 </ol>
 </main>

@@ -5,8 +5,9 @@
 #ifndef MOCHI_AP_PASS  /* override: build_flags = -DMOCHI_AP_PASS=\"sandibaru123\" */
 #define MOCHI_AP_PASS "rzmong123"
 #endif
-#define MOCHI_VERSION "0.6.0"
-/* v0.6.0: 18 model JPEG milik repo, ketuk dua kali ganti model.\n * v0.5.9: perilaku pemutar disamakan dengan pikapet.
+#define MOCHI_VERSION "0.6.1"
+/* v0.6.1: dokumen dan pesan edisi bahasa Indonesia.
+ * v0.6.0: 18 model JPEG milik repo, ketuk dua kali ganti model.\n * v0.5.9: perilaku pemutar disamakan dengan pikapet.
  * v0.5.8: backlight GPIO7 seperti pikapet, HIGH nyala, LOW mati saat jeda.
  * v0.5.7: pinout disamakan dengan Dasai Mochi pikapet / bangdc90: TFT DC GPIO3, RST GPIO10, CS tidak dipakai,
  *         backlight GPIO7, MPU6050 SDA GPIO8 / SCL GPIO9. DFPlayer tetap UART GPIO20/21.

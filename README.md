@@ -1,10 +1,10 @@
 # Mochi DFPlayer
 
-Varian **ESP32-C3 Super Mini + ST7789 1.3" 240×240** yang suaranya lewat **DFPlayer Mini** (MP3). Firmware layar, tema, sentuh, dan Chronos mengikuti [mochi-rzmong](https://github.com/rz7mong/mochi-rzmong). Build WAV + MAX98357 tetap di repo itu, tidak dicampur di sini.
+Edisi bahasa Indonesia untuk ESP32-C3 Super Mini + layar ST7789 1,3 inci 240×240, suara lewat DFPlayer Mini. Cara main mengikuti pola Dasai Mochi, tetapi teks, kabel, dan model gambar milik repo ini. Repo sumber Vietnam tidak disalin framenya.
 
 **MIT © rzmong**
 
-Halaman rakitan: [docs/index.html](docs/index.html). Instalasi: [docs/instalasi.html](docs/instalasi.html).
+Rakitan: [docs/index.html](docs/index.html). Instalasi: [docs/instalasi.html](docs/instalasi.html).
 
 ## Build
 
@@ -13,9 +13,9 @@ cd firmware
 pio run -e esp32-c3-dfplayer -t upload
 ```
 
-## Kabel
+Tahan BOOT saat colok USB-C jika unduhan gagal. Port serial memakai USB CDC.
 
-Pinout sama dengan Dasai Mochi pikapet / [bangdc90/esp32-c3-phatvideo_anime](https://github.com/bangdc90/esp32-c3-phatvideo_anime). Jangan pakai kabel mochi-rzmong (CS GPIO7, DC GPIO10, RST GPIO0).
+## Kabel
 
 | Net | ESP32-C3 |
 |---|---|
@@ -23,31 +23,24 @@ Pinout sama dengan Dasai Mochi pikapet / [bangdc90/esp32-c3-phatvideo_anime](htt
 | TFT MOSI | GPIO6 |
 | TFT DC | GPIO3 |
 | TFT RST | GPIO10 |
-| TFT CS | tidak disambung |
-| Backlight | GPIO7 (HIGH = nyala) |
-| Sentuh TTP223 | GPIO1 |
+| TFT CS | tidak disambung, kaki CS modul ke GND |
+| Lampu latar | GPIO7, HIGH nyala, LOW mati |
+| Sentuh | GPIO1, active-low |
 | MPU6050 SDA / SCL | GPIO8 / GPIO9 |
-| DFPlayer RX | GPIO20 lewat resistor ~1 kΩ |
+| DFPlayer RX | GPIO20 lewat resistor sekitar 1 kΩ |
 | DFPlayer TX | GPIO21 |
 | DFPlayer VCC | 5 V |
-| Speaker | SPK+ / SPK− modul, 8 Ω |
+| Speaker | SPK+ / SPK−, 8 Ω |
 
-GPIO9 pin strap. Jangan ditarik ke GND saat boot.
+GPIO9 pin strap. Jangan tarik ke GND saat boot.
 
-Perilaku sama pikapet: ketuk singkat putar/berhenti (berhenti = layar hitam, lampu latar mati, suara berhenti). Tahan memutar klip hati sampai dilepas. Goyang MPU tiga kali dalam 1 detik memutar klip pusing sekali, lalu kembali ke frame semula. Sentuh active-low, INPUT_PULLUP. Volume DFPlayer 28. Delapan belas model di flash: 10 wajah, 4 gundam, 4 mobil. Ketuk dua kali mengganti model. Kartu DFPlayer: `0001.mp3` sampai `0018.mp3` di root, nomor = urutan model.
+## Cara main
 
+- Ketuk singkat: putar atau berhenti. Berhenti menghitamkan layar dan mematikan lampu.
+- Ketuk dua kali: model berikutnya.
+- Tahan: klip terakhir tema itu berulang sampai dilepas.
+- Goyang tiga kali dalam 1 detik: klip lain di tema yang sama, sekali, lalu kembali.
 
-## SD modul (FAT32)
+Delapan belas model di flash: 10 wajah, 4 gundam, 4 mobil. Kartu DFPlayer FAT32, berkas di root: `0001.mp3` sampai `0018.mp3`. Nomor sama dengan urutan model. Volume 28.
 
-| Folder | Isi |
-|---|---|
-| `01/001.mp3` .. `011.mp3` | reaksi: raspberry, squint, love_hearts_kiss, angry_2, smirk, sleepy, yawn_tired, rainbow, pong, revs, hadouken_hit |
-| `02/001.mp3` .. | ekspresi wajah, nomor = indeks + 1 |
-| `06/001.mp3` .. `009.mp3` | tema: wajah, gundam, mobil, polisi, musik, neon, anime, makanan, intro |
-| `03/001.mp3` | notifikasi Chronos |
-| `04/001.mp3` | dering Chronos, diulang sampai ditutup |
-| `05/001.mp3` .. | lagu pemutar |
-
-Menu: Musik putar/jeda, lagu berikut, lagu sebelumnya. Dari AP: `POST http://192.168.4.1/api/music` dengan `{"action":"play"}`, `next`, `prev`, `toggle`, atau `stop`.
-
-Library: `firmware/lib/MochiDfPlayer`.
+Tidak ada Wi-Fi, menu, atau Chronos di firmware ini.
