@@ -135,145 +135,215 @@
   ],
   "jpeg_clips": [
     [
+      "wajah",
+      "vid_00",
+      "",
+      1
+    ],
+    [
+      "wajah",
+      "vid_01",
+      "",
+      2
+    ],
+    [
+      "wajah",
+      "vid_10",
+      "",
+      3
+    ],
+    [
+      "wajah",
+      "vid_11",
+      "",
+      4
+    ],
+    [
+      "wajah",
+      "vid_20",
+      "",
+      5
+    ],
+    [
+      "wajah",
+      "vid_21",
+      "",
+      6
+    ],
+    [
+      "wajah",
+      "vid_30",
+      "",
+      7
+    ],
+    [
+      "wajah",
+      "vid_31",
+      "",
+      8
+    ],
+    [
+      "wajah",
+      "vid_40",
+      "",
+      9
+    ],
+    [
+      "wajah",
+      "vid_41",
+      "",
+      10
+    ],
+    [
+      "mobil",
+      "car",
+      "",
+      15
+    ],
+    [
+      "mobil",
+      "turbo",
+      "",
+      16
+    ],
+    [
+      "mobil",
+      "headlights",
+      "",
+      17
+    ],
+    [
+      "mobil",
+      "speed_3",
+      "",
+      18
+    ],
+    [
       "mochi",
       "full1",
-      ""
+      "",
+      19
     ],
     [
       "mochi",
       "chongmat1",
-      "dizzy"
+      "dizzy",
+      20
     ],
     [
       "mochi",
       "video17",
-      ""
+      "",
+      21
     ],
     [
       "mochi",
       "video18",
-      ""
+      "",
+      22
     ],
     [
       "mochi",
       "xoadau1",
-      "heart"
-    ],
-    [
-      "gundam",
-      "blade",
-      ""
-    ],
-    [
-      "gundam",
-      "titan",
-      ""
-    ],
-    [
-      "gundam",
-      "hadouken_hit",
-      ""
-    ],
-    [
-      "gundam",
-      "mecha_doc",
-      "heart"
-    ],
-    [
-      "gundam",
-      "equip",
-      ""
-    ],
-    [
-      "gundam",
-      "hadouken_miss",
-      ""
-    ],
-    [
-      "gundam",
-      "helm_hujan",
-      ""
-    ],
-    [
-      "gundam",
-      "helm_siaga",
-      ""
-    ],
-    [
-      "gundam",
-      "isyarat",
-      ""
-    ],
-    [
-      "gundam",
-      "kokpit",
-      ""
-    ],
-    [
-      "gundam",
-      "kokpit_2",
-      ""
-    ],
-    [
-      "gundam",
-      "pilot",
-      ""
+      "heart",
+      23
     ],
     [
       "dasai",
       "video01",
-      ""
+      "",
+      32
     ],
     [
       "dasai",
       "video02",
-      ""
+      "",
+      33
     ],
     [
       "dasai",
       "video03",
-      ""
+      "",
+      34
     ],
     [
       "dasai",
       "video04",
-      ""
+      "",
+      35
     ],
     [
       "dasai",
       "video05",
-      ""
+      "",
+      36
     ],
     [
       "dasai",
       "video06",
-      ""
+      "",
+      37
     ],
     [
       "dasai",
       "video07",
-      ""
+      "",
+      38
     ],
     [
       "dasai",
       "video08",
-      ""
+      "",
+      39
     ],
     [
       "dasai",
-      "video2",
-      ""
+      "video09",
+      "",
+      43
+    ],
+    [
+      "dasai",
+      "video10",
+      "",
+      44
     ],
     [
       "dasai",
       "video11",
-      ""
+      "",
+      41
     ],
     [
       "dasai",
       "video12",
-      ""
+      "",
+      42
+    ],
+    [
+      "dasai",
+      "video13",
+      "",
+      45
+    ],
+    [
+      "dasai",
+      "video14",
+      "",
+      46
+    ],
+    [
+      "dasai",
+      "video2",
+      "",
+      40
     ]
   ],
-  "boot_theme": "mochi"
+  "boot_theme": "mochi",
+  "skip_builtins": [
+    "gundam/blade",
+    "gundam/titan",
+    "gundam/hadouken_hit",
+    "gundam/mecha_doc"
+  ]
 }

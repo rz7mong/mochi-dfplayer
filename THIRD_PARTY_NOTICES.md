@@ -41,9 +41,8 @@ Code license **does not** automatically cover media inside Release `assets-v1` o
 
 If you fork this repo, replace theme packs with your own media before publishing.
 
-## Klip JPEG tema mochi, gundam, dasai
+## Klip JPEG tema mochi, dasai
 
 `firmware/assets/builtin/jpeg/mochi/` (full1, chongmat1, xoadau1, video17, video18) ditambahkan pemilik repo dari berkasnya sendiri. Klip ini tidak termasuk lisensi MIT kode. Pastikan hak distribusinya sebelum dibagikan ulang.
 
-- `gundam/`: dikonversi dari `gif/gundam/` di rilis `assets-v1` repo rz7mong/mochi-rzmong.
-- `dasai/`: dikonversi dari header `video*.h` di [bangdc90/dasai_mochi_tft](https://github.com/bangdc90/dasai_mochi_tft). Repo itu tidak mencantumkan lisensi; pastikan izin sebelum distribusi ulang.
+- `dasai/`: dikonversi dari header `video*.h` di [bangdc90/dasai_mochi_tft](https://github.com/bangdc90/dasai_mochi_tft). Repo itu tidak mencantumkan lisensi; tampaknya diambil dari video produk Dasai Mochi. Pastikan izin sebelum distribusi ulang.

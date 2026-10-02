@@ -36,7 +36,7 @@ a{color:#9cf}
 </table>
 <p>Tambah resistor 4,7 kΩ dari SDA dan SCL ke 3V3. GPIO9 pin strap: jangan tarik ke GND saat boot.</p>
 <h2>2. Kartu DFPlayer</h2>
-<p>FAT32. Berkas di root: <code>0001.mp3</code> sampai <code>0042.mp3</code>. Trek 1–10 wajah, 11–14 gundam (blade, titan, hadouken_hit, mecha_doc), 15–18 mobil, 19–23 mochi, 24–31 gundam tambahan (equip, hadouken_miss, helm_hujan, helm_siaga, isyarat, kokpit, kokpit_2, pilot), 32–42 dasai (video01–08, video2, video11, video12).</p>
+<p>FAT32. Berkas di root: <code>0001.mp3</code> sampai <code>0046.mp3</code>. Trek 1–10 wajah, 15–18 mobil, 19–23 mochi, 32–46 dasai (video01–08 = 32–39, video2 = 40, video11–12 = 41–42, video09–10 = 43–44, video13–14 = 45–46). Trek 11–14 dan 24–31 kosong (cadangan gundam).</p>
 <h2>3. Flash</h2>
 <pre>cd firmware
 pio run -e esp32-c3-dfplayer -t upload</pre>

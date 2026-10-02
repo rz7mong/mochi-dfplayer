@@ -25,6 +25,9 @@ ap.add_argument("--hold", type=int, default=57, help="maks piksel berbeda agar f
 ap.add_argument("--quality", type=int, default=0, help="encode ulang (lossy); GIF default 80")
 ap.add_argument("--step", type=int, default=1, help="ambil 1 dari tiap N frame, tempo tetap (delay x N)")
 ap.add_argument("--smooth", type=float, default=0, help="blur Gaussian (px) sebelum encode, hilangkan dither GIF")
+ap.add_argument("--resize", default="", help="WxH, mis. 240x120: Lanczos + unsharp ringan (perlu --quality)")
+ap.add_argument("--crop", default="", help="WxH potong tengah setelah resize, mis. 240x240")
+ap.add_argument("--subsampling", type=int, default=2, help="0 = 4:4:4 (warna tajam), 2 = 4:2:0")
 ap.add_argument("--outdir", default="", help="default assets/builtin/jpeg")
 a = ap.parse_args()
 
@@ -48,6 +51,7 @@ else:
     idx = [int(x) for x in re.findall(r"jpg_frame_(\d+)", order.group(1))] if order else sorted(arrs)
     frames = [arrs[i] for i in idx]
 if not a.delay: a.delay = 100
+if (a.resize or a.crop) and not a.quality: a.quality = 80
 if a.step > 1:  # GIF: slot diulang; header/folder: delay dikali N
     if images: images = [(im, n * a.step) for im, n in images[::a.step]]
     else: a.delay *= a.step
@@ -73,6 +77,12 @@ uniq, sizes, seq = [], [], []
 last = size = None
 for fi, raw in enumerate(frames):
     im, slots = images[fi] if images else (Image.open(io.BytesIO(raw)).convert("RGB"), 1)
+    if a.resize:
+        w, h = map(int, a.resize.lower().split("x"))
+        im = im.resize((w, h), Image.LANCZOS).filter(ImageFilter.UnsharpMask(radius=1.0, percent=60, threshold=2))
+    if a.crop:
+        w, h = map(int, a.crop.lower().split("x")); l, t = (im.width - w) // 2, (im.height - h) // 2
+        im = im.crop((l, t, l + w, t + h))
     if size is None: size = im.size
     if im.size != size or im.size[0] > 240 or im.size[1] > 240: sys.exit(f"frame {fi} berukuran {im.size}")
     if last is not None and changed(im, last) <= a.hold * im.size[0] * im.size[1] // 57600:
@@ -81,7 +91,7 @@ for fi, raw in enumerate(frames):
     out = raw
     if a.quality:
         if a.smooth: im = im.filter(ImageFilter.GaussianBlur(a.smooth))
-        b = io.BytesIO(); im.save(b, "JPEG", quality=a.quality, optimize=True, subsampling=2); out = b.getvalue()
+        b = io.BytesIO(); im.save(b, "JPEG", quality=a.quality, optimize=True, subsampling=a.subsampling); out = b.getvalue()
     if jt:
         opt = subprocess.run([jt, "-optimize", "-copy", "none"], input=out, capture_output=True, check=True).stdout
         if len(opt) < len(out): out = opt

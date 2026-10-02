@@ -2,6 +2,7 @@
 """Bake clips into JPEG frames, Dasai/Pikapet style, for ESP flash -> include/jpeg_clips.h.
 
 * GIF builtins (meta "builtins" [[theme, stem], ...]): maks 6 frame, trek DFPlayer = posisi + 1.
+  meta "skip_builtins" ["tema/stem", ...]: tidak ditanam; trek tetap dicadangkan supaya nomor lain tidak bergeser.
 * Klip JPEG penuh (meta "jpeg_clips" [[theme, stem, role, track?], ...], role "" / "dizzy" / "heart"):
   dibaca dari assets/builtin/jpeg/<theme>/<stem>.{mjpeg,json}, dibuat tools/import_jpeg_clip.py, semua framenya.
   - Jika theme/stem sama dengan builtin, klip penuh MENGGANTIKAN builtin itu di posisi dan nomor trek yang sama.
@@ -45,9 +46,11 @@ def jpeg_clip(theme, stem):
 jents = [(e[0], e[1], ROLES[e[2] if len(e) > 2 else ""], e[3] if len(e) > 3 else 0) for e in meta.get("jpeg_clips", [])]
 jmap = {(t, s): (r, tr) for t, s, r, tr in jents}
 builtins = [tuple(b) for b in meta["builtins"]]
+skip = set(meta.get("skip_builtins", []))  # "tema/stem": builtin tidak ditanam, nomor treknya dibiarkan kosong
 order = []  # (theme, stem, kind, role, track)
 for i, (t, s) in enumerate(builtins):
-    if (t, s) in jmap: order.append((t, s, "jpeg", jmap[(t, s)][0], i + 1))
+    if f"{t}/{s}" in skip: pass
+    elif (t, s) in jmap: order.append((t, s, "jpeg", jmap[(t, s)][0], i + 1))
     else: order.append((t, s, "gif", 0, i + 1))
     if i + 1 == len(builtins) or builtins[i + 1][0] != t:  # akhir kelompok tema: sisipkan klip baru tema ini
         order += [(jt, js, "jpeg", r, tr) for jt, js, r, tr in jents if jt == t and (jt, js) not in builtins]
