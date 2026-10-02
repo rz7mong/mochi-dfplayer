@@ -120,18 +120,23 @@ function long(){
   ui="menu"; menuRow=0; log("menu terbuka");
 }
 const btn=document.getElementById("btn");
-btn.onpointerdown=()=>{ downAt=Date.now(); holdFired=longFired=false; };
-btn.onpointerup=()=>{
-  const ms=Date.now()-downAt;
-  if(longFired) return;
-  if(holdFired) holdEnd();
-  else tap();
+let held = false;
+function release(e){
+  if(!held) return;
+  held = false;
+  if(e) e.preventDefault();
+  if(!longFired){ if(holdFired) holdEnd(); else tap(); }
+  downAt = 0;
   draw();
-};
+}
+btn.onpointerdown=(e)=>{ e.preventDefault(); held=true; downAt=Date.now(); holdFired=longFired=false; };
+btn.onpointerup=release;
+btn.onpointercancel=release;
+btn.onpointerleave=(e)=>{ if(held && e.buttons===0) release(e); };
 setInterval(()=>{
-  if(!downAt) return;
+  if(!held || !downAt) return;
   const ms=Date.now()-downAt;
-  if(!holdFired && ms>=400 && ms<2000){ holdFired=true; }
+  if(!holdFired && ms>=400) holdFired=true;
   if(!longFired && ms>=2000){ longFired=true; long(); draw(); }
 },50);
 setInterval(draw,200);
