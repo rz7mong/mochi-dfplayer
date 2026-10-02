@@ -1,5 +1,6 @@
-// Mochi DFPlayer (versi: MOCHI_VERSION di include/MochiRzmong.h) — perilaku pemutar sama pikapet / bangdc90.
-// Aset JPEG tetap milik repo ini, bukan frame video mereka.
+// Mochi DFPlayer 0.6.5 — perilaku pemutar sama pikapet / bangdc90.
+// Tema "mochi": 5 klip JPEG penuh dari pemilik repo (full1 utama, chongmat1 goyang, xoadau1 tahan).
+// Semua klip JPEG penuh 240 lebar (gundam 240x240 dari huykhoong, dasai 240x120 di tengah). Tempo dan nomor trek per klip (jpeg_clips.h).
 #include <Arduino.h>
 #include <Wire.h>
 #include <SPI.h>
@@ -12,19 +13,9 @@
 
 TFT_eSPI tft;
 
-// uint16_t, bukan uint8_t: 400 tidak muat di uint8_t (jadi 144 ms, tap biasa terbaca "tahan").
-static const uint16_t FRAME_MS = 100;
+// uint16_t, bukan uint8_t: 400 tidak muat di uint8_t (jadi 144 ms).
 static const uint16_t HOLD_MS = 400;
 static const uint16_t DEBOUNCE_MS = 15;
-// Sentuh default active-low (tombol ke GND, atau TTP223 dengan jumper A disolder).
-// TTP223 bawaan pabrik (HIGH saat disentuh, seperti mochi-rzmong): build_flags = -DMOCHI_TOUCH_ACTIVE_HIGH
-#ifdef MOCHI_TOUCH_ACTIVE_HIGH
-static const int TOUCH_DOWN = HIGH;
-static const int TOUCH_PINMODE = INPUT_PULLDOWN;
-#else
-static const int TOUCH_DOWN = LOW;
-static const int TOUCH_PINMODE = INPUT_PULLUP;
-#endif
 static const float SHAKE_G = 1.2f;
 static const uint32_t SHAKE_WINDOW_MS = 1000;
 static const uint32_t SHAKE_COOLDOWN_MS = 1000;
@@ -65,30 +56,56 @@ static int themeEnd(int i) {
   while (e + 1 < JPEG_CLIP_COUNT && strcmp(JPEG_CLIPS[e + 1].theme, JPEG_CLIPS[s].theme) == 0) e++;
   return e;
 }
+static int roleClip(uint8_t role) {
+  for (int i = themeStart(model), e = themeEnd(model); i <= e; i++)
+    if (JPEG_CLIPS[i].role == role) return i;
+  return -1;
+}
 static int mainClip() { return model; }
 static int dizzyClip() {
+  int r = roleClip(JPEG_ROLE_DIZZY);
+  if (r >= 0) return r;
   int s = themeStart(model), e = themeEnd(model);
   return e > s ? s + 1 + ((model - s) % (e - s)) : model;
 }
-static int heartClip() { return themeEnd(model); }
+static int heartClip() {
+  int r = roleClip(JPEG_ROLE_HEART);
+  return r >= 0 ? r : themeEnd(model);
+}
+static int bootModel() {
+  for (int i = 0; i < JPEG_CLIP_COUNT; i++)
+    if (strcmp(JPEG_CLIPS[i].theme, JPEG_BOOT_THEME) == 0) return i;
+  return 0;
+}
 
 static void backlight(bool on) { digitalWrite(MOCHI_PIN_TFT_BL, on ? HIGH : LOW); }
+
+static int drawnClip = -1;
+static const uint8_t *drawnJpg = nullptr;
 
 static bool drawFrame(int c, int f) {
   if (c < 0 || c >= JPEG_CLIP_COUNT) return false;
   const JpegClip &clipInfo = JPEG_CLIPS[c];
   if (f < 0 || f >= clipInfo.n) return false;
-  return TJpgDec.drawJpg(0, 0, clipInfo.frames[f], clipInfo.sizes[f]) == JDR_OK;
+  if (c != drawnClip) {
+    // Klip lebih kecil dari layar (mis. 160x80 dasai) digambar di tengah, sisanya hitam.
+    if (clipInfo.x || clipInfo.y) tft.fillScreen(TFT_BLACK);
+    drawnClip = c;
+    drawnJpg = nullptr;
+  }
+  if (clipInfo.frames[f] == drawnJpg) return true;  // frame tahan: gambar sama, tidak perlu decode ulang
+  drawnJpg = clipInfo.frames[f];
+  return TJpgDec.drawJpg(clipInfo.x, clipInfo.y, clipInfo.frames[f], clipInfo.sizes[f]) == JDR_OK;
 }
 
 static void playAudio(int c) {
-  uint8_t track = (uint8_t)(c + 1);
-  mochiDfPlayTrack(track);
+  mochiDfPlayTrack(JPEG_CLIPS[c].track);
 }
 
 static void stopAll() {
   mochiDfStop();
   tft.fillScreen(TFT_BLACK);
+  drawnClip = -1;
   backlight(false);
   mode = Mode::Stopped;
   shakeClip = false;
@@ -106,7 +123,8 @@ static void startMain() {
   lastFrame = millis();
   backlight(true);
   playAudio(clip);
-  Serial.printf("model %d/%d %s/%s\n", model + 1, JPEG_CLIP_COUNT, JPEG_CLIPS[model].theme, JPEG_CLIPS[model].stem);
+  Serial.printf("model %d/%d %s/%s trek %d\n", model + 1, JPEG_CLIP_COUNT, JPEG_CLIPS[model].theme, JPEG_CLIPS[model].stem,
+                JPEG_CLIPS[model].track);
 }
 static void nextModel() {
   model = (model + 1) % JPEG_CLIP_COUNT;
@@ -168,10 +186,9 @@ static bool shakeNow() {
 }
 
 static void readButton() {
-  bool down = digitalRead(MOCHI_PIN_TOUCH) == TOUCH_DOWN;
+  bool down = digitalRead(MOCHI_PIN_TOUCH) == LOW;
   uint32_t now = millis();
-  // Debounce dibanding bacaan mentah sebelumnya (lastBtn), bukan status stabil.
-  // Versi lama membandingkan dengan `pressed`, sehingga timer selalu direset dan sentuhan tidak pernah terbaca.
+  // Debounce terhadap bacaan mentah sebelumnya, bukan status stabil (versi lama tidak pernah terbaca).
   if ((down ? LOW : HIGH) != lastBtn) {
     lastBtn = down ? LOW : HIGH;
     debounceAt = now;
@@ -211,7 +228,7 @@ void setup() {
   pinMode(MOCHI_PIN_TFT_BL, OUTPUT);
   digitalWrite(MOCHI_PIN_TFT_BL, HIGH);
   Serial.begin(115200);
-  pinMode(MOCHI_PIN_TOUCH, TOUCH_PINMODE);
+  pinMode(MOCHI_PIN_TOUCH, INPUT_PULLUP);
   SPI.begin(MOCHI_PIN_TFT_SCLK, -1, MOCHI_PIN_TFT_MOSI, -1);
   tft.init();
   tft.setRotation(0);
@@ -226,8 +243,9 @@ void setup() {
   mochiDfInit();
   mochiDfSetVolume(20, true);
   mpuInit();
+  model = bootModel();
   startMain();
-  Serial.printf("Mochi DFPlayer %s, edisi Indonesia, %d model\n", MOCHI_VERSION, JPEG_CLIP_COUNT);
+  Serial.printf("edisi Indonesia, %d model\n", JPEG_CLIP_COUNT);
 }
 
 void loop() {
@@ -246,7 +264,7 @@ void loop() {
     playAudio(clip);
   }
   if (mode != Mode::Playing) return;
-  if (millis() - lastFrame < FRAME_MS) return;
+  if (millis() - lastFrame < JPEG_CLIPS[clip].delay) return;
   lastFrame = millis();
   drawFrame(clip, frame);
   frame++;
