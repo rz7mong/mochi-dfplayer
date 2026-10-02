@@ -253,6 +253,10 @@ Saat build, `extra_script.py` menjalankan `tools/embed_jpeg.py` yang menanam kli
 |---|---|
 | `-DMOCHI_DF_MP3_FOLDER` | Suara di `/MP3/0001.mp3` …, dicocokkan dari nama (bawaan: root, urutan salin) |
 | `-DMOCHI_PIN_DF_BUSY=5` | Pakai pin BUSY DFPlayer di GPIO5 untuk deteksi trek selesai |
+
+UART DFPlayer dipetakan eksplisit di `Serial1.begin(9600, SERIAL_8N1, RX=GPIO21, TX=GPIO20)`. Itu kebalikan bawaan UART0 ESP32-C3 (RX20/TX21), jadi pemetaan di `begin` wajib.
+
+Pemasang browser memakai `docs/firmware/firmware.bin`, yang tidak di-commit oleh CI. Versinya harus sama dengan `MOCHI_VERSION` dan `docs/firmware/manifest.json`. Workflow menolak build jika berkas installer tertinggal.
 | `-DMOCHI_TOUCH_ACTIVE_HIGH` | Paksa sentuh HIGH = ditekan, dengan pull-down (bawaan: deteksi otomatis saat nyala) |
 | `-DMOCHI_TOUCH_MODE=2` | Paksa sentuh LOW = ditekan, dengan pull-up (tombol ke GND / TTP223 pad A) |
 | `-DMOCHI_DEFAULT_ROTATION=0` | Rotasi awal layar (0–3, bawaan 2 = pin LCD di bawah, tatakan GMT130). Menu "Putar layar" menimpanya |
@@ -284,7 +288,7 @@ Animasi ditanam di firmware, jadi alurnya **impor → daftarkan → build → fl
    python tools/import_jpeg_clip.py <tema> <nama> folder_frame/
    ```
    Opsi: `--resize`, `--crop`, `--step`, `--hold`, `--delay` (lihat `--help`). Frame lebih kecil dari 240×240 digambar di tengah.
-2. Daftarkan di `firmware/assets/meta.json` → `"jpeg_clips"`: `["<tema>", "<nama>", "", <trek>]`. Peran: `""` biasa, `"dizzy"` saat goyang, `"heart"` saat tahan. Trek boleh dikosongkan (otomatis nomor berikutnya). Tambahkan di **akhir** `"jpeg_clips"`, jangan di `"builtins"` (nomor trek builtin = posisinya, jadi baris baru akan bentrok dengan trek 19 `wajah/senyum_kedip`). Panduan lengkap: [Animasi & suara](https://rz7mong.github.io/mochi-dfplayer/kelola.html).
+2. Daftarkan di `firmware/assets/meta.json` → `"jpeg_clips"`: `["<tema>", "<nama>", "", <trek>]`. Peran: `""` biasa, `"dizzy"` saat goyang, `"heart"` saat tahan. Trek boleh dikosongkan (otomatis nomor berikutnya yang kosong, mulai 0049; 0041–0048 dikunci untuk Chronos). Tambahkan di **akhir** `"jpeg_clips"`, jangan di `"builtins"` (nomor trek builtin = posisinya, jadi baris baru akan bentrok dengan trek 19 `wajah/senyum_kedip`). Panduan lengkap: [Animasi & suara](https://rz7mong.github.io/mochi-dfplayer/kelola.html).
 3. Build + flash: `pio run -e esp32-c3-dfplayer -t upload`. Perhatikan baris `ANGGARAN` jika klip banyak.
 4. `python tools/daftar_trek.py` untuk melihat nomor trek, taruh suaranya sebagai `sd/mp3/000N.mp3` (nomor 0001–0040 yang masih hening, atau tambah di `KLIP` dalam `sd/buat_suara.py`), lalu salin ulang kartu sesuai [urutan salin](#kartu-sd). Nomor 0041–0048 dipakai Chronos.
 

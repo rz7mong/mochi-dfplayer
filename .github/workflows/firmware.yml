@@ -30,6 +30,14 @@ jobs:
       - name: Build ESP32-C3 (aset di-embed otomatis oleh extra_script.py)
         working-directory: firmware
         run: pio run -e esp32-c3-dfplayer
+      - name: Cek versi installer tidak tertinggal
+        run: |
+          ver=$(grep -o 'MOCHI_VERSION \"[^\"]*\"' firmware/include/MochiRzmong.h | head -1 | sed 's/.*"\(.*\)"/\1/')
+          man=$(python3 -c 'import json;print(json.load(open("docs/firmware/manifest.json"))["version"])')
+          binver=$(python3 -c 'import pathlib;s=pathlib.Path("docs/firmware/firmware.bin").read_bytes().decode("latin1","ignore");i=s.find("Mochi DFPlayer");print("missing" if i<0 else "ok")')
+          echo "header=$ver manifest=$man bin=$binver"
+          test "$ver" = "$man"
+          python3 -c 'import pathlib,sys;s=pathlib.Path("docs/firmware/firmware.bin").read_bytes().decode("latin1","ignore");sys.exit(0 if sys.argv[1] in s else 1)' "$ver"
       - name: Gabung jadi satu firmware.bin (offset 0x0)
         run: |
           B=firmware/.pio/build/esp32-c3-dfplayer

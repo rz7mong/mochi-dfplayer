@@ -66,7 +66,11 @@ nxt = max(len(builtins), max((tr for *_, tr in jents), default=0), CHRONOS_TRK[-
 tracks = {}
 for jt, js, r, tr in jents:
     if (jt, js) in builtins: continue
-    if not tr: tr, nxt = nxt, nxt + 1
+    if not tr:
+        while nxt in CHRONOS_TRK: nxt += 1
+        tr, nxt = nxt, nxt + 1
+    if tr in CHRONOS_TRK:
+        raise SystemExit(f"{jt}/{js}: trek {tr:04d} milik Chronos (0041-0048). Kosongkan nomor agar otomatis mulai 0049.")
     tracks[(jt, js)] = tr
 
 # --- Muat semua klip dulu, lalu (jika perlu) muatkan ke anggaran flash, baru tulis header. ---
@@ -126,8 +130,7 @@ for i, c in enumerate(clips):
     seq = c["seq"]
     if not seq: raise SystemExit(f"{theme}/{stem}: tidak ada frame")
     if len(seq) > 65535: raise SystemExit(f"{theme}/{stem}: {len(seq)} frame, maks 65535")
-    if track in CHRONOS_TRK: print(f"PERINGATAN: {theme}/{stem} memakai trek {track:04d}, bentrok dengan suara Chronos 0041-0048")
-    if not 1 <= track <= 3000: raise SystemExit(f"{theme}/{stem}: trek {track} di luar 1..3000 (batas DFPlayer folder MP3)")
+        if not 1 <= track <= 3000: raise SystemExit(f"{theme}/{stem}: trek {track} di luar 1..3000 (batas DFPlayer folder MP3)")
     if c["delay"] > 65535: raise SystemExit(f"{theme}/{stem}: delay terlalu besar")
     used = sorted(set(seq)); names = {}
     for j in used:
