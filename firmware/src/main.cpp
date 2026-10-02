@@ -501,21 +501,8 @@ static void serviceSound() {
   }
   // Pesan selesai tidak datang (mis. TX modul tidak tersambung): anggap notifikasi selesai setelah 8 dtk.
   if (dfOwner == Owner::Notif && millis() - notifSoundAt > 8000) resumeAfterInterrupt();
-  // Tanpa pin BUSY dan pesan UART hilang: tanya status di layar pemutar.
-  // Satu jawaban "berhenti" tidak cukup — DFPlayer sering menjawab 0 saat masih memutar.
-  static uint32_t lastQuery = 0;
-  static uint8_t stoppedPolls = 0;
-  if (mState != MState::Playing) stoppedPolls = 0;
-  if (ui == Ui::Player && mState == MState::Playing && !mochiDfBusyPin() && millis() - lastQuery > 2500 &&
-      millis() - mLastCmd > 3000) {
-    lastQuery = millis();
-    DfState st = mochiDfQueryState();
-    if (st == DfState::Stopped) {
-      if (++stoppedPolls >= 2) { stoppedPolls = 0; musicFinished(); }
-    } else {
-      stoppedPolls = 0;  // Playing, Paused, atau tidak menjawab
-    }
-  }
+  // Jangan menanya status untuk ganti lagu: DFPlayer sering menjawab "berhenti" saat masih memutar.
+  // Lagu berikutnya hanya dari pesan selesai (0x3D / BUSY) atau error file tidak ada.
 }
 
 // =====================================================================
@@ -545,7 +532,7 @@ static void showInfo(const char *a, const char *b) {
 
 struct MenuItem { const char *label; uint16_t col; };
 static const MenuItem MENU[] = {
-  {"Pemutar MP3", C_PINK}, {"Kembali ke animasi", C_TEAL}, {"Volume +", C_TEAL}, {"Volume -", C_TEAL},
+  {"Pemutar MP3", C_PINK}, {"Pilih nomor", C_PINK}, {"Kembali ke animasi", C_TEAL}, {"Volume +", C_TEAL}, {"Volume -", C_TEAL},
   {"Chronos BLE", C_BLUE}, {"Jam HP", C_BLUE}, {"Tampil navigasi", C_BLUE}, {"Putar layar", C_YEL}, {"Tentang", C_TEXT},
 };
 static const int NMENU = sizeof(MENU) / sizeof(MENU[0]), VIS = 7;
@@ -553,12 +540,12 @@ static int menuRow = 0, menuTop = 0;
 
 static String menuValue(int id) {
   switch (id) {
-    case 0: return mState == MState::Playing ? "main" : (mState == MState::Paused ? "jeda" : "");
-    case 2: case 3: return String(volume);
-    case 4: return chronosOn ? (chronoConn ? "ON *" : "ON") : "OFF";
-    case 5: return clockOn ? "ON" : "OFF";
-    case 6: return chronosNav ? "ON" : "OFF";
-    case 7: return String(rot * 90) + "°";
+    case 0: case 1: return mState == MState::Playing ? "main" : (mState == MState::Paused ? "jeda" : "");
+    case 3: case 4: return String(volume);
+    case 5: return chronosOn ? (chronoConn ? "ON *" : "ON") : "OFF";
+    case 6: return clockOn ? "ON" : "OFF";
+    case 7: return chronosNav ? "ON" : "OFF";
+    case 8: return String(rot * 90) + "°";
     default: return "";
   }
 }
@@ -845,6 +832,7 @@ static void showAbout() {
 // =====================================================================
 // Pindah layar + aksi menu
 // =====================================================================
+static bool openPicker = false;
 static void enterUi(Ui u) {
   if (ui == Ui::Anim && u != Ui::Anim) holdEnd();
   ui = u;
@@ -863,26 +851,28 @@ static void enterUi(Ui u) {
     else if (n == 0) mEmpty = true;
     if (mCount > 0 && mTrack > mCount) mTrack = 1;
   }
+  if (u == Ui::Player && openPicker) { openPicker = false; startPick(); }
   if (u == Ui::Clock) clockDrawn = -1;
 }
 static void openMenu() { menuRow = 0; menuTop = 0; enterUi(Ui::Menu); }
 
 static void applyMenu() {
   switch (menuRow) {
-    case 0: pFocus = B_PLAY; enterUi(Ui::Player); return;
-    case 1: clockOn = false; savePrefs(); enterUi(Ui::Anim); return;
-    case 2: setVolume(volume + 2); break;
-    case 3: setVolume(volume - 2); break;
-    case 4: chronosOn = !chronosOn; if (!chronosOn) clockOn = false; savePrefs(); chronosApply();
+    case 0: pFocus = B_PLAY; picking = false; enterUi(Ui::Player); return;
+    case 1: openPicker = true; enterUi(Ui::Player); return;
+    case 2: clockOn = false; savePrefs(); enterUi(Ui::Anim); return;
+    case 3: setVolume(volume + 2); break;
+    case 4: setVolume(volume - 2); break;
+    case 5: chronosOn = !chronosOn; if (!chronosOn) clockOn = false; savePrefs(); chronosApply();
             showInfo("Chronos BLE", chronosOn ? "ON: buka aplikasi Chronos" : "OFF"); break;
-    case 5: clockOn = !clockOn;
+    case 6: clockOn = !clockOn;
             if (clockOn && !chronosOn) { chronosOn = true; chronosApply(); }
             savePrefs();
             if (clockOn) { enterUi(Ui::Clock); return; }
             break;
-    case 6: chronosNav = !chronosNav; savePrefs(); break;
-    case 7: rot = (rot + 1) & 3; tft.setRotation(rot); savePrefs(); break;
-    case 8: showAbout(); break;
+    case 7: chronosNav = !chronosNav; savePrefs(); break;
+    case 8: rot = (rot + 1) & 3; tft.setRotation(rot); savePrefs(); break;
+    case 9: showAbout(); break;
   }
   uiDirty = true;
 }

@@ -1,7 +1,7 @@
 #pragma once
 /* Konstanta Mochi DFPlayer. Satu-satunya sumber versi: MOCHI_VERSION. */
 #define MOCHI_BRAND   "rzmong"
-#define MOCHI_VERSION "0.7.3"
+#define MOCHI_VERSION "0.8.0"
 #ifndef MOCHI_BLE_NAME            /* nama perangkat di aplikasi Chronos */
 #define MOCHI_BLE_NAME "rzmong dfplayer"
 #endif
@@ -14,7 +14,8 @@
 #define TRK_CONNECT  46  /* Chronos tersambung */
 #define TRK_DISCONN  47  /* Chronos terputus */
 #define TRK_NAV_END  48  /* navigasi selesai */
-/* v0.7.3: pemutar bisa memilih nomor trek /01 (3 digit). Tidak menyentuh trek animasi.
+/* v0.8.0: pemilih nomor ada di menu (bukan hanya tombol #). Lagu tidak lagi loncat dari tanya status.
+ * v0.7.3: pemutar bisa memilih nomor trek /01 (3 digit). Tidak menyentuh trek animasi.
  *         Polaritas sentuh hanya dibalik dalam 60 dtk pertama (jari menempel belakangan tidak membalik).
  * v0.7.2: pemutar tidak loncat lagu dari satu jawaban status "berhenti"; hitungan /01 diulang dan
  *         kegagalan tidak di-cache; selesai-trek pendek (suara Chronos) tidak dibuang.
