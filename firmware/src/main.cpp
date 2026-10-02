@@ -21,11 +21,13 @@ static const uint32_t SHAKE_COOLDOWN_MS = 1000;
 enum class Mode { Stopped, Playing };
 
 static Mode mode = Mode::Stopped;
+static int model = 0;
 static int clip = 0;
 static int frame = 0;
 static int savedFrame = 0;
 static bool shakeClip = false;
 static bool holdClip = false;
+static uint32_t shortAt = 0;
 static uint32_t lastFrame = 0;
 static bool mpuOk = false;
 static float lastMag = 1.0f;
@@ -38,9 +40,26 @@ static bool pressed = false;
 static uint32_t pressAt = 0;
 static bool held = false;
 
-static int mainClip() { return 0; }
-static int dizzyClip() { return JPEG_CLIP_COUNT > 1 ? 1 : 0; }
-static int heartClip() { return JPEG_CLIP_COUNT > 2 ? 2 : 0; }
+static int themeStart(int i) {
+  if (i < 0) i = 0;
+  if (i >= JPEG_CLIP_COUNT) i = JPEG_CLIP_COUNT - 1;
+  const char *theme = JPEG_CLIPS[i].theme;
+  int s = i;
+  while (s > 0 && strcmp(JPEG_CLIPS[s - 1].theme, theme) == 0) s--;
+  return s;
+}
+static int themeEnd(int i) {
+  int s = themeStart(i);
+  int e = s;
+  while (e + 1 < JPEG_CLIP_COUNT && strcmp(JPEG_CLIPS[e + 1].theme, JPEG_CLIPS[s].theme) == 0) e++;
+  return e;
+}
+static int mainClip() { return model; }
+static int dizzyClip() {
+  int s = themeStart(model), e = themeEnd(model);
+  return e > s ? s + 1 + ((model - s) % (e - s)) : model;
+}
+static int heartClip() { return themeEnd(model); }
 
 static void backlight(bool on) { digitalWrite(MOCHI_PIN_TFT_BL, on ? HIGH : LOW); }
 
@@ -66,6 +85,7 @@ static void stopAll() {
 }
 
 static void startMain() {
+  if (model < 0 || model >= JPEG_CLIP_COUNT) model = 0;
   clip = mainClip();
   frame = 0;
   savedFrame = 0;
@@ -75,6 +95,11 @@ static void startMain() {
   lastFrame = millis();
   backlight(true);
   playAudio(clip);
+  Serial.printf("model %d/%d %s/%s\n", model + 1, JPEG_CLIP_COUNT, JPEG_CLIPS[model].theme, JPEG_CLIPS[model].stem);
+}
+static void nextModel() {
+  model = (model + 1) % JPEG_CLIP_COUNT;
+  startMain();
 }
 
 static void mpuInit() {
@@ -158,8 +183,10 @@ static void readButton() {
       playAudio(clip);
     } else if (pressAt && now - pressAt < HOLD_MS) {
       pressAt = 0;
-      if (mode == Mode::Playing) stopAll();
-      else startMain();
+      if (shortAt && now - shortAt < 350) {
+        shortAt = 0;
+        nextModel();
+      } else shortAt = now;
     } else pressAt = 0;
   }
 }
@@ -184,11 +211,16 @@ void setup() {
   mochiDfSetVolume(20, true);
   mpuInit();
   startMain();
-  Serial.printf("pikapet mode, %d klip\n", JPEG_CLIP_COUNT);
+  Serial.printf("pikapet mode, %d model\n", JPEG_CLIP_COUNT);
 }
 
 void loop() {
   readButton();
+  if (shortAt && millis() - shortAt >= 350 && !pressed) {
+    shortAt = 0;
+    if (mode == Mode::Playing) stopAll();
+    else startMain();
+  }
   if (mode == Mode::Playing && !holdClip && !shakeClip && shakeNow()) {
     savedFrame = frame;
     clip = dizzyClip();
