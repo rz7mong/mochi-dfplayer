@@ -1,4 +1,4 @@
-// Mochi DFPlayer 0.6.6 — perilaku pemutar sama pikapet / bangdc90.
+// Mochi DFPlayer 0.6.7 — perilaku pemutar sama pikapet / bangdc90.
 // Tema "mochi": 5 klip JPEG penuh dari pemilik repo (full1 utama, chongmat1 goyang, xoadau1 tahan).
 // Semua klip JPEG penuh 240 lebar (gundam 240x240 dari paket rzmong, dasai 240x120 di tengah). Tempo dan nomor trek per klip (jpeg_clips.h).
 #include <Arduino.h>

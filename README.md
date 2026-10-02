@@ -38,21 +38,20 @@ GPIO9 pin strap. Jangan tarik ke GND saat boot.
 
 - Ketuk singkat: putar atau berhenti. Berhenti menghitamkan layar dan mematikan lampu.
 - Ketuk dua kali: model berikutnya.
-- Tahan: klip terakhir tema itu berulang sampai dilepas. Di tema `mochi`: xoadau1 (mata hati). Gundam: mecha_doc. Dasai: video2.
+- Tahan: klip terakhir tema itu berulang sampai dilepas. Di tema `mochi`: xoadau1 (mata hati). Gundam: helm_siaga. Dasai: video2.
 - Goyang tiga kali dalam 1 detik: klip lain di tema yang sama, sekali, lalu kembali. Di tema `mochi`: chongmat1 (mata pusing).
 
-Tiga puluh empat model di flash, urutan ketuk dua kali: 10 wajah, 12 gundam, 4 mobil, 5 mochi, 3 dasai. Semua klip JPEG penuh, lebar 240. Saat nyala langsung memutar `mochi/full1`. Kartu DFPlayer FAT32, berkas di root. Nomor trek tetap per klip (bukan urutan model). Volume 28.
+Dua puluh delapan model di flash, urutan ketuk dua kali: 10 wajah, 6 gundam, 4 mobil, 5 mochi, 3 dasai. Semua klip JPEG penuh, lebar 240. Saat nyala langsung memutar `mochi/full1`. Kartu DFPlayer FAT32, berkas di root. Nomor trek tetap per klip (bukan urutan model). Volume 28.
 
 | Model | Trek | Klip |
 |---|---|---|
 | 1–10 | `0001`–`0010` | wajah vid_00 … vid_41 |
-| 11–14 | `0011`–`0014` | gundam blade, titan, hadouken_hit, mecha_doc (tahan) |
-| 15–22 | `0024`–`0031` | gundam equip, hadouken_miss, helm_hujan, helm_siaga, isyarat, kokpit, kokpit_2, pilot |
-| 23–26 | `0015`–`0018` | mobil car, turbo, headlights, speed_3 |
-| 27–31 | `0019`–`0023` | mochi full1, chongmat1, video17, video18, xoadau1 |
-| 32–34 | `0034`, `0038`, `0040` | dasai video03 (lampu sorot), video07 (spidometer), video2 (tahan) |
+| 11–16 | `0026`–`0031` | gundam helm_hujan, helm_siaga (tahan), isyarat, kokpit, kokpit_2, pilot |
+| 17–20 | `0015`–`0018` | mobil car, turbo, headlights, speed_3 |
+| 21–25 | `0019`–`0023` | mochi full1, chongmat1, video17, video18, xoadau1 |
+| 26–28 | `0034`, `0038`, `0040` | dasai video03 (lampu sorot), video07 (spidometer), video2 (tahan) |
 
-Trek 32–33, 35–37, 39, 41–46 tidak dipakai.
+Trek 11–14, 24–25, 32–33, 35–37, 39, 41–46 tidak dipakai.
 
 ### Tema wajah dan mobil
 
@@ -64,7 +63,7 @@ full1 (558 frame) wajah utama, chongmat1 (44) saat goyang, video17 (132), video1
 
 ### Tema gundam
 
-12 GIF penuh dari paket tema `assets-v1` rz7mong/mochi-rzmong (`mochi-themes.zip`, `gif/gundam/`), semua frame (144) dengan durasi frame GIF asli (60–90 ms, frame panjang diulang). 240×240: dither GIF dihaluskan (blur Gaussian 1,2 px), Lanczos, unsharp ringan, JPEG kualitas 82. Tahan: mecha_doc.
+6 GIF penuh dari paket tema `assets-v1` rz7mong/mochi-rzmong (`mochi-themes.zip`, `gif/gundam/`): helm_hujan, helm_siaga, isyarat, kokpit, kokpit_2, pilot. Semua frame (82) dengan durasi frame GIF asli (90 ms). 240×240: dither GIF dihaluskan (blur Gaussian 1,2 px), Lanczos, unsharp ringan, JPEG kualitas 82. Tahan: helm_siaga. Model GIF gundam lama (blade, titan, hadouken_hit, mecha_doc) tidak ditanam (`skip_builtins` di `meta.json`).
 
 ### Tema dasai
 
