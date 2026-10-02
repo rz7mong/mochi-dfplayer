@@ -5,8 +5,9 @@
 #ifndef MOCHI_AP_PASS  /* override: build_flags = -DMOCHI_AP_PASS=\"sandibaru123\" */
 #define MOCHI_AP_PASS "rzmong123"
 #endif
-#define MOCHI_VERSION "0.5.7"
-/* v0.5.7: pinout disamakan dengan Dasai Mochi pikapet / bangdc90: TFT DC GPIO3, RST GPIO10, CS tidak dipakai,
+#define MOCHI_VERSION "0.5.8"
+/* v0.5.8: backlight GPIO7 seperti pikapet, HIGH nyala, LOW mati saat jeda.
+ * v0.5.7: pinout disamakan dengan Dasai Mochi pikapet / bangdc90: TFT DC GPIO3, RST GPIO10, CS tidak dipakai,
  *         backlight GPIO7, MPU6050 SDA GPIO8 / SCL GPIO9. DFPlayer tetap UART GPIO20/21.
  * v0.5.6: 30 built-in GIF+WAV slots in flash (new happy-blink wajah/default from video, colourful wajah/musik/mobil + gundam),
  *         built-in WAV played from flash, 11 tap reacts, clock honours GIF frame delay, default between idle clips.
