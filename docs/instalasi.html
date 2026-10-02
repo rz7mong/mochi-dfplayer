@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&amp;family=Quicksand:wght@500;700&amp;display=swap"/>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E%F0%9F%8D%A1%3C/text%3E%3C/svg%3E"/>
-<link rel="stylesheet" href="./mochi.css?v=2"/>
+<link rel="stylesheet" href="./mochi.css?v=3"/>
 </head>
 <body>
 <header class="hero wrap narrow">
@@ -19,24 +19,25 @@
   <p class="sub">Bahan, kabel per pin, isi kartu microSD DFPlayer, dan solusi masalah umum.</p>
   <div class="chips"><span class="chip">🧠 ESP32-C3 Super Mini</span><span class="chip">📺 ST7789 1,3" 240×240</span><span class="chip">🎵 DFPlayer Mini</span><span class="chip">📱 Chronos BLE</span><span class="chip">⚡ firmware 0.7.0</span></div>
 </header>
-<nav class="tabs"><div class="wrap narrow"><a href="index.html">🍡 Instalasi</a><a href="panduan.html">📖 Cara pakai</a><a href="instalasi.html" class="on" aria-current="page">🔧 Rakit &amp; kartu SD</a><a href="animasi.html">🎞️ Tambah animasi</a><a href="https://rz7mong.github.io/mochi-rzmong/">💗 Mochi rzmong (GIF)</a><a href="https://github.com/rz7mong/mochi-dfplayer">🐙 GitHub</a></div></nav>
+<nav class="tabs"><div class="wrap narrow"><a href="index.html">⚡ Instalasi firmware</a><a href="panduan.html">📖 Cara pakai</a><a href="instalasi.html" class="on" aria-current="page">🔧 Rakit &amp; kartu SD</a><a href="pemasangan.html">🧩 Demo rakit</a><a href="pemasangan-kabel.html">🔌 Diagram kabel</a><a href="kelola.html">🎵 Animasi &amp; suara</a><a href="animasi.html">🎞️ Tambah animasi</a><a href="https://rz7mong.github.io/mochi-rzmong/">💗 Mochi rzmong (GIF)</a><a href="https://github.com/rz7mong/mochi-dfplayer">🐙 GitHub</a></div></nav>
 <main class="wrap narrow">
 <section class="card">
   <h2>🧺 Bahan</h2>
   <div class="grid">
-    <div class="part"><span class="q">1×</span><h3>ESP32-C3 Super Mini</h3><p>Flash 4 MB, USB-C, BLE.</p></div>
-    <div class="part"><span class="q">1×</span><h3>Layar ST7789 1,3"</h3><p>IPS 240×240, SPI 7 pin (tanpa CS) atau 8 pin.</p></div>
-    <div class="part"><span class="q">1×</span><h3>DFPlayer Mini</h3><p>Pemutar MP3 dengan slot microSD dan amplifier 3 W.</p></div>
-    <div class="part"><span class="q">1×</span><h3>Speaker 8 Ω</h3><p>Kecil, 0,5–3 W, ke SPK_1/SPK_2.</p></div>
-    <div class="part"><span class="q">1×</span><h3>Kartu microSD</h3><p>FAT32, ≤ 32 GB.</p></div>
-    <div class="part"><span class="q">1×</span><h3>Resistor 1 kΩ</h3><p>Di jalur GPIO20 → RX DFPlayer.</p></div>
-    <div class="part"><span class="q">1×</span><h3>Tombol / TTP223</h3><p>Ke GPIO1, active-low.</p><span class="tag">lihat catatan sentuh</span></div>
-    <div class="part"><span class="q">1×</span><h3>MPU6050</h3><p>Untuk fitur goyang. Tanpa modul ini, fitur goyang mati sendiri.</p><span class="tag opt">opsional</span></div>
+    <div class="part"><span class="q">1×</span><h3>🧠 ESP32-C3 Super Mini</h3><p>Flash 4 MB, USB-C, BLE.</p></div>
+    <div class="part"><span class="q">1×</span><h3>📺 Layar ST7789 1,3"</h3><p>IPS 240×240, SPI 7 pin (tanpa CS) atau 8 pin.</p></div>
+    <div class="part"><span class="q">1×</span><h3>🎵 DFPlayer Mini</h3><p>Pemutar MP3 dengan slot microSD dan amplifier 3 W.</p></div>
+    <div class="part"><span class="q">1×</span><h3>🔊 Speaker 8 Ω</h3><p>Kecil, 0,5–3 W, ke SPK_1/SPK_2.</p></div>
+    <div class="part"><span class="q">1×</span><h3>💾 Kartu microSD</h3><p>FAT32, ≤ 32 GB.</p></div>
+    <div class="part"><span class="q">1×</span><h3>🟫 Resistor 1 kΩ</h3><p>Di jalur GPIO20 → RX DFPlayer.</p></div>
+    <div class="part"><span class="q">1×</span><h3>👆 Tombol / TTP223</h3><p>Ke GPIO1, active-low.</p><span class="tag">lihat catatan sentuh</span></div>
+    <div class="part"><span class="q">1×</span><h3>🌀 MPU6050</h3><p>Untuk fitur goyang. Tanpa modul ini, fitur goyang mati sendiri.</p><span class="tag opt">opsional</span></div>
   </div>
 </section>
 
 <section class="card" id="kabel">
   <h2>🔌 Kabel</h2>
+  <p class="info">ℹ️ Gambar kabel lengkap: <a href="pemasangan-kabel.html">Diagram kabel</a>. Rakit langkah demi langkah: <a href="pemasangan.html">Demo rakit</a>.</p>
   <p class="hint">Sumber: <code>firmware/include/MochiRzmong.h</code> dan <code>firmware/include/User_Setup_ST7789.h</code>.</p>
   <div class="tbl"><table><tr><th>Kaki modul</th><th>ESP32-C3</th><th>Catatan</th></tr>
 <tr><td>TFT SCL / SCLK</td><td><b>GPIO4</b></td><td></td></tr>
@@ -56,8 +57,8 @@
 <tr><td>MPU6050 VCC</td><td>3V3</td><td></td></tr>
 <tr><td>GND</td><td>gabung semua</td><td>ESP, layar, DFPlayer, MPU6050, sentuh</td></tr>
   </table></div>
-  <p class="note">GPIO9 adalah pin strap: jangan ditarik ke GND saat boot. GPIO20/21 adalah UART0 bawaan chip; log ESP dibaca lewat USB CDC.</p>
-  <p class="info"><b>Catatan sentuh:</b> firmware membaca GPIO1 sebagai <b>LOW = ditekan</b> (pull-up internal). Modul TTP223 bawaan pabrik justru HIGH saat disentuh; solder jumper <b>A</b> agar active-low, atau build dengan <code>-DMOCHI_TOUCH_ACTIVE_HIGH</code>.</p>
+  <p class="note">⚠️ GPIO9 adalah pin strap: jangan ditarik ke GND saat boot. GPIO20/21 adalah UART0 bawaan chip; log ESP dibaca lewat USB CDC.</p>
+  <p class="info">ℹ️ <b>Catatan sentuh:</b> firmware membaca GPIO1 sebagai <b>LOW = ditekan</b> (pull-up internal). Modul TTP223 bawaan pabrik justru HIGH saat disentuh; solder jumper <b>A</b> agar active-low, atau build dengan <code>-DMOCHI_TOUCH_ACTIVE_HIGH</code>.</p>
 </section>
 
 <section class="card" id="sd">

@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Mochi DFPlayer — Instalasi ESP32</title>
+<title>Instalasi firmware — Mochi DFPlayer</title>
 <meta name="description" content="Mochi DFPlayer: teman meja ESP32-C3 + ST7789, animasi JPEG tajam di flash, suara MP3 lewat DFPlayer Mini, pemutar MP3 dan Chronos BLE."/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&amp;family=Quicksand:wght@500;700&amp;display=swap"/>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E%F0%9F%8D%A1%3C/text%3E%3C/svg%3E"/>
-<link rel="stylesheet" href="./mochi.css?v=2"/>
+<link rel="stylesheet" href="./mochi.css?v=3"/>
 <script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module"></script>
 </head>
 <body>
@@ -20,25 +20,63 @@
   <p class="sub">Animasi JPEG tajam di flash, suara MP3 lewat DFPlayer Mini, pemutar MP3 dan Chronos. Flash langsung dari browser.</p>
   <div class="chips"><span class="chip">🧠 ESP32-C3 Super Mini</span><span class="chip">📺 ST7789 1,3" 240×240</span><span class="chip">🎵 DFPlayer Mini</span><span class="chip">📱 Chronos BLE</span><span class="chip">⚡ firmware 0.7.0</span></div>
 </header>
-<nav class="tabs"><div class="wrap narrow"><a href="index.html" class="on" aria-current="page">🍡 Instalasi</a><a href="panduan.html">📖 Cara pakai</a><a href="instalasi.html">🔧 Rakit &amp; kartu SD</a><a href="animasi.html">🎞️ Tambah animasi</a><a href="https://rz7mong.github.io/mochi-rzmong/">💗 Mochi rzmong (GIF)</a><a href="https://github.com/rz7mong/mochi-dfplayer">🐙 GitHub</a></div></nav>
+<nav class="tabs"><div class="wrap narrow"><a href="index.html" class="on" aria-current="page">⚡ Instalasi firmware</a><a href="panduan.html">📖 Cara pakai</a><a href="instalasi.html">🔧 Rakit &amp; kartu SD</a><a href="pemasangan.html">🧩 Demo rakit</a><a href="pemasangan-kabel.html">🔌 Diagram kabel</a><a href="kelola.html">🎵 Animasi &amp; suara</a><a href="animasi.html">🎞️ Tambah animasi</a><a href="https://rz7mong.github.io/mochi-rzmong/">💗 Mochi rzmong (GIF)</a><a href="https://github.com/rz7mong/mochi-dfplayer">🐙 GitHub</a></div></nav>
 <main class="wrap narrow">
 <section class="card" id="flash">
-  <h2>⚡ Pasang firmware dari browser</h2>
+  <h2>⚡ Instalasi firmware 0.7.0 dari browser</h2>
   <div class="flash-grid">
   <div class="step"><div class="num">1</div><div>Buka di <b>Chrome</b> atau <b>Edge</b> di komputer (bukan Safari, bukan browser di dalam aplikasi).</div></div>
   <div class="step"><div class="num">2</div><div>Tahan <b>BOOT</b>, colok USB-C, lalu lepas BOOT.</div></div>
-  <div class="step"><div class="num">3</div><div>Klik tombol di bawah, pilih port, lalu <b>Install</b>. Centang <b>Erase</b> untuk pemasangan pertama atau naik dari versi &lt; 0.7.0.</div></div>
-  <div class="step"><div class="num">4</div><div>Cabut lalu colok lagi. Layar langsung memutar <code>mochi/full1</code>.</div></div>
+  <div class="step"><div class="num">3</div><div>Klik tombol di bawah, pilih port (<code>USB JTAG/serial debug unit</code> atau <code>ttyACM</code>/<code>COM</code>), lalu <b>Install</b>.</div></div>
+  <div class="step"><div class="num">4</div><div>Centang <b>Erase</b> untuk pemasangan pertama atau naik dari versi &lt; 0.7.0. Erase menghapus pengaturan (volume, rotasi, Chronos); kartu SD tidak tersentuh.</div></div>
+  <div class="step"><div class="num">5</div><div>Tunggu sampai 100%, cabut lalu colok lagi. Layar langsung memutar <code>mochi/full1</code>.</div></div>
   </div>
   <div class="install">
   <esp-web-install-button manifest="./firmware/manifest.json">
     <button slot="activate" class="btn primary big">Install Mochi DFPlayer 0.7.0</button>
-    <span slot="unsupported"><p class="note">Browser ini tidak mendukung Web Serial. Pakai Chrome atau Edge di komputer.</p></span>
-    <span slot="not-allowed"><p class="note">Halaman harus dibuka lewat https (GitHub Pages) atau localhost.</p></span>
+    <span slot="unsupported"><p class="note">⚠️ Browser ini tidak mendukung Web Serial. Pakai Chrome atau Edge di komputer.</p></span>
+    <span slot="not-allowed"><p class="note">⚠️ Halaman harus dibuka lewat https (GitHub Pages) atau localhost.</p></span>
   </esp-web-install-button>
   </div>
   <p class="note">⚠️ Jangan pakai installer <a href="https://rz7mong.github.io/mochi-rzmong/">mochi-rzmong</a> untuk rakitan ini: itu firmware amplifier I2S (MAX98357), bukan DFPlayer. Sebaliknya, firmware ini juga tidak cocok untuk rakitan MAX98357.</p>
   <p class="hint">Isi <code>firmware/firmware.bin</code>: bootloader + tabel partisi + boot_app0 + aplikasi, digabung di offset 0x0 untuk flash 4 MB. Build sendiri: lihat <a href="https://github.com/rz7mong/mochi-dfplayer#flash">README</a>.</p>
+</section>
+
+<section class="card" id="setelah">
+  <h2>✨ Setelah flash</h2>
+  <div class="step"><div class="num">1</div><div><b>Isi kartu microSD DFPlayer</b> (FAT32, ≤ 32 GB), lalu masukkan sebelum menyalakan:
+<pre>/MP3/0001.mp3 … 0040.mp3   suara animasi (nomor = trek model)
+/01/001.mp3 … 255.mp3      lagu untuk Pemutar MP3
+/02/001.mp3                suara notifikasi Chronos
+/03/001.mp3 …              nada dering panggilan Chronos</pre>
+  Detail dan tabel trek: <a href="kelola.html#suara">Animasi &amp; suara</a>.</div></div>
+  <div class="step"><div class="num">2</div><div><b>Nyala pertama</b>: lampu latar nyala, <code>mochi/full1</code> main dengan suara <code>/MP3/0019.mp3</code>. Ketuk 1× = berhenti/putar, ketuk 2× = model berikutnya, tahan 2 dtk = menu.</div></div>
+  <div class="step"><div class="num">3</div><div><b>Atur dari menu</b>: volume, Chronos BLE, Jam HP, putar layar. Lihat <a href="panduan.html">Cara pakai</a>.</div></div>
+  <p class="hint">Belum dirakit? <a href="pemasangan.html">Demo rakit</a> dan <a href="pemasangan-kabel.html">Diagram kabel</a>.</p>
+</section>
+
+<section class="card" id="masalah">
+  <h2>🛠️ Kalau gagal</h2>
+  <div class="tbl"><table><tr><th>Gejala</th><th>Coba ini</th></tr>
+    <tr><td>Tombol Install tidak muncul / "tidak didukung"</td><td>Pakai Chrome atau Edge di komputer (Windows, macOS, Linux, ChromeOS). Safari, Firefox, dan browser HP tidak punya Web Serial. Halaman harus https atau localhost.</td></tr>
+    <tr><td>Port tidak muncul di daftar</td><td>Kabel USB-C harus kabel <b>data</b>, bukan kabel cas. Tahan <b>BOOT</b> saat mencolok, lalu lepas. Coba port USB lain (tanpa hub). Tutup Arduino IDE / serial monitor lain yang memegang port.</td></tr>
+    <tr><td>Driver CH340 / USB CDC</td><td>ESP32-C3 Super Mini memakai <b>USB CDC bawaan chip</b> (tanpa chip CH340), jadi tidak perlu driver di Windows 10/11, macOS, dan Linux. Hanya papan lain yang punya chip <b>CH340/CP2102</b> yang butuh driver dari pembuat chip. Linux: tambahkan user ke grup <code>dialout</code> kalau port ditolak.</td></tr>
+    <tr><td>Gagal di tengah / "Failed to connect"</td><td>Ulangi dengan BOOT ditahan saat colok. Centang Erase. Kalau tetap gagal, tekan RESET sambil menahan BOOT, lalu lepas RESET dulu baru BOOT.</td></tr>
+    <tr><td>Layar hitam setelah flash</td><td>Cabut-colok dulu (setelah flash ESP kadang tetap di mode unduh). Cek kabel layar: SCL 4, SDA 6, DC 3, RES 10, BLK 7, VCC 3V3; modul 8 pin CS ke GND. Mode berhenti juga hitam: ketuk 1×.</td></tr>
+    <tr><td>Layar putih / bergaris</td><td>Kabel SPI terlalu panjang atau RES/DC tertukar. Pendekkan kabel SCL/SDA/DC.</td></tr>
+    <tr><td>Gambar jalan, tidak ada suara</td><td>DFPlayer VCC 5V, GPIO20 → 1 kΩ → RX, TX → GPIO21, speaker di SPK_1/SPK_2, kartu FAT32 dengan folder <code>/MP3</code>.</td></tr>
+    <tr><td>Ketukan tidak terbaca / selalu "tahan"</td><td>Polaritas sentuh: solder jumper A di TTP223, atau build sendiri dengan <code>-DMOCHI_TOUCH_ACTIVE_HIGH</code>.</td></tr>
+  </table></div>
+  <p class="hint">Log lewat USB CDC: <code>pio device monitor</code> (115200). Gejala lain: <a href="instalasi.html#masalah">Rakit &amp; kartu SD</a>.</p>
+</section>
+
+<section class="card" id="build">
+  <h2>🧑‍💻 Build sendiri (PlatformIO)</h2>
+<pre>pip install platformio pillow
+cd firmware
+pio run -e esp32-c3-dfplayer -t upload
+pio device monitor        # 115200</pre>
+  <p class="hint">Opsi di <code>build_flags</code> (<code>platformio.ini</code>): <code>-DMOCHI_TOUCH_ACTIVE_HIGH</code> (TTP223 pabrik), <code>-DMOCHI_PIN_DF_BUSY=5</code> (pin BUSY), <code>-DMOCHI_DEFAULT_ROTATION=2</code> (layar terbalik). Lihat <a href="pemasangan-kabel.html#build">Diagram kabel</a>.</p>
 </section>
 
 <section class="card">
@@ -81,9 +119,11 @@
 <section class="card">
   <h2>➡️ Lanjut</h2>
   <div class="row">
-    <a class="btn primary" href="instalasi.html">🔧 Rakit &amp; siapkan kartu SD</a>
+    <a class="btn primary" href="pemasangan.html">🧩 Demo rakit</a>
+    <a class="btn" href="pemasangan-kabel.html">🔌 Diagram kabel</a>
+    <a class="btn" href="instalasi.html">🔧 Rakit &amp; siapkan kartu SD</a>
     <a class="btn" href="panduan.html">📖 Menu, pemutar MP3, Chronos</a>
-    <a class="btn" href="animasi.html">🎞️ Tambah animasi</a>
+    <a class="btn" href="kelola.html">🎵 Animasi &amp; suara</a>
   </div>
 </section>
 </main>

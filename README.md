@@ -15,6 +15,16 @@ Teman meja **ESP32-C3 Super Mini** + layar **ST7789 1,3" 240×240** dengan **sua
 
 **Firmware 0.7.0** · **MIT © rzmong** · Situs + pemasang browser: **https://rz7mong.github.io/mochi-dfplayer/** (sumber di [`docs/`](docs/))
 
+### 📚 Panduan di situs
+
+| Halaman | Isi |
+|---|---|
+| ⚡ [Instalasi firmware](https://rz7mong.github.io/mochi-dfplayer/) ([`docs/index.html`](docs/index.html)) | Flash dari browser, setelah flash, kalau gagal |
+| 🧩 [Demo rakit](https://rz7mong.github.io/mochi-dfplayer/pemasangan.html) ([`docs/pemasangan.html`](docs/pemasangan.html)) | Komponen → solder tiap modul → kartu SD → flash → uji nyala, langkah demi langkah |
+| 🔌 [Diagram kabel](https://rz7mong.github.io/mochi-dfplayer/pemasangan-kabel.html) ([`docs/pemasangan-kabel.html`](docs/pemasangan-kabel.html)) | Diagram lengkap, tabel pin per modul / per GPIO, tips |
+| 🎵 [Animasi &amp; suara](https://rz7mong.github.io/mochi-dfplayer/kelola.html) ([`docs/kelola.html`](docs/kelola.html)) | Tambah GIF, suara `/MP3`, pemutar musik `/01`, suara Chronos `/02` `/03` |
+| 📖 [Cara pakai](https://rz7mong.github.io/mochi-dfplayer/panduan.html) · 🔧 [Rakit &amp; kartu SD](https://rz7mong.github.io/mochi-dfplayer/instalasi.html) · 🎞️ [Tambah animasi](https://rz7mong.github.io/mochi-dfplayer/animasi.html) | Menu, gerakan, kartu SD, anggaran flash |
+
 ## ✨ Fitur
 
 - **34 model animasi** di flash: 10 wajah, 12 gundam, 4 mobil, 5 mochi, 3 dasai. JPEG lebar 240, tempo per klip. Saat nyala langsung `mochi/full1`.
@@ -56,6 +66,10 @@ Teman meja **ESP32-C3 Super Mini** + layar **ST7789 1,3" 240×240** dengan **sua
 ## 🔌 Kabel
 
 Sumber: [`firmware/include/MochiRzmong.h`](firmware/include/MochiRzmong.h) dan [`User_Setup_ST7789.h`](firmware/include/User_Setup_ST7789.h).
+
+<p align="center"><img src="docs/wiring-dfplayer.svg" width="720" alt="Diagram kabel Mochi DFPlayer"></p>
+
+Rakit langkah demi langkah: [Demo rakit](https://rz7mong.github.io/mochi-dfplayer/pemasangan.html) · tabel lengkap: [Diagram kabel](https://rz7mong.github.io/mochi-dfplayer/pemasangan-kabel.html).
 
 | Kaki modul | ESP32-C3 | Catatan |
 |---|---|---|
@@ -215,7 +229,7 @@ Animasi ditanam di firmware, jadi alurnya **impor → daftarkan → build → fl
    python tools/import_jpeg_clip.py <tema> <nama> folder_frame/
    ```
    Opsi: `--resize`, `--crop`, `--step`, `--hold`, `--delay` (lihat `--help`). Frame lebih kecil dari 240×240 digambar di tengah.
-2. Daftarkan di `firmware/assets/meta.json` → `"jpeg_clips"`: `["<tema>", "<nama>", "", <trek>]`. Peran: `""` biasa, `"dizzy"` saat goyang, `"heart"` saat tahan. Trek boleh dikosongkan (otomatis nomor berikutnya).
+2. Daftarkan di `firmware/assets/meta.json` → `"jpeg_clips"`: `["<tema>", "<nama>", "", <trek>]`. Peran: `""` biasa, `"dizzy"` saat goyang, `"heart"` saat tahan. Trek boleh dikosongkan (otomatis nomor berikutnya). Tambahkan di **akhir** `"jpeg_clips"`, jangan di `"builtins"` (nomor trek builtin = posisinya, jadi baris baru akan bentrok dengan trek 19 `mochi/full1`). Panduan lengkap: [Animasi & suara](https://rz7mong.github.io/mochi-dfplayer/kelola.html).
 3. Build + flash: `pio run -e esp32-c3-dfplayer -t upload`. Perhatikan baris `ANGGARAN` jika klip banyak.
 4. `python tools/daftar_trek.py` untuk melihat nomor trek, lalu salin `/MP3/000N.mp3` ke kartu.
 

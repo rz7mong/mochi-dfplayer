@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>🍡 Demo Cara Pemasangan Mochi DFPlayer</title>
+<meta name="description" content="Panduan rakit interaktif Mochi DFPlayer: ESP32-C3 Super Mini, ST7789, TTP223, DFPlayer Mini, speaker, MPU6050. Daftar komponen, kabel per modul, kartu SD, flash, uji nyala."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&amp;family=Quicksand:wght@500;700&amp;display=swap"/>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E%F0%9F%8D%A1%3C/text%3E%3C/svg%3E"/>
+<link rel="stylesheet" href="./mochi.css?v=3"/>
+</head>
+<body>
+<header class="hero wrap">
+  <div class="verswitch" role="navigation" aria-label="Panduan rakit"><a href="pemasangan.html" class="on">🧩 Demo rakit langkah demi langkah</a><a href="pemasangan-kabel.html">🔌 Diagram &amp; tabel kabel</a></div>
+  <svg class="mochi" viewBox="0 0 120 96" aria-hidden="true"><ellipse cx="60" cy="88" rx="36" ry="5" fill="#f6c6d9" opacity=".6"/><path d="M14 66c0-30 20-52 46-52s46 22 46 52c0 14-12 20-46 20S14 80 14 66z" fill="#fff" stroke="#ffb3cf" stroke-width="3"/><rect x="33" y="34" width="54" height="36" rx="10" fill="#2b2140"/><ellipse cx="49" cy="51" rx="5" ry="6.5" fill="#7ef0c8"/><ellipse cx="71" cy="51" rx="5" ry="6.5" fill="#7ef0c8"/><path d="M53 61q7 6 14 0" stroke="#ff8fb8" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="38" cy="64" rx="5" ry="3" fill="#ffb3cf" opacity=".6"/><ellipse cx="82" cy="64" rx="5" ry="3" fill="#ffb3cf" opacity=".6"/><path d="M100 18v16a5 4 0 1 1-2-3V20l10-3v13a5 4 0 1 1-2-3V15z" fill="#ff8fb8"/></svg>
+  <div class="kicker">demo rakit · dfplayer · v0.7.0</div>
+  <h1>🧩 Demo <span>Cara Pemasangan</span> Mochi DFPlayer</h1>
+  <p class="sub">Panduan rakit interaktif dengan <b>kabel lepas</b>: ESP32-C3 Super Mini + layar ST7789 1,3" + TTP223 + DFPlayer Mini + speaker 8 Ω, dan MPU6050 kalau mau. Urutannya: daftar komponen, solder modul satu per satu, siapkan kartu SD, flash, lalu uji nyala pertama. Semua pin dicek dengan <code>firmware/include/MochiRzmong.h</code> dan <code>User_Setup_ST7789.h</code>.</p>
+  <div class="chips"><span class="chip">🧠 ESP32-C3 Super Mini</span><span class="chip">📺 ST7789 1,3" 240×240</span><span class="chip">🎵 DFPlayer Mini</span><span class="chip">👆 TTP223</span><span class="chip">🌀 MPU6050 (opsional)</span><span class="chip">⚡ firmware 0.7.0</span></div>
+</header>
+<nav class="tabs"><div class="wrap "><a href="index.html">⚡ Instalasi firmware</a><a href="panduan.html">📖 Cara pakai</a><a href="instalasi.html">🔧 Rakit &amp; kartu SD</a><a href="pemasangan.html" class="on" aria-current="page">🧩 Demo rakit</a><a href="pemasangan-kabel.html">🔌 Diagram kabel</a><a href="kelola.html">🎵 Animasi &amp; suara</a><a href="animasi.html">🎞️ Tambah animasi</a><a href="https://rz7mong.github.io/mochi-rzmong/">💗 Mochi rzmong (GIF)</a><a href="https://github.com/rz7mong/mochi-dfplayer">🐙 GitHub</a></div></nav>
+<main class="wrap">
+<nav class="tabsw" aria-label="Isi halaman" style="margin-top:14px"></nav>
+<section id="komponen">
+  <h2>🛒 Daftar komponen</h2>
+  <div class="info">ℹ️ Semua modul memakai kabel titik-ke-titik, tanpa PCB. Kabel jumper dupont boleh untuk uji coba di breadboard, tapi untuk rakitan akhir lebih awet disolder.</div>
+  <div class="grid" id="parts"></div>
+</section>
+
+<section id="rakit">
+  <h2>🔧 Langkah rakit interaktif</h2>
+  <div class="stepper">
+    <div>
+      <div class="stage card"><div id="svgwrap"></div><div class="legend" id="legend"></div></div>
+      <div class="progress"><i id="prog"></i></div>
+      <div class="dots" id="dots"></div>
+    </div>
+    <div class="panel card" id="panel">
+      <div class="kick" id="kick"></div>
+      <h3 id="stitle"></h3>
+      <div id="sbody"></div>
+      <div id="sconn"></div>
+      <div class="ctl"><button class="btn" id="prev">◀ Sebelumnya</button><button class="btn primary" id="next">Berikutnya ▶</button></div>
+    </div>
+  </div>
+  <p class="hint">Rute kabel di gambar hanya ilustrasi. Yang penting <b>pin ke pin</b>-nya. Tombol keyboard ← → juga bisa dipakai. Diagram lengkap dan tabel ada di <a href="pemasangan-kabel.html">Diagram kabel</a>.</p>
+</section>
+
+<section id="kartu-sd">
+  <h2>💾 Siapkan kartu SD DFPlayer</h2>
+  <div class="card">
+    <div class="step"><div class="num">1</div><div>Pakai kartu microSD <b>≤ 32 GB</b>, format <b>FAT32</b>.</div></div>
+    <div class="step"><div class="num">2</div><div>Buat folder dan salin MP3 dengan nama bernomor. File dicocokkan dari <b>nama</b>, jadi urutan salin tidak penting.
+<pre class="tree">/MP3/0001.mp3 … 0040.mp3   suara animasi (nomor = trek model)
+/01/001.mp3 … 255.mp3      lagu untuk Pemutar MP3
+/02/001.mp3                suara notifikasi Chronos
+/03/001.mp3 …              nada dering panggilan Chronos</pre></div></div>
+    <div class="step"><div class="num">3</div><div>Di macOS, hapus file <code>._*</code> dan <code>.DS_Store</code>. Cek isi kartu: <code>python firmware/tools/daftar_trek.py --sd /path/ke/kartu</code>.</div></div>
+    <div class="step"><div class="num">4</div><div>Masukkan kartu ke slot DFPlayer <b>sebelum</b> menyalakan perangkat.</div></div>
+    <p class="hint">Nomor trek tiap model dan cara menambah suara: <a href="kelola.html#suara">Animasi &amp; suara</a>.</p>
+  </div>
+</section>
+
+<section id="flash">
+  <h2>⚡ Flash firmware</h2>
+  <div class="card">
+    <div class="step"><div class="num">1</div><div>Buka <a href="index.html#flash">Instalasi firmware</a> di <b>Chrome</b> atau <b>Edge</b> di komputer.</div></div>
+    <div class="step"><div class="num">2</div><div>Tahan tombol <b>BOOT</b> di ESP32-C3, colok USB-C, lalu lepas BOOT.</div></div>
+    <div class="step"><div class="num">3</div><div>Klik <b>Install</b>, pilih port, centang <b>Erase</b> untuk pemasangan pertama, tunggu sampai selesai.</div></div>
+    <div class="step"><div class="num">4</div><div>Cabut lalu colok lagi USB-C.</div></div>
+    <p class="tip">💡 Pakai sentuh TTP223 bawaan pabrik tanpa solder jumper A? Build sendiri dengan <code>-DMOCHI_TOUCH_ACTIVE_HIGH</code> (lihat <a href="index.html#build">build sendiri</a>). Pin BUSY ke GPIO5? Tambahkan <code>-DMOCHI_PIN_DF_BUSY=5</code>.</p>
+  </div>
+</section>
+
+<section id="uji">
+  <h2>✅ Uji nyala pertama</h2>
+  <div class="card">
+    <div class="tbl"><table><tr><th>Cek</th><th>Yang harus terjadi</th><th>Kalau tidak</th></tr>
+      <tr><td>Layar</td><td>Lampu latar nyala, klip <code>mochi/full1</code> langsung main</td><td>Cek SCL 4, SDA 6, DC 3, RES 10, BLK 7, VCC 3V3. Modul 8 pin: CS ke GND</td></tr>
+      <tr><td>Suara</td><td>Suara model terdengar dari speaker (<code>/MP3/0019.mp3</code> untuk <code>mochi/full1</code>)</td><td>VCC DFPlayer 5V, GPIO20 → 1 kΩ → RX, kartu FAT32, folder <code>/MP3</code></td></tr>
+      <tr><td>Ketuk 1×</td><td>Animasi berhenti, layar gelap. Ketuk lagi: main</td><td>Polaritas TTP223: solder jumper A atau build <code>-DMOCHI_TOUCH_ACTIVE_HIGH</code></td></tr>
+      <tr><td>Ketuk 2×</td><td>Model berikutnya</td><td>Ketuk lebih cepat (jeda ≤ 0,35 dtk)</td></tr>
+      <tr><td>Tahan 2 dtk</td><td>Menu terbuka</td><td>Kalau langsung "tahan" terus: polaritas sentuh terbalik</td></tr>
+      <tr><td>Serial 115200</td><td><code>Mochi DFPlayer 0.7.0, 34 model …</code>, <code>MPU6050 siap</code> (kalau dipasang)</td><td><code>MPU6050 tidak ada</code>: cek SDA 8, SCL 9, 3V3</td></tr>
+    </table></div>
+    <p class="hint">Serial monitor lewat USB: <code>pio device monitor</code> (115200). Daftar gejala lain: <a href="instalasi.html#masalah">Kalau ada masalah</a>.</p>
+  </div>
+</section>
+
+<section id="catatan">
+  <h2>⚠️ Catatan penting</h2>
+  <div class="tips">
+    <div class="note">🔊 <b>Jangan pernah</b> menyambung kaki speaker ke GND atau ke GPIO. SPK_1 dan SPK_2 adalah output amplifier jembatan (BTL) di DFPlayer.</div>
+    <div class="note">⚡ DFPlayer butuh <b>5V</b> (pin 5V / VBUS ESP). Layar, TTP223, dan MPU6050 tetap <b>3V3</b>.</div>
+    <div class="note">📌 <b>GPIO9</b> pin strap: jangan ditarik ke GND saat boot. GPIO20/21 adalah UART0 chip, log ESP keluar lewat USB CDC.</div>
+    <div class="tip">🔋 Pasang kapasitor <b>100–470 µF</b> dekat VCC–GND DFPlayer supaya tidak reset atau "plok" saat suara keras.</div>
+    <div class="tip">🔗 Semua GND <b>disatukan</b>: ESP, layar, TTP223, DFPlayer, MPU6050, kapasitor.</div>
+    <div class="tip">📏 Kabel SPI layar (SCL, SDA, DC) <b>sependek mungkin</b>. SPI jalan di 40 MHz; kabel panjang bikin gambar bergaris.</div>
+  </div>
+</section>
+</main>
+<footer>© rzmong · MIT (kode) · Mochi DFPlayer 0.7.0 · proyek independen, terinspirasi Dasai Mochi, bukan produk resmi</footer>
+<script src="./wiring.js?v=1"></script>
+<script>
+(function(){
+const MW=MochiWiring, $=id=>document.getElementById(id);
+const PREV=['esp','tft','ttp','df','dfpwr','spk','mpu'];
+const SDILL=`<svg viewBox="0 0 640 420" xmlns="http://www.w3.org/2000/svg" font-family="Nunito,system-ui,sans-serif" role="img" aria-label="Isi kartu SD"><rect width="640" height="420" rx="14" fill="#fffafc"/>
+<g transform="translate(40 60)"><path d="M0 14a14 14 0 0 1 14-14h120l40 40v240a14 14 0 0 1-14 14H14a14 14 0 0 1-14-14z" fill="#334155"/><rect x="18" y="0" width="12" height="34" fill="#e6c35c"/><rect x="40" y="0" width="12" height="34" fill="#e6c35c"/><rect x="62" y="0" width="12" height="34" fill="#e6c35c"/><rect x="84" y="0" width="12" height="34" fill="#e6c35c"/><text x="87" y="170" font-size="26" fill="#fff" font-weight="800" text-anchor="middle">microSD</text><text x="87" y="200" font-size="16" fill="#cbd5e1" text-anchor="middle">FAT32 · ≤ 32 GB</text></g>
+<g font-size="17" fill="#3b2a3a"><text x="260" y="70" font-weight="800">📁 /MP3</text><text x="290" y="96" fill="#8a7488">0001.mp3 … 0040.mp3 · suara animasi</text>
+<text x="260" y="146" font-weight="800">📁 /01</text><text x="290" y="172" fill="#8a7488">001.mp3 … 255.mp3 · pemutar MP3</text>
+<text x="260" y="222" font-weight="800">📁 /02</text><text x="290" y="248" fill="#8a7488">001.mp3 · notifikasi Chronos</text>
+<text x="260" y="298" font-weight="800">📁 /03</text><text x="290" y="324" fill="#8a7488">001.mp3 … · dering panggilan</text></g>
+<text x="320" y="392" font-size="15" fill="#ff5c98" font-weight="800" text-anchor="middle">nama file menentukan nomor trek, urutan salin tidak penting</text></svg>`;
+const FLASHILL=`<svg viewBox="0 0 640 420" xmlns="http://www.w3.org/2000/svg" font-family="Nunito,system-ui,sans-serif" role="img" aria-label="Flash dari browser"><rect width="640" height="420" rx="14" fill="#fffafc"/>
+<rect x="40" y="60" width="330" height="210" rx="12" fill="#1f2937"/><rect x="56" y="76" width="298" height="178" rx="6" fill="#fff"/><rect x="20" y="270" width="370" height="18" rx="8" fill="#9ca3af"/>
+<rect x="72" y="92" width="266" height="22" rx="6" fill="#ffd3e4"/><text x="82" y="108" font-size="12" fill="#3b2a3a">Chrome / Edge · Instalasi firmware</text>
+<rect x="110" y="150" width="190" height="42" rx="14" fill="#ff5c98"/><text x="205" y="177" font-size="16" fill="#fff" font-weight="800" text-anchor="middle">Install 0.7.0</text>
+<text x="205" y="222" font-size="12" fill="#8a7488" text-anchor="middle">pilih port → Erase → Install</text>
+<path d="M390 279 C470 279 450 200 500 200" stroke="#475569" stroke-width="7" fill="none" stroke-linecap="round"/>
+<rect x="490" y="120" width="110" height="170" rx="10" fill="#1d212b"/><rect x="520" y="104" width="50" height="30" rx="7" fill="#c9ced8"/><text x="545" y="232" font-size="12" fill="#fff" text-anchor="middle" font-weight="700">ESP32-C3</text>
+<circle cx="515" cy="265" r="12" fill="#e5e7eb" stroke="#ff5c98" stroke-width="4"/><text x="515" y="318" font-size="14" fill="#ff5c98" font-weight="800" text-anchor="middle">tahan BOOT</text><text x="515" y="336" font-size="12" fill="#8a7488" text-anchor="middle">saat colok USB-C</text>
+<text x="320" y="392" font-size="15" fill="#3b2a3a" font-weight="800" text-anchor="middle">selesai → cabut lalu colok lagi</text></svg>`;
+const BOOTILL=`<svg viewBox="0 0 640 420" xmlns="http://www.w3.org/2000/svg" font-family="Nunito,system-ui,sans-serif" role="img" aria-label="Uji nyala pertama"><rect width="640" height="420" rx="14" fill="#fffafc"/>
+<rect x="60" y="50" width="250" height="250" rx="18" fill="#1d4fa8"/><rect x="80" y="70" width="210" height="210" rx="8" fill="#0b1020"/>
+<g transform="translate(185 175)"><ellipse cx="-34" cy="-8" rx="13" ry="18" fill="#7ef0c8"/><ellipse cx="34" cy="-8" rx="13" ry="18" fill="#7ef0c8"/><path d="M-14 24q14 12 28 0" stroke="#ff8fb8" stroke-width="5" fill="none" stroke-linecap="round"/></g>
+<path d="M330 150q20-20 0-40M345 165q36-36 0-70" stroke="#ff8fb8" stroke-width="5" fill="none" stroke-linecap="round"/>
+<g font-size="15" fill="#3b2a3a"><text x="380" y="90" font-weight="800">✅ mochi/full1 main</text><text x="380" y="125" font-weight="800">🔊 suara /MP3/0019</text><text x="380" y="160" font-weight="800">👆 ketuk 1× = berhenti</text><text x="380" y="195" font-weight="800">👆👆 ketuk 2× = model</text><text x="380" y="230" font-weight="800">✋ tahan 2 dtk = menu</text></g>
+<rect x="60" y="320" width="520" height="60" rx="10" fill="#1f2937"/><text x="76" y="345" font-size="12" fill="#a7f3d0" font-family="ui-monospace,monospace">Mochi DFPlayer 0.7.0, 34 model, rotasi 0, Chronos OFF</text><text x="76" y="366" font-size="12" fill="#a7f3d0" font-family="ui-monospace,monospace">MPU6050 siap</text></svg>`;
+const S=[
+{id:'prep',kick:'Langkah 0 · Persiapan',title:'Alat & aturan dasar',show:[],
+ body:`<ul><li>Solder, timah, kabel tipis (silikon / AWG 26–28), multimeter, resistor <b>1 kΩ</b> (1–2 buah), elko <b>100–470 µF ≥ 10 V</b>.</li><li>Kerjakan dengan <b>USB tercabut</b>. Colok hanya saat uji.</li><li>Urutan: layar → sentuh → DFPlayer (data, lalu daya) → speaker → MPU6050 (opsional) → cek multimeter.</li></ul><div class="info">ℹ️ Cek pin di firmware: <code>MochiRzmong.h</code> (sentuh, DFPlayer, MPU6050) dan <code>User_Setup_ST7789.h</code> (layar).</div>`},
+{id:'esp',kick:'Langkah 1 · Otak',title:'ESP32-C3 Super Mini',show:['esp'],hi:MW.PADS.esp,
+ body:`<ul><li>USB-C di atas. Kiri: 5V, GND, 3V3, GPIO4, GPIO3, GPIO2, GPIO1, GPIO0. Kanan: GPIO5, GPIO6, GPIO7, GPIO8, GPIO9, GPIO10, GPIO20, GPIO21.</li><li>Yang dipakai berkedip. <b>GPIO0 dan GPIO2 kosong</b>.</li><li>GPIO5 (BUSY) dan GPIO8/9 (MPU6050) opsional.</li></ul><div class="note">⚠️ GPIO9 pin strap: jangan ditarik ke GND saat boot. GPIO20/21 adalah UART0 chip, dipakai untuk DFPlayer; log ESP lewat USB CDC.</div>`},
+{id:'tft',kick:'Langkah 2 · Layar',title:'ST7789 1,3" (7 kabel)',show:['esp','tft'],
+ body:`<ul><li><b>SCL → GPIO4</b> · <b>SDA → GPIO6</b> · <b>DC → GPIO3</b> · <b>RES → GPIO10</b> · <b>BLK → GPIO7</b></li><li><b>VCC → 3V3</b> · <b>GND → GND</b></li><li>Modul 8 pin dengan kaki <b>CS</b>: sambungkan CS ke <b>GND</b>. Firmware memakai CS = −1.</li></ul><div class="tip">💡 Kabel SPI sependek mungkin (SPI 40 MHz). BLK dikendalikan firmware: mati saat animasi berhenti.</div>`},
+{id:'ttp',kick:'Langkah 3 · Sentuh',title:'TTP223 → GPIO1',show:['esp','tft','ttp'],
+ body:`<ul><li><b>OUT (I/O) → GPIO1</b> · <b>VCC → 3V3</b> · <b>GND → GND</b></li><li>Firmware bawaan membaca <b>LOW = disentuh</b> (pull-up internal). TTP223 pabrik justru HIGH saat disentuh, jadi <b>solder jumper A</b> di modul.</li><li>Tidak mau solder jumper? Build dengan <code>-DMOCHI_TOUCH_ACTIVE_HIGH</code> (pull-down).</li></ul><div class="info">ℹ️ Tombol tekan biasa juga bisa: satu kaki ke GPIO1, kaki lain ke GND.</div>`},
+{id:'df',kick:'Langkah 4 · DFPlayer data',title:'DFPlayer RX / TX / BUSY',show:['esp','tft','ttp','df'],
+ body:`<ul><li><b>GPIO20 → resistor 1 kΩ → RX</b> DFPlayer (ESP TX).</li><li><b>TX DFPlayer → GPIO21</b> (ESP RX). Resistor 1 kΩ di sini <b>opsional</b>. Kabel ini <b>wajib</b>: membawa pesan "trek selesai" supaya suara diulang dan lagu lanjut.</li><li><b>BUSY → GPIO5</b> opsional, aktifkan dengan <code>-DMOCHI_PIN_DF_BUSY=5</code>.</li></ul><div class="note">⚠️ Resistor 1 kΩ di RX meredam dengung dan melindungi modul. Jangan dilewati.</div>`},
+{id:'dfpwr',kick:'Langkah 5 · DFPlayer daya',title:'VCC 5V, GND, kapasitor',show:['esp','tft','ttp','df','cap'],
+ body:`<ul><li><b>VCC DFPlayer → 5V</b> (pin 5V / VBUS ESP), <b>bukan 3V3</b>.</li><li><b>GND DFPlayer → GND bersama</b> (pin GND kiri atau kanan, sama saja).</li><li>Elko <b>100–470 µF</b>: kaki <b>+</b> ke VCC, kaki <b>−</b> ke GND, <b>sedekat mungkin</b> ke modul.</li></ul><div class="tip">💡 Tanpa kapasitor, DFPlayer bisa reset atau bunyi "plok" saat suara keras.</div>`},
+{id:'spk',kick:'Langkah 6 · Suara',title:'Speaker 8 Ω ke SPK_1 / SPK_2',show:['esp','tft','ttp','df','cap','spk'],
+ body:`<ul><li><b>SPK_1</b> dan <b>SPK_2</b> langsung ke speaker <b>8 Ω 1–3 W</b>. Tanpa amplifier tambahan.</li><li>Polaritas speaker tidak penting untuk satu speaker.</li></ul><div class="note">🔊 <b>Jangan pernah</b> menyambung kaki speaker ke GND. Output DFPlayer jembatan (BTL), kaki ke GND = amplifier rusak.</div>`},
+{id:'mpu',kick:'Langkah 7 · Goyang (opsional)',title:'MPU6050 → GPIO8 / GPIO9',show:['esp','tft','ttp','df','cap','spk','mpu'],
+ body:`<ul><li><b>SDA → GPIO8</b> · <b>SCL → GPIO9</b> · <b>VCC → 3V3</b> · <b>GND → GND</b>. Alamat 0x68 (AD0 dibiarkan).</li><li>Goyang 3× dalam 1 dtk memutar klip "goyang" tema itu.</li><li>Tanpa MPU6050, fitur goyang mati sendiri. Langkah ini boleh dilewati.</li></ul><div class="info">ℹ️ Pull-up 4,7 kΩ ke 3V3 hanya perlu kalau modulmu belum punya (GY-521 sudah punya).</div>`},
+{id:'cek',kick:'Langkah 8 · Cek',title:'Cek multimeter sebelum colok',show:MW.ALL,all:true,
+ body:`<ul><li>5V–GND dan 3V3–GND <b>tidak boleh short</b>.</li><li>SPK_1 / SPK_2 <b>tidak</b> tersambung ke GND.</li><li>Resistor 1 kΩ ada di antara GPIO20 dan RX.</li><li>Tidak ada kabel di GPIO9 yang menuju GND.</li></ul>`},
+{id:'sd',kick:'Langkah 9 · Kartu SD',title:'Isi kartu microSD DFPlayer',ill:SDILL,
+ body:`<ul><li>FAT32, ≤ 32 GB. Folder <code>/MP3</code>, <code>/01</code>, <code>/02</code>, <code>/03</code>.</li><li>Nama file bernomor: 4 digit di <code>/MP3</code>, 3 digit di folder angka.</li><li>Cek: <code>python firmware/tools/daftar_trek.py --sd /path/kartu</code>.</li></ul><p><a href="#kartu-sd">Detail kartu SD ↓</a></p>`},
+{id:'flash',kick:'Langkah 10 · Flash',title:'Pasang firmware dari browser',ill:FLASHILL,
+ body:`<ul><li>Chrome/Edge di komputer → <a href="index.html#flash">Instalasi firmware</a>.</li><li>Tahan BOOT, colok USB-C, lepas BOOT, klik Install, pilih port.</li><li>Centang <b>Erase</b> untuk pemasangan pertama.</li></ul>`},
+{id:'boot',kick:'Langkah 11 · Uji',title:'Uji nyala pertama',ill:BOOTILL,
+ body:`<ul><li>Layar langsung memutar <code>mochi/full1</code> dengan suaranya.</li><li>Ketuk 1× = berhenti/putar, ketuk 2× = model berikutnya, tahan 2 dtk = menu.</li><li>Ada yang tidak jalan? Lihat <a href="#uji">tabel uji</a>.</li></ul>`},
+{id:'done',kick:'Selesai 🎉',title:'Mochi siap!',show:MW.ALL,all:true,
+ body:`<ul><li>Atur volume, Chronos, dan rotasi dari menu (tahan 2 dtk): <a href="panduan.html">Cara pakai</a>.</li><li>Tambah lagu, suara, dan animasi: <a href="kelola.html">Animasi &amp; suara</a>.</li></ul>`}
+];
+let cur=0, hashOn=false;
+function go(i){
+ cur=Math.max(0,Math.min(S.length-1,i)); const st=S[cur];
+ const k=PREV.indexOf(st.id);
+ if(st.ill){$('svgwrap').innerHTML=st.ill;$('legend').innerHTML='';}
+ else {
+  const show=st.show||[];
+  const prv=k>=0?PREV.slice(0,k):[];
+  $('svgwrap').innerHTML=MW.svg({show,cur:k>=0?[st.id]:[],prev:prv,all:!!st.all,full:!!st.all,static:!!st.all,hi:st.hi||(MW.PADS[st.id]||[]),title:st.title});
+  const nets=[...new Set(MW.W.filter(c=>c.step===st.id).map(c=>c.net))];
+  $('legend').innerHTML=MW.legend(nets);
+ }
+ $('kick').textContent=st.kick+'  ·  '+(cur+1)+'/'+S.length; $('stitle').textContent=st.title; $('sbody').innerHTML=st.body;
+ $('sconn').innerHTML=MW.connTable(st.id);
+ $('prev').disabled=cur===0; $('next').textContent=cur===S.length-1?'↺ Ulangi':'Berikutnya ▶';
+ $('prog').style.width=(cur/(S.length-1)*100)+'%';
+ [...$('dots').children].forEach((b,j)=>b.className=j===cur?'on':(j<cur?'done':''));
+ if(hashOn) history.replaceState(null,'','#step-'+cur);
+}
+$('prev').onclick=()=>{hashOn=true;go(cur-1)}; $('next').onclick=()=>{hashOn=true;go(cur===S.length-1?0:cur+1)};
+document.addEventListener('keydown',e=>{if(e.target.closest&&e.target.closest('input,textarea'))return;if(e.key==='ArrowRight'){hashOn=true;go(cur+1)}if(e.key==='ArrowLeft'){hashOn=true;go(cur-1)}});
+S.forEach((s,j)=>{const b=document.createElement('button');b.textContent=j;b.title=s.title;b.setAttribute('aria-label','Langkah '+j+': '+s.title);b.onclick=()=>{hashOn=true;go(j)};$('dots').appendChild(b)});
+const PARTS=[
+ ['🧠','ESP32-C3 Super Mini','1','Flash 4 MB, USB-C native (USB CDC), BLE untuk Chronos.','wajib'],
+ ['📺','Layar ST7789 1,3" IPS 240×240','1','SPI 7 pin: GND VCC SCL SDA RES DC BLK. Modul 8 pin: CS ke GND.','wajib'],
+ ['🎵','DFPlayer Mini','1','Pemutar MP3 dengan slot microSD dan amplifier 3 W. VCC 5V.','wajib'],
+ ['🔊','Speaker 8 Ω 1–3 W','1','Langsung ke SPK_1 / SPK_2, tanpa amplifier tambahan.','wajib'],
+ ['💾','Kartu microSD','1','FAT32, ≤ 32 GB. Isi MP3 bernomor (lihat kartu SD).','wajib'],
+ ['👆','TTP223 (atau tombol)','1','Sentuh ke GPIO1. Solder jumper A, atau build <code>-DMOCHI_TOUCH_ACTIVE_HIGH</code>.','wajib'],
+ ['🟫','Resistor 1 kΩ','1–2','Wajib di GPIO20 → RX DFPlayer. Satu lagi opsional di TX → GPIO21.','wajib'],
+ ['⚡','Elko 100–470 µF ≥ 10 V','1','Dekat VCC–GND DFPlayer, menahan lonjakan arus speaker.','disarankan'],
+ ['🌀','MPU6050 (GY-521)','1','Untuk fitur goyang. SDA GPIO8, SCL GPIO9, 3V3.','opsional'],
+ ['🧵','Kabel tipis + timah','set','AWG 26–28. Kabel SPI layar dibuat pendek.','wajib'],
+ ['🔌','Kabel USB-C data','1','Bukan kabel cas saja. Untuk flash dan daya 5V.','wajib']];
+$('parts').innerHTML=PARTS.map(p=>`<div class="part"><div class="ico" aria-hidden="true">${p[0]}</div><span class="q">×${p[2]}</span><h3>${p[1]}</h3><p>${p[3]}</p><span class="tag ${p[4]==='wajib'?'':'opt'}">${p[4]}</span></div>`).join('');
+const toc=[['#komponen','🛒 Komponen'],['#rakit','🔧 Langkah rakit'],['#kartu-sd','💾 Kartu SD'],['#flash','⚡ Flash'],['#uji','✅ Uji nyala'],['#catatan','⚠️ Catatan']];
+document.querySelector('nav.tabsw').innerHTML=toc.map(([h,t])=>`<a class="chip" href="${h}" style="text-decoration:none">${t}</a>`).join('');
+const m=location.hash.match(/^#step-(\d+)/); go(m?+m[1]:0); if(m) document.getElementById('rakit').scrollIntoView();
+})();
+</script>
+</body>
+</html>
