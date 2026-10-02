@@ -38,7 +38,7 @@ GPIO9 pin strap. Jangan tarik ke GND saat boot.
 
 - Ketuk singkat: putar atau berhenti. Berhenti menghitamkan layar dan mematikan lampu.
 - Ketuk dua kali: model berikutnya.
-- Tahan: klip terakhir tema itu berulang sampai dilepas. Di tema `mochi`: xoadau1 (mata hati). Gundam: isyarat. Dasai: video2.
+- Tahan: klip terakhir tema itu berulang sampai dilepas. Di tema `mochi`: xoadau1 (mata hati). Gundam: siaga. Dasai: video2.
 - Goyang tiga kali dalam 1 detik: klip lain di tema yang sama, sekali, lalu kembali. Di tema `mochi`: chongmat1 (mata pusing). Gundam: ledak.
 
 Tiga puluh model di flash, urutan ketuk dua kali: 10 wajah, 8 gundam, 4 mobil, 5 mochi, 3 dasai. Semua klip JPEG penuh, lebar 240. Saat nyala langsung memutar `mochi/full1`. Kartu DFPlayer FAT32, berkas di root. Nomor trek tetap per klip (bukan urutan model). Volume 28.
@@ -46,8 +46,8 @@ Tiga puluh model di flash, urutan ketuk dua kali: 10 wajah, 8 gundam, 4 mobil, 5
 | Model | Trek | Klip |
 |---|---|---|
 | 1–10 | `0001`–`0010` | wajah vid_00 … vid_41 |
-| 11–14 | `0011`–`0014` | gundam intro, kokpit, tembak, siaga |
-| 15–18 | `0024`–`0027` | gundam hujan, isyarat (tahan), pilot, ledak (goyang) |
+| 11–14 | `0011`–`0014` | gundam intro, kokpit, tembak, siaga (tahan) |
+| 15–18 | `0024`–`0027` | gundam hujan, isyarat (gestur jari tengah), marah, ledak (goyang) |
 | 19–22 | `0015`–`0018` | mobil car, turbo, headlights, speed_3 |
 | 23–27 | `0019`–`0023` | mochi full1, chongmat1, video17, video18, xoadau1 |
 | 28–30 | `0034`, `0038`, `0040` | dasai video03 (lampu sorot), video07 (spidometer), video2 (tahan) |
@@ -64,7 +64,7 @@ full1 (558 frame) wajah utama, chongmat1 (44) saat goyang, video17 (132), video1
 
 ### Tema gundam
 
-Dasai Mochi edisi Gundam dari `gundam.mp4` di [huykhoong/esp32_dasai_mochi_clone_and_how_to](https://github.com/huykhoong/esp32_dasai_mochi_clone_and_how_to) (320×240, 15 fps, 246 frame), dipotong per adegan menjadi 8 klip. Potong tengah 228×228 (tanpa tepi atas/bawah), Lanczos ke 240×240, unsharp ringan, JPEG kualitas 72. Agar muat diambil 1 dari 3 frame (5 fps, durasi sama). Goyang: ledak. Tahan: isyarat.
+Dasai Mochi edisi Gundam dari `gundam.mp4` di [huykhoong/esp32_dasai_mochi_clone_and_how_to](https://github.com/huykhoong/esp32_dasai_mochi_clone_and_how_to) (320×240, 15 fps, 246 frame), dipotong per adegan menjadi 8 klip: intro (frame 0–13), kokpit (14–69), tembak (70–105), siaga (106–117), hujan (118–134), isyarat (135–165), marah (166–197), ledak (198–245). Potong tengah 228×228 dari 320×240, Lanczos ke 240×240, unsharp ringan, JPEG kualitas 72. Agar muat diambil 1 dari 3 frame (5 fps, durasi sama). Goyang: ledak. Tahan: siaga. Catatan: adegan isyarat berisi gestur jari tengah.
 
 ### Tema dasai
 
