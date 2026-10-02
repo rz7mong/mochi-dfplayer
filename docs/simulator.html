@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Simulator — Mochi DFPlayer 0.8.0</title>
+<meta name="description" content="Simulator logika firmware Mochi DFPlayer 0.8.0: satu tombol, menu, pemilih nomor, musik sambil animasi."/>
+<link rel="stylesheet" href="./mochi.css?v=3"/>
+<style>
+  .sim { display:flex; gap:28px; flex-wrap:wrap; align-items:flex-start; }
+  .phone { width:280px; background:#1b1428; border-radius:28px; padding:22px 18px 26px; box-shadow:0 12px 40px #0006; }
+  canvas { width:240px; height:240px; border-radius:8px; background:#1082; display:block; image-rendering:pixelated; }
+  .touch { margin-top:16px; width:100%; height:54px; border:0; border-radius:27px; background:#ff8fb8; color:#2b2140; font:800 16px Nunito,sans-serif; cursor:pointer; }
+  .touch:active { background:#ffd0e2; }
+  .log { font:13px/1.45 ui-monospace,monospace; background:#241833; color:#efe7f7; border-radius:12px; padding:12px 14px; min-height:240px; flex:1; min-width:240px; white-space:pre-wrap; }
+  .hint { margin-top:8px; }
+</style>
+</head>
+<body>
+<header class="hero wrap narrow">
+  <div class="kicker">bukan perangkat sungguhan · logika 0.8.0</div>
+  <h1>🧪 Simulator <span>0.8.0</span></h1>
+  <p class="sub">Satu tombol, sama seperti TTP223. Layar, DFPlayer, dan BLE tidak disimulasikan — hanya alur menu, pemilih nomor, dan aturan suara.</p>
+</header>
+<nav class="tabs"><div class="wrap narrow"><a href="index.html">⚡ Instalasi firmware</a><a href="panduan.html">📖 Cara pakai</a><a href="musik.html">🎧 Pilih trek</a><a href="simulator.html" class="on" aria-current="page">🧪 Simulator</a><a href="instalasi.html">🔧 Rakit & kartu SD</a><a href="kelola.html">🎵 Animasi & suara</a><a href="https://github.com/rz7mong/mochi-dfplayer">🐙 GitHub</a></div></nav>
+<main class="wrap narrow">
+<div class="sim">
+  <div class="phone">
+    <canvas id="lcd" width="240" height="240"></canvas>
+    <button class="touch" id="btn">Tahan = sentuh</button>
+    <p class="hint">Ketuk singkat, ketuk dua kali, tahan 0,4 dtk, tahan 2 dtk.</p>
+  </div>
+  <div class="log" id="log"></div>
+</div>
+</main>
+<footer>© rzmong · simulator logika, bukan ESP32</footer>
+<script>
+const C = {bg:"#1084", bar:"#ffa040", sel:"#ffcc40", text:"#eeeef8", dim:"#888", teal:"#00f0a0", pink:"#ff40ff", yel:"#ffe040", blue:"#3c80ff"};
+const MENU = ["Pemutar MP3","Pilih nomor","Kembali ke animasi","Volume +","Volume -","Chronos BLE","Jam HP","Tampil navigasi","Putar layar","Tentang"];
+const BTN = ["Putar / jeda","Berikutnya","Sebelumnya","Pilih nomor","Volume +","Volume -","Mode","Berhenti"];
+const MODE = ["ulang semua","ulang 1","acak"];
+const tracks = ["001 lagu-a","002 lagu-b","003 lagu-c","007 favorit"];
+let ui="anim", menuRow=0, focus=0, picking=false, digit=2, digs=[0,0,1];
+let track=1, playing=false, paused=false, mode=0, vol=18, animSound=true, face=0;
+let downAt=0, holdFired=false, longFired=false, lastTap=0, taps=0;
+const lcd = document.getElementById("lcd"), g = lcd.getContext("2d"), logEl = document.getElementById("log");
+function log(s){ logEl.textContent = s + "\n" + logEl.textContent.slice(0,700); }
+function rrect(x,y,w,h,r,c){ g.fillStyle=c; g.beginPath(); g.roundRect(x,y,w,h,r); g.fill(); }
+function text(s,x,y,c,size=14,align="left"){ g.fillStyle=c; g.font=`700 ${size}px Nunito,sans-serif`; g.textAlign=align; g.fillText(s,x,y); }
+function draw(){
+  g.fillStyle=C.bg; g.fillRect(0,0,240,240);
+  if(ui==="anim"){
+    face=(face+1)%20;
+    rrect(48,36,144,144,28,"#fff");
+    g.fillStyle="#2b2140"; g.fillRect(70,70,100,64);
+    const blink = face<2;
+    g.fillStyle=blink?"#2b2140":"#7ef0c8"; g.beginPath(); g.arc(100,100,7,0,7); g.arc(140,100,7,0,7); g.fill();
+    text(playing?"musik /01":"suara animasi",120,210,C.dim,13,"center");
+    text(playing?`trek ${String(track).padStart(3,"0")} jalan`:"ketuk=putar  2 dtk=menu",120,228,C.text,12,"center");
+    return;
+  }
+  if(ui==="menu"){
+    g.fillStyle=C.bar; g.fillRect(0,0,240,34);
+    text("MENU",120,16,C.bg,14,"center"); text("Mochi DFPlayer 0.8.0",120,30,C.bg,10,"center");
+    const top=Math.max(0,Math.min(menuRow-3,MENU.length-7));
+    for(let i=0;i<7;i++){ const id=top+i; if(id>=MENU.length) break; const y=42+i*26;
+      if(id===menuRow) rrect(6,y-2,228,24,6,C.sel);
+      text(MENU[id],34,y+14,id===menuRow?"#111":C.text,13);
+    }
+    text("ketuk=pindah  2x=pilih  2 dtk=tutup",120,232,C.dim,11,"center");
+    return;
+  }
+  g.fillStyle=C.bar; g.fillRect(0,0,240,34);
+  text(picking?"PILIH NOMOR":"PEMUTAR MP3",120,16,C.bg,14,"center");
+  text("/01 saja",120,30,C.bg,10,"center");
+  const n = picking?`${digs[0]}${digs[1]}${digs[2]}`:String(track).padStart(3,"0");
+  text(n,24,92,picking?C.yel:C.text,42);
+  if(picking){ g.fillStyle=C.yel; g.fillRect(24+digit*26,98,22,3); }
+  text(picking?"ketuk=angka  tahan=digit  2 dtk=batal":BTN[focus],120,150,C.sel,14,"center");
+  text(playing?"Memutar":paused?"Jeda":"Berhenti",20,176,playing?C.teal:C.dim,13);
+  text(MODE[mode]+"  vol "+vol,120,176,C.text,13,"center");
+  if(!picking){ for(let i=0;i<8;i++){ const x=4+i*29; rrect(x,188,27,30,8,i===focus?C.sel:C.bg); g.strokeStyle=C.dim; g.strokeRect(x,188,27,30);
+    text(BTN[i][0],x+13,208,i===focus?"#111":C.text,12,"center"); } }
+  text(picking?"digit "+(digit+1)+" dari 3":"tahan=pindah tombol",120,232,C.dim,11,"center");
+}
+function playN(n){ track=n; playing=true; paused=false; animSound=false; picking=false; ui="player"; log("putar /01/"+String(n).padStart(3,"0")+".mp3  (bukan trek animasi)"); }
+function act(b){
+  if(b===0){ if(playing){playing=false;paused=true;log("jeda");} else {playing=true;paused=false;animSound=false;log("putar "+track);} }
+  if(b===1) playN(track>=7?1:track+1);
+  if(b===2) playN(track<=1?7:track-1);
+  if(b===3){ picking=true; digit=2; digs=[0,0,track%10]; log("pemilih nomor"); }
+  if(b===4) vol=Math.min(30,vol+2);
+  if(b===5) vol=Math.max(0,vol-2);
+  if(b===6) mode=(mode+1)%3;
+  if(b===7){ playing=paused=false; animSound=true; log("musik berhenti, suara animasi boleh kembali"); }
+}
+function choose(){
+  if(menuRow===0){ ui="player"; picking=false; log("pemutar"); }
+  else if(menuRow===1){ ui="player"; picking=true; digit=2; digs=[0,0,1]; log("pilih nomor langsung dari menu"); }
+  else if(menuRow===2){ ui="anim"; log(playing?"animasi + musik /01, suara ekspresi mati":"animasi + suara ekspresi"); }
+  else if(menuRow===3) vol=Math.min(30,vol+2);
+  else if(menuRow===4) vol=Math.max(0,vol-2);
+  else if(menuRow===9) log("Tentang: Mochi DFPlayer 0.8.0 (simulator)");
+  else log(MENU[menuRow]+" diubah");
+}
+function tap(){
+  const now=Date.now();
+  if(ui==="menu"){ if(now-lastTap<350){ taps=0; choose(); } else { menuRow=(menuRow+1)%MENU.length; } lastTap=now; return; }
+  if(ui==="player" && picking){ digs[digit]=(digs[digit]+1)%10; log("digit "+(digit+1)+" = "+digs[digit]); return; }
+  if(ui==="player") act(focus);
+  else { playing? (playing=false,paused=false,log("layar berhenti, musik tidak dimatikan dari sini")) : log("animasi jalan"); }
+}
+function holdEnd(){
+  if(ui==="player" && picking){ if(digit<2){ digit++; log("digit berikutnya"); } else { const n=digs[0]*100+digs[1]*10+digs[2]||1; playN(Math.min(n,7)); } return; }
+  if(ui==="player"){ focus=(focus+1)%8; log("sorot "+BTN[focus]); }
+}
+function long(){
+  if(ui==="player" && picking){ picking=false; log("pilih nomor dibatalkan"); return; }
+  if(ui==="menu"){ ui="anim"; log("menu tutup"); return; }
+  ui="menu"; menuRow=0; log("menu terbuka");
+}
+const btn=document.getElementById("btn");
+btn.onpointerdown=()=>{ downAt=Date.now(); holdFired=longFired=false; };
+btn.onpointerup=()=>{
+  const ms=Date.now()-downAt;
+  if(longFired) return;
+  if(holdFired) holdEnd();
+  else tap();
+  draw();
+};
+setInterval(()=>{
+  if(!downAt) return;
+  const ms=Date.now()-downAt;
+  if(!holdFired && ms>=400 && ms<2000){ holdFired=true; }
+  if(!longFired && ms>=2000){ longFired=true; long(); draw(); }
+},50);
+setInterval(draw,200);
+log("simulator siap. tahan tombol merah muda 2 detik untuk menu.");
+</script>
+</body>
+</html>
