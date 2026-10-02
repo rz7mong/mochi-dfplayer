@@ -15,6 +15,7 @@
 #define TRK_DISCONN  47  /* Chronos terputus */
 #define TRK_NAV_END  48  /* navigasi selesai */
 /* v0.7.3: pemutar bisa memilih nomor trek /01 (3 digit). Tidak menyentuh trek animasi.
+ *         Polaritas sentuh hanya dibalik dalam 60 dtk pertama (jari menempel belakangan tidak membalik).
  * v0.7.2: pemutar tidak loncat lagu dari satu jawaban status "berhenti"; hitungan /01 diulang dan
  *         kegagalan tidak di-cache; selesai-trek pendek (suara Chronos) tidak dibuang.
  * v0.7.1: semua trek (animasi + Chronos) diputar menurut urutan salin di root (bawaan; -DMOCHI_DF_MP3_FOLDER = /MP3).

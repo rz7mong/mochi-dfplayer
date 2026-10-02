@@ -58,7 +58,7 @@
 <tr><td>GND</td><td>gabung semua</td><td>ESP, layar, DFPlayer, MPU6050, sentuh</td></tr>
   </table></div>
   <p class="note">⚠️ GPIO9 adalah pin strap: jangan ditarik ke GND saat boot. GPIO20/21 adalah UART0 bawaan chip; log ESP dibaca lewat USB CDC.</p>
-  <p class="info">ℹ️ <b>Catatan sentuh:</b> firmware <b>mendeteksi jenis sensor sendiri saat nyala</b>: GPIO1 dibaca sebentar dengan pull-up lalu pull-down, sehingga TTP223 bawaan pabrik (HIGH saat disentuh), TTP223 dengan pad/jumper A disolder (LOW saat disentuh), maupun tombol tekan ke GND langsung jalan tanpa solder apa pun. Syaratnya: <b>jangan sentuh sensor ±1 detik setelah nyala</b> (TTP223 juga mengkalibrasi diri saat itu). Kalau terlanjur dan sensor terbaca tersentuh terus, firmware membalik polaritas sendiri setelah 10 detik. Paksa manual lewat <code>build_flags</code>: <code>-DMOCHI_TOUCH_ACTIVE_HIGH</code> (aktif HIGH) atau <code>-DMOCHI_TOUCH_MODE=2</code> (aktif LOW + pull-up).</p>
+  <p class="info">ℹ️ <b>Catatan sentuh:</b> firmware <b>mendeteksi jenis sensor sendiri saat nyala</b>: GPIO1 dibaca sebentar dengan pull-up lalu pull-down, sehingga TTP223 bawaan pabrik (HIGH saat disentuh), TTP223 dengan pad/jumper A disolder (LOW saat disentuh), maupun tombol tekan ke GND langsung jalan tanpa solder apa pun. Syaratnya: <b>jangan sentuh sensor ±1 detik setelah nyala</b> (TTP223 juga mengkalibrasi diri saat itu). Kalau terlanjur dan sensor terbaca tersentuh terus, firmware membalik polaritas sendiri setelah 10 detik, hanya dalam 60 detik pertama setelah nyala. Paksa manual lewat <code>build_flags</code>: <code>-DMOCHI_TOUCH_ACTIVE_HIGH</code> (aktif HIGH) atau <code>-DMOCHI_TOUCH_MODE=2</code> (aktif LOW + pull-up).</p>
 </section>
 
 <section class="card" id="sd">

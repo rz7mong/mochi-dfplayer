@@ -30,6 +30,7 @@ static const uint32_t SHAKE_WINDOW_MS = 1000;
 static const uint32_t SHAKE_COOLDOWN_MS = 1000;
 static const uint32_t TOUCH_BOOT_IGNORE_MS = 800;   // TTP223 kalibrasi sesaat setelah nyala
 static const uint32_t TOUCH_STUCK_MS = 10000;       // modul "tersentuh" terus 10 dtk -> polaritas dibalik
+static const uint32_t TOUCH_FLIP_WINDOW_MS = 60000; // pembalikan hanya 60 dtk pertama (salah deteksi saat nyala)
 // Polaritas sensor: bawaan dideteksi otomatis saat nyala (lihat touchInit).
 // Paksa lewat build_flags: -DMOCHI_TOUCH_ACTIVE_HIGH (TTP223 standar), atau -DMOCHI_TOUCH_MODE=1 (aktif HIGH)
 // / 2 (aktif LOW + pull-up, tombol ke GND / TTP223 pad A). 0 = otomatis.
@@ -105,6 +106,7 @@ enum class Ev : uint8_t { None, Tap1, Tap2, HoldStart, HoldEnd, Long };
 static bool touchActiveHigh = true;
 static bool touchDriven = true;           // modul mendorong pin (TTP223). Tombol / mengambang: polaritas tidak dibalik
 static uint32_t touchReadyAt = 0;
+static uint32_t touchBootAt = 0;
 static bool waitRelease = false;          // tersentuh saat nyala: tunggu dilepas dulu
 static int lastRaw = 0;
 static uint32_t debounceAt = 0;
@@ -147,7 +149,8 @@ static void touchInit() {
   delay(2);
   lastRaw = touchRawRead();
   debounceAt = millis();
-  touchReadyAt = millis() + TOUCH_BOOT_IGNORE_MS;
+  touchBootAt = millis();
+  touchReadyAt = touchBootAt + TOUCH_BOOT_IGNORE_MS;
   waitRelease = lastRaw;
   Serial.printf("sentuh GPIO%d: %s\n", MOCHI_PIN_TOUCH, kind);
 }
@@ -157,8 +160,8 @@ static Ev readTouch() {
   uint32_t now = millis();
   // Debounce terhadap bacaan mentah sebelumnya, bukan status stabil.
   if (raw != lastRaw) { lastRaw = raw; debounceAt = now; }
-  if (raw && touchDriven && now - debounceAt >= TOUCH_STUCK_MS) {
-    // TTP223 "tersentuh" terus 10 dtk: hampir pasti salah deteksi (jari di sensor saat nyala). Balik polaritas.
+  if (raw && touchDriven && now - touchBootAt < TOUCH_FLIP_WINDOW_MS && now - debounceAt >= TOUCH_STUCK_MS) {
+    // TTP223 "tersentuh" terus 10 dtk dalam 60 dtk pertama: salah deteksi saat nyala. Jari menempel belakangan tidak membalik.
     bool wasHold = pressed && holdFired && !longFired;
     touchActiveHigh = !touchActiveHigh;
     touchPinMode();
@@ -167,7 +170,7 @@ static Ev readTouch() {
     taps = 0;
     lastRaw = touchRawRead();
     debounceAt = now;
-    Serial.printf("sentuh: aktif terus 10 dtk, polaritas dibalik ke aktif %s\n", touchActiveHigh ? "HIGH" : "LOW");
+    Serial.printf("sentuh: aktif terus 10 dtk saat nyala, polaritas dibalik ke aktif %s\n", touchActiveHigh ? "HIGH" : "LOW");
     return wasHold ? Ev::HoldEnd : Ev::None;
   }
   if ((int32_t)(now - touchReadyAt) < 0) return Ev::None;

@@ -1,6 +1,6 @@
 {
   "name": "MochiDfPlayer",
-  "version": "0.7.0",
+  "version": "0.7.3",
   "description": "Jalur suara DFPlayer Mini (UART) untuk Mochi DFPlayer: trek animasi, folder musik, notifikasi, dering, deteksi trek selesai.",
   "frameworks": "arduino",
   "platforms": "espressif32"

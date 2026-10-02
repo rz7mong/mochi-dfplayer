@@ -95,7 +95,7 @@ Rakit langkah demi langkah: [Demo rakit](https://rz7mong.github.io/mochi-dfplaye
 - **GPIO9** pin strap: jangan ditarik ke GND saat boot.
 - **GPIO20/21** adalah UART0 bawaan chip. Log ESP keluar lewat **USB CDC**, bukan UART0.
 
-<a id="catatan-sentuh"></a>**Catatan sentuh:** saat nyala firmware membaca GPIO1 ±0,2 detik dengan pull-up lalu pull-down untuk mengenali jenis sensor: TTP223 bawaan pabrik (HIGH saat disentuh), TTP223 dengan pad A disolder (LOW saat disentuh), atau tombol tekan ke GND. Jadi **TTP223 tidak perlu disolder**. Syaratnya: jangan sentuh sensor ±1 detik setelah nyala (TTP223 juga mengkalibrasi diri). Kalau terlanjur dan sensor terbaca tersentuh terus, polaritas dibalik otomatis setelah 10 detik. Paksa manual: `-DMOCHI_TOUCH_ACTIVE_HIGH` (aktif HIGH) atau `-DMOCHI_TOUCH_MODE=2` (aktif LOW + pull-up). Serial monitor menulis jenis yang terdeteksi: `sentuh GPIO1: …`.
+<a id="catatan-sentuh"></a>**Catatan sentuh:** saat nyala firmware membaca GPIO1 ±0,2 detik dengan pull-up lalu pull-down untuk mengenali jenis sensor: TTP223 bawaan pabrik (HIGH saat disentuh), TTP223 dengan pad A disolder (LOW saat disentuh), atau tombol tekan ke GND. Jadi **TTP223 tidak perlu disolder**. Syaratnya: jangan sentuh sensor ±1 detik setelah nyala (TTP223 juga mengkalibrasi diri). Kalau terlanjur dan sensor terbaca tersentuh terus, polaritas dibalik otomatis setelah 10 detik, hanya dalam 60 detik pertama setelah nyala. Jari yang menempel lebih lama sesudah itu tidak membalik polaritas. Paksa manual: `-DMOCHI_TOUCH_ACTIVE_HIGH` (aktif HIGH) atau `-DMOCHI_TOUCH_MODE=2` (aktif LOW + pull-up). Serial monitor menulis jenis yang terdeteksi: `sentuh GPIO1: …`.
 
 <a id="kartu-sd"></a>
 ## 💾 Kartu SD DFPlayer
