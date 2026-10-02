@@ -21,20 +21,20 @@ a{color:#9cf}
 <tr><th>Net</th><th>Sambungan</th></tr>
 <tr><td>TFT SCLK</td><td>GPIO4</td></tr>
 <tr><td>TFT MOSI</td><td>GPIO6</td></tr>
-<tr><td>TFT CS</td><td>GPIO7</td></tr>
-<tr><td>TFT DC</td><td>GPIO10</td></tr>
-<tr><td>TFT RST</td><td>GPIO0</td></tr>
-<tr><td>BLK</td><td>3V3</td></tr>
+<tr><td>TFT DC</td><td>GPIO3</td></tr>
+<tr><td>TFT RST</td><td>GPIO10</td></tr>
+<tr><td>TFT CS</td><td>tidak disambung</td></tr>
+<tr><td>BLK</td><td>GPIO7</td></tr>
 <tr><td>Sentuh</td><td>GPIO1</td></tr>
 <tr><td>DFPlayer RX</td><td>GPIO20 lewat ~1 kΩ</td></tr>
 <tr><td>DFPlayer TX</td><td>GPIO21</td></tr>
 <tr><td>DFPlayer VCC</td><td>5 V</td></tr>
 <tr><td>GND</td><td>gabung</td></tr>
-<tr><td>MPU6050 SDA</td><td>GPIO5</td></tr>
-<tr><td>MPU6050 SCL</td><td>GPIO3</td></tr>
+<tr><td>MPU6050 SDA</td><td>GPIO8</td></tr>
+<tr><td>MPU6050 SCL</td><td>GPIO9</td></tr>
 <tr><td>MPU6050 VCC</td><td>3V3</td></tr>
 </table>
-<p>MPU6050: SDA GPIO5, SCL GPIO3, VCC 3V3, GND gabung. Tambah resistor 4,7 kΩ dari SDA dan SCL ke 3V3. GPIO2, GPIO8, dan GPIO9 tetap kosong.</p>
+<p>Sama dengan kabel pikapet. MPU6050: SDA GPIO8, SCL GPIO9, VCC 3V3, GND gabung. Tambah resistor 4,7 kΩ dari SDA dan SCL ke 3V3. GPIO9 pin strap: jangan tarik ke GND saat boot.</p>
 <h2>2. Kartu DFPlayer</h2>
 <ul>
 <li><code>02/001.mp3</code> sampai <code>02/018.mp3</code> untuk 18 klip JPEG</li>

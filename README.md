@@ -15,15 +15,24 @@ pio run -e esp32-c3-dfplayer -t upload
 
 ## Kabel
 
-Lepas MAX98357. GPIO20/21 dipakai UART, bukan I2S.
+Pinout sama dengan Dasai Mochi pikapet / [bangdc90/esp32-c3-phatvideo_anime](https://github.com/bangdc90/esp32-c3-phatvideo_anime). Jangan pakai kabel mochi-rzmong (CS GPIO7, DC GPIO10, RST GPIO0).
 
-| DFPlayer | ESP32-C3 |
+| Net | ESP32-C3 |
 |---|---|
-| VCC | 5 V |
-| GND | GND |
-| RX | GPIO20 lewat resistor ~1 kΩ |
-| TX | GPIO21 |
-| SPK+ / SPK− | speaker 8 Ω |
+| TFT SCLK | GPIO4 |
+| TFT MOSI | GPIO6 |
+| TFT DC | GPIO3 |
+| TFT RST | GPIO10 |
+| TFT CS | tidak disambung |
+| Backlight | GPIO7 (HIGH = nyala) |
+| Sentuh TTP223 | GPIO1 |
+| MPU6050 SDA / SCL | GPIO8 / GPIO9 |
+| DFPlayer RX | GPIO20 lewat resistor ~1 kΩ |
+| DFPlayer TX | GPIO21 |
+| DFPlayer VCC | 5 V |
+| Speaker | SPK+ / SPK− modul, 8 Ω |
+
+GPIO9 pin strap. Jangan ditarik ke GND saat boot.
 
 Gambar memakai 18 klip JPEG di flash: 10 wajah, 4 gundam, 4 mobil. Web dan menu hanya menampilkan tema itu. Trek DFPlayer folder 02 nomor 1-18 sama dengan urutan klip.
 

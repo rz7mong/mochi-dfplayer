@@ -606,12 +606,13 @@ void handleUploadDone(){
 }
 
 void setup(){
-  pinMode(MOCHI_PIN_SD_CS,INPUT);
+  pinMode(MOCHI_PIN_TFT_BL, OUTPUT);
+  digitalWrite(MOCHI_PIN_TFT_BL, HIGH);
   Serial.begin(115200); pinMode(MOCHI_PIN_TOUCH,INPUT_PULLDOWN); loadPrefs();
   gif.begin(GIF_PALETTE_RGB565_BE);
-  // Satu FSPI: klaim MISO SD dulu, TFT menyusul. CS SD tetap HIGH supaya modul tidak nimbrung.
-  SPI.begin(MOCHI_PIN_SD_SCK,-1,MOCHI_PIN_SD_MOSI,-1);
+  SPI.begin(MOCHI_PIN_TFT_SCLK,-1,MOCHI_PIN_TFT_MOSI,-1);
   tft.init(); tft.setRotation(rot); bootMark();
+  digitalWrite(MOCHI_PIN_TFT_BL, HIGH);
   sdOk=false; useSd=false;
   tft.setRotation(rot);
   useSd=false; sdOk=false;

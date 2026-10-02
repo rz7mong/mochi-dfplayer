@@ -5,8 +5,10 @@
 #ifndef MOCHI_AP_PASS  /* override: build_flags = -DMOCHI_AP_PASS=\"sandibaru123\" */
 #define MOCHI_AP_PASS "rzmong123"
 #endif
-#define MOCHI_VERSION "0.5.6"
-/* v0.5.6: 30 built-in GIF+WAV slots in flash (new happy-blink wajah/default from video, colourful wajah/musik/mobil + gundam),
+#define MOCHI_VERSION "0.5.7"
+/* v0.5.7: pinout disamakan dengan Dasai Mochi pikapet / bangdc90: TFT DC GPIO3, RST GPIO10, CS tidak dipakai,
+ *         backlight GPIO7, MPU6050 SDA GPIO8 / SCL GPIO9. DFPlayer tetap UART GPIO20/21.
+ * v0.5.6: 30 built-in GIF+WAV slots in flash (new happy-blink wajah/default from video, colourful wajah/musik/mobil + gundam),
  *         built-in WAV played from flash, 11 tap reacts, clock honours GIF frame delay, default between idle clips.
  * v0.5.5: embedded wajah/default.gif for Jam HP; shared SPI init before TFT; upload preempts SD playback.
  * v0.5.4: default rotation 2 (180 deg) for the GMT130 LCD mounted pins-down in case/tatakan_GMT130_fit.stl.
@@ -19,19 +21,20 @@
 #define MOCHI_PIN_TOUCH 1
 #define MOCHI_PIN_TFT_SCLK 4
 #define MOCHI_PIN_TFT_MOSI 6
-#define MOCHI_PIN_TFT_CS 7
-#define MOCHI_PIN_TFT_DC 10
-#define MOCHI_PIN_TFT_RST 0
+#define MOCHI_PIN_TFT_CS -1
+#define MOCHI_PIN_TFT_DC 3
+#define MOCHI_PIN_TFT_RST 10
+#define MOCHI_PIN_TFT_BL 7
 /* DFPlayer: ESP TX GPIO20 -> RX modul lewat 1k. ESP RX GPIO21 <- TX modul. */
 #define MOCHI_PIN_DF_TX 20
 #define MOCHI_PIN_DF_RX 21
-/* MPU6050 di pin bebas strap: SDA GPIO5, SCL GPIO3. GPIO2, GPIO8, GPIO9 tetap kosong. */
-#define MOCHI_PIN_MPU_SDA 5
-#define MOCHI_PIN_MPU_SCL 3
+/* MPU6050 sama pikapet: SDA GPIO8, SCL GPIO9. GPIO9 strap, jangan ditarik LOW saat boot. */
+#define MOCHI_PIN_MPU_SDA 8
+#define MOCHI_PIN_MPU_SCL 9
 #define MOCHI_PIN_SD_SCK MOCHI_PIN_TFT_SCLK
-#define MOCHI_PIN_SD_MISO 3
+#define MOCHI_PIN_SD_MISO -1
 #define MOCHI_PIN_SD_MOSI MOCHI_PIN_TFT_MOSI
-#define MOCHI_PIN_SD_CS 5
+#define MOCHI_PIN_SD_CS -1
 #define MOCHI_PIN_I2S_BCLK MOCHI_PIN_DF_RX
 #define MOCHI_PIN_I2S_LRC MOCHI_PIN_DF_TX
 #define MOCHI_PIN_I2S_DIN 8

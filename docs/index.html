@@ -14,7 +14,7 @@ a{color:#9cf}
 </style>
 <main>
 <h1>Mochi DFPlayer</h1>
-<p>Varian ESP32-C3 + ST7789 1.3" 240×240. Gambar frame JPEG di flash. Suara DFPlayer Mini.</p>
+<p>Varian ESP32-C3 + ST7789 1.3" 240×240. Pinout sama pikapet. Gambar frame JPEG di flash. Suara DFPlayer Mini.</p>
 <p>Halaman instalasi: <a href="instalasi.html">instalasi.html</a>. Belum ada web-flasher. Flash dari sumber:</p>
 <pre>cd firmware
 pio run -e esp32-c3-dfplayer -t upload</pre>
@@ -31,19 +31,18 @@ pio run -e esp32-c3-dfplayer -t upload</pre>
 <tr><th>Net</th><th>Sambungan</th></tr>
 <tr><td>TFT SCLK</td><td>GPIO4</td></tr>
 <tr><td>TFT MOSI</td><td>GPIO6</td></tr>
-<tr><td>TFT CS</td><td>GPIO7</td></tr>
-<tr><td>TFT DC</td><td>GPIO10</td></tr>
-<tr><td>TFT RST</td><td>GPIO0</td></tr>
-<tr><td>BLK layar</td><td>3V3</td></tr>
+<tr><td>TFT DC</td><td>GPIO3</td></tr>
+<tr><td>TFT RST</td><td>GPIO10</td></tr>
+<tr><td>TFT CS</td><td>tidak disambung</td></tr>
+<tr><td>BLK layar</td><td>GPIO7, HIGH = nyala</td></tr>
 <tr><td>Sentuh</td><td>GPIO1</td></tr>
 <tr><td>DFPlayer RX</td><td>GPIO20 lewat resistor sekitar 1 kΩ</td></tr>
 <tr><td>DFPlayer TX</td><td>GPIO21</td></tr>
 <tr><td>DFPlayer VCC</td><td>5 V</td></tr>
 <tr><td>GND</td><td>gabung semua</td></tr>
-<tr><td>MPU6050 SDA</td><td>GPIO5</td></tr>
-<tr><td>MPU6050 SCL</td><td>GPIO3</td></tr>
+<tr><td>MPU6050 SDA</td><td>GPIO8</td></tr>
+<tr><td>MPU6050 SCL</td><td>GPIO9</td></tr>
 <tr><td>MPU6050 VCC</td><td>3V3</td></tr>
-<tr><td>GPIO2, GPIO8, GPIO9</td><td>kosong</td></tr>
 </table>
 <h2>Kartu DFPlayer</h2>
 <ul>
@@ -51,5 +50,5 @@ pio run -e esp32-c3-dfplayer -t upload</pre>
 <li><code>02/001.mp3</code> sampai <code>02/018.mp3</code> mengikuti urutan klip</li>
 <li><code>03</code> notifikasi, <code>04</code> dering, <code>05</code> lagu, <code>06</code> tema</li>
 </ul>
-<p>Sumber layar lama: <a href="https://github.com/rz7mong/mochi-rzmong">mochi-rzmong</a>. Jangan flash installer situs itu ke papan DFPlayer.</p>
+<p>Pinout mengikuti pikapet / <a href="https://github.com/bangdc90/esp32-c3-phatvideo_anime">bangdc90</a>. Jangan flash installer mochi-rzmong ke papan ini.</p>
 </main>
