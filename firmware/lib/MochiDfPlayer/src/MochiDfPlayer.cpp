@@ -190,3 +190,16 @@ void mochiDfMusicToggle() {
 
 void mochiDfMusicStop() { mochiDfStop(); }
 bool mochiDfMusicPlaying() { return musicOn; }
+
+bool mochiDfPlayTrack(uint8_t track) {
+  if (!dfOk || track == 0) {
+    mochiDfStop();
+    return false;
+  }
+  musicOn = false;
+  ringOn = false;
+  dfGap();
+  dfPlayer.volume(28);
+  dfPlayer.play(track);
+  return true;
+}

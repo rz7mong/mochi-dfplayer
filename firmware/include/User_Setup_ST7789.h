@@ -1,5 +1,6 @@
 #pragma once
 #define ST7789_DRIVER
+#define TFT_INVERSION_ON
 #define TFT_WIDTH  240
 #define TFT_HEIGHT 240
 #define TFT_RGB_ORDER TFT_BGR

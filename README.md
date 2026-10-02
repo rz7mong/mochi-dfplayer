@@ -34,7 +34,10 @@ Pinout sama dengan Dasai Mochi pikapet / [bangdc90/esp32-c3-phatvideo_anime](htt
 
 GPIO9 pin strap. Jangan ditarik ke GND saat boot.
 
-Gambar memakai 18 klip JPEG di flash: 10 wajah, 4 gundam, 4 mobil. Web dan menu hanya menampilkan tema itu. Trek DFPlayer folder 02 nomor 1-18 sama dengan urutan klip.
+Perilaku sama pikapet: ketuk singkat putar/berhenti (berhenti = layar hitam, lampu latar mati, suara berhenti). Tahan memutar klip hati sampai dilepas. Goyang MPU tiga kali dalam 1 detik memutar klip pusing sekali, lalu kembali ke frame semula. Sentuh active-low, INPUT_PULLUP. Volume DFPlayer 28. Klip 1 wajah utama, klip 2 pusing, klip 3 hati. Kartu DFPlayer: `0001.mp3`, `0002.mp3`, `0003.mp3` di root, bukan folder.
+
+Gambar memakai 18 klip JPEG di flash. Hanya tiga pertama yang dipakai putaran pikapet.
+
 
 ## SD modul (FAT32)
 

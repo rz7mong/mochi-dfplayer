@@ -7,6 +7,7 @@ void mochiDfService();
 void mochiDfSetVolume(int vol21, bool on);
 bool mochiDfPlayReact(int reactIndex);
 bool mochiDfPlayFace(int faceIndex);
+bool mochiDfPlayTrack(uint8_t track);
 bool mochiDfPlayTheme(const char *theme);
 bool mochiDfPlayGif(const char *gifPath);
 bool mochiDfPlayNotif();

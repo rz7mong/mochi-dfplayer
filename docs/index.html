@@ -14,7 +14,7 @@ a{color:#9cf}
 </style>
 <main>
 <h1>Mochi DFPlayer</h1>
-<p>Varian ESP32-C3 + ST7789 1.3" 240×240. Pinout sama pikapet. Gambar frame JPEG di flash. Suara DFPlayer Mini.</p>
+<p>Varian ESP32-C3 + ST7789 1.3" 240×240. Pinout dan perilaku sama pikapet. Ketuk singkat putar/berhenti. Tahan klip hati. Goyang klip pusing. Gambar frame JPEG di flash. Suara DFPlayer Mini.</p>
 <p>Halaman instalasi: <a href="instalasi.html">instalasi.html</a>. Belum ada web-flasher. Flash dari sumber:</p>
 <pre>cd firmware
 pio run -e esp32-c3-dfplayer -t upload</pre>
@@ -35,7 +35,7 @@ pio run -e esp32-c3-dfplayer -t upload</pre>
 <tr><td>TFT RST</td><td>GPIO10</td></tr>
 <tr><td>TFT CS</td><td>tidak disambung</td></tr>
 <tr><td>BLK layar</td><td>GPIO7, HIGH = nyala</td></tr>
-<tr><td>Sentuh</td><td>GPIO1</td></tr>
+<tr><td>Sentuh</td><td>GPIO1, active-low</td></tr>
 <tr><td>DFPlayer RX</td><td>GPIO20 lewat resistor sekitar 1 kΩ</td></tr>
 <tr><td>DFPlayer TX</td><td>GPIO21</td></tr>
 <tr><td>DFPlayer VCC</td><td>5 V</td></tr>
@@ -47,7 +47,7 @@ pio run -e esp32-c3-dfplayer -t upload</pre>
 <h2>Kartu DFPlayer</h2>
 <ul>
 <li>Gambar ada di flash ESP: 18 klip JPEG, tema wajah, gundam, mobil</li>
-<li><code>02/001.mp3</code> sampai <code>02/018.mp3</code> mengikuti urutan klip</li>
+<li><code>0001.mp3</code> wajah, <code>0002.mp3</code> pusing, <code>0003.mp3</code> hati, di root kartu</li>
 <li><code>03</code> notifikasi, <code>04</code> dering, <code>05</code> lagu, <code>06</code> tema</li>
 </ul>
 <p>Pinout mengikuti pikapet / <a href="https://github.com/bangdc90/esp32-c3-phatvideo_anime">bangdc90</a>. Jangan flash installer mochi-rzmong ke papan ini.</p>
