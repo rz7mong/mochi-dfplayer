@@ -1,11 +1,24 @@
 #pragma once
 /* Konstanta Mochi DFPlayer. Satu-satunya sumber versi: MOCHI_VERSION. */
 #define MOCHI_BRAND   "rzmong"
-#define MOCHI_VERSION "0.7.0"
+#define MOCHI_VERSION "0.7.1"
 #ifndef MOCHI_BLE_NAME            /* nama perangkat di aplikasi Chronos */
 #define MOCHI_BLE_NAME "rzmong dfplayer"
 #endif
-/* v0.7.0: Chronos BLE (jam, baterai HP, notifikasi, panggilan, navigasi), menu LCD, pemutar MP3 folder /01,
+/* Suara Chronos: MP3 di root kartu, nomor URUTAN SALIN (salin 0001..0048 berurutan, baru folder /01). */
+#define TRK_NOTIF    41  /* notifikasi */
+#define TRK_NAV      42  /* instruksi navigasi baru */
+#define TRK_CALL     43  /* panggilan masuk (diulang) */
+#define TRK_FIND     44  /* cari perangkat (diulang, volume 30) */
+#define TRK_ALARM    45  /* alarm (diulang) */
+#define TRK_CONNECT  46  /* Chronos tersambung */
+#define TRK_DISCONN  47  /* Chronos terputus */
+#define TRK_NAV_END  48  /* navigasi selesai */
+/* v0.7.1: semua trek (animasi + Chronos) diputar menurut urutan salin di root (bawaan; -DMOCHI_DF_MP3_FOLDER = /MP3).
+ *         Chronos: cari perangkat, alarm, cuaca + musik HP di halaman jam (ketuk putar/jeda, 2x lagu berikut),
+ *         notifikasi dibuka klip cinta_pipi, suara sambung/putus/navigasi selesai, overlay ditutup dengan ketuk.
+ *         Tiap animasi punya suara sendiri (sd/mp3, dari aset rzmong mochi-themes).
+ * v0.7.0: Chronos BLE (jam, baterai HP, notifikasi, panggilan, navigasi), menu LCD, pemutar MP3 folder /01,
  *         trek animasi /MP3/000N.mp3 menurut nama dan diputar sampai habis, versi tunggal, rotasi dari header.
  *         Sentuh: polaritas dideteksi otomatis saat nyala (dari v0.6.10), MOCHI_TOUCH_ACTIVE_HIGH tetap sebagai paksaan.
  *         Klip dari v0.6.9/0.6.8: nama Indonesia (wajah, mobil, gundam), theme_order, boot wajah/senyum_kedip.

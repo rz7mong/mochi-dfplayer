@@ -54,3 +54,9 @@ If you fork this repo, replace theme packs with your own media before publishing
 - `gundam/` (helm_hujan, helm_siaga, isyarat, kokpit, kokpit_2, pilot): dikonversi dari `gif/gundam/` di rilis `assets-v1` repo rz7mong/mochi-rzmong milik pemilik repo.
 
 Pratinjau `docs/img/*.gif` (120×120) dibuat dari klip di atas dan mengikuti catatan yang sama.
+
+## Suara kartu SD (`sd/mp3/`)
+
+- Semua 48 file di `sd/mp3/` (14 suara animasi 0019–0040, suara Chronos 0041–0048, pengisi hening) **dibuat dari nol** oleh [`sd/buat_suara.py`](sd/buat_suara.py) dengan numpy (osilator, derau terfilter, amplop) lalu dienkode ffmpeg/LAME. Tidak ada sampel pihak ketiga. Lisensi: **MIT**, sama dengan kode.
+- `sd/buat_suara.py --pack mochi-themes.zip` (opsional) memakai WAV dari rilis [`assets-v1`](https://github.com/rz7mong/mochi-rzmong/releases/tag/assets-v1) repo rz7mong/mochi-rzmong milik pemilik repo (`gundam/*.wav`, `polisi/police.wav`, `mobil/headlights|car|accel|speed_3|revs.wav`, `wajah/happy|squint|smile|look_*|distracted|confused_2|love_hearts_kiss|embarrassed|uwu.wav`). Paket itu tidak mencantumkan lisensi, jadi hasilnya **tidak** disertakan di repo ini. Pastikan hak Anda sebelum menyebarkannya.
+- Repo [bangdc90/dasai_mochi_tft](https://github.com/bangdc90/dasai_mochi_tft) dicek: tidak berisi berkas suara (mp3/wav) untuk klip mobil/cinta_pipi.

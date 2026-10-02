@@ -17,7 +17,7 @@
   <div class="kicker">rakit · kabel · kartu sd</div>
   <h1>🔧 Rakit <span>Mochi DFPlayer</span></h1>
   <p class="sub">Bahan, kabel per pin, isi kartu microSD DFPlayer, dan solusi masalah umum.</p>
-  <div class="chips"><span class="chip">🧠 ESP32-C3 Super Mini</span><span class="chip">📺 ST7789 1,3" 240×240</span><span class="chip">🎵 DFPlayer Mini</span><span class="chip">📱 Chronos BLE</span><span class="chip">⚡ firmware 0.7.0</span></div>
+  <div class="chips"><span class="chip">🧠 ESP32-C3 Super Mini</span><span class="chip">📺 ST7789 1,3" 240×240</span><span class="chip">🎵 DFPlayer Mini</span><span class="chip">📱 Chronos BLE</span><span class="chip">⚡ firmware 0.7.1</span></div>
 </header>
 <nav class="tabs"><div class="wrap narrow"><a href="index.html">⚡ Instalasi firmware</a><a href="panduan.html">📖 Cara pakai</a><a href="instalasi.html" class="on" aria-current="page">🔧 Rakit &amp; kartu SD</a><a href="pemasangan.html">🧩 Demo rakit</a><a href="pemasangan-kabel.html">🔌 Diagram kabel</a><a href="kelola.html">🎵 Animasi &amp; suara</a><a href="animasi.html">🎞️ Tambah animasi</a><a href="https://rz7mong.github.io/mochi-rzmong/">💗 Mochi rzmong (GIF)</a><a href="https://github.com/rz7mong/mochi-dfplayer">🐙 GitHub</a></div></nav>
 <main class="wrap narrow">
@@ -63,34 +63,54 @@
 
 <section class="card" id="sd">
   <h2>💾 Kartu SD untuk DFPlayer</h2>
-  <p>Format <b>FAT32</b>, lalu buat struktur ini. File dicocokkan dari <b>nama</b>, urutan salin tidak penting.</p>
-<pre>/MP3/0001.mp3 … 0040.mp3   suara animasi (nomor = trek model)
-/01/001.mp3 … 255.mp3      lagu untuk Pemutar MP3
-/02/001.mp3                suara notifikasi Chronos
-/03/001.mp3 …              nada dering panggilan Chronos</pre>
-  <div class="tbl"><table><tr><th>Model (ketuk 2×)</th><th>File <code>/MP3/</code></th><th>Klip</th></tr>
-    <tr><td>1</td><td><code>0019</code></td><td>wajah/senyum_kedip (klip saat nyala)</td></tr>
-    <tr><td>2</td><td><code>0020</code></td><td>wajah/pusing (goyang)</td></tr>
-    <tr><td>3</td><td><code>0023</code></td><td>wajah/cinta (tahan)</td></tr>
-    <tr><td>4</td><td><code>0021</code></td><td>wajah/sorot</td></tr>
-    <tr><td>5</td><td><code>0022</code></td><td>wajah/sirine</td></tr>
-    <tr><td>6</td><td><code>0040</code></td><td>wajah/cinta_pipi</td></tr>
-    <tr><td>7</td><td><code>0034</code></td><td>mobil/lampu_sorot</td></tr>
-    <tr><td>8</td><td><code>0038</code></td><td>mobil/speedometer (tahan)</td></tr>
-    <tr><td>9</td><td><code>0026</code></td><td>gundam/helm_hujan</td></tr>
-    <tr><td>10</td><td><code>0027</code></td><td>gundam/helm_siaga (tahan)</td></tr>
-    <tr><td>11</td><td><code>0028</code></td><td>gundam/isyarat</td></tr>
-    <tr><td>12</td><td><code>0029</code></td><td>gundam/kokpit</td></tr>
-    <tr><td>13</td><td><code>0030</code></td><td>gundam/kokpit_2</td></tr>
-    <tr><td>14</td><td><code>0031</code></td><td>gundam/pilot</td></tr>
-    <tr><td>–</td><td>0001–0018, 0024, 0025, 0032, 0033, 0035–0037, 0039</td><td>tidak dipakai, boleh tidak ada</td></tr>
+  <p>Isi kartu siap pakai: folder <a href="https://github.com/rz7mong/mochi-dfplayer/tree/main/sd/mp3"><code>sd/mp3/</code></a> di repo (48 file, 1,4 MB). DFPlayer memutar file root menurut <b>urutan salin</b> (file ke-N yang disalin), <b>bukan nama</b>.</p>
+  <div class="step"><div class="num">1</div><div><b>Format</b> kartu FAT32 (≤ 32 GB). Kartu harus kosong.</div></div>
+  <div class="step"><div class="num">2</div><div>Salin <code>0001.mp3</code> … <code>0048.mp3</code> ke <b>root</b>, <b>berurutan satu per satu</b> (jangan seret sekaligus).</div></div>
+  <div class="step"><div class="num">3</div><div><b>Sesudahnya</b> buat folder <code>/01</code> dan salin lagu <code>001.mp3</code>, <code>002.mp3</code>, … untuk Pemutar MP3.</div></div>
+<pre># Linux (kartu di /media/SD)
+for f in sd/mp3/*.mp3; do cp "$f" /media/SD/; sync; done
+
+# Windows PowerShell (kartu di E:)
+Get-ChildItem sd\mp3\*.mp3 | Sort-Object Name | ForEach-Object { Copy-Item $_.FullName E:\ }</pre>
+<pre>/0001.mp3 … /0048.mp3      suara animasi + Chronos (isi sd/mp3/), disalin PERTAMA dan berurutan
+/01/001.mp3 … 255.mp3      lagu untuk Pemutar MP3, disalin SESUDAHNYA</pre>
+  <div class="tbl"><table><tr><th>File (root)</th><th>Dipakai untuk</th><th>Suara di <code>sd/mp3/</code></th></tr>
+    <tr><td><code>0001–0018</code></td><td>–</td><td>hening 0,5 dtk (pengisi)</td></tr>
+    <tr><td><code>0019</code></td><td>model 1 wajah/senyum_kedip (saat nyala)</td><td>tawa kecil “hi-hi-hi” + denting kedip, 8 dtk</td></tr>
+    <tr><td><code>0020</code></td><td>model 2 wajah/pusing (goyang)</td><td>nada goyang menurun + per “boing”, 4,4 dtk</td></tr>
+    <tr><td><code>0021</code></td><td>model 4 wajah/sorot</td><td>desis lirik kiri-kanan + blip, 6 dtk</td></tr>
+    <tr><td><code>0022</code></td><td>model 5 wajah/sirine</td><td>sirine polisi naik-turun ×2, 3,8 dtk</td></tr>
+    <tr><td><code>0023</code></td><td>model 3 wajah/cinta (tahan)</td><td>detak jantung + arpeggio + kilau, 2,5 dtk</td></tr>
+    <tr><td><code>0024–0025</code></td><td>–</td><td>hening (pengisi)</td></tr>
+    <tr><td><code>0026</code></td><td>model 9 gundam/helm_hujan</td><td>hujan di helm + tetes + servo, 3 dtk</td></tr>
+    <tr><td><code>0027</code></td><td>model 10 gundam/helm_siaga (tahan)</td><td>servo + bip siaga, 1,6 dtk</td></tr>
+    <tr><td><code>0028</code></td><td>model 11 gundam/isyarat</td><td>sandi radio + statis, 2,6 dtk</td></tr>
+    <tr><td><code>0029</code></td><td>model 12 gundam/kokpit</td><td>dengung kokpit + blip komputer, 3 dtk</td></tr>
+    <tr><td><code>0030</code></td><td>model 13 gundam/kokpit_2</td><td>sistem menyala + dengung, 3 dtk</td></tr>
+    <tr><td><code>0031</code></td><td>model 14 gundam/pilot</td><td>servo + kunci mekanis + bip, 2,6 dtk</td></tr>
+    <tr><td><code>0032–0033</code></td><td>–</td><td>hening (pengisi)</td></tr>
+    <tr><td><code>0034</code></td><td>model 7 mobil/lampu_sorot</td><td>klik lampu + desis sorot + mesin idle, 6,7 dtk</td></tr>
+    <tr><td><code>0035–0037</code></td><td>–</td><td>hening (pengisi)</td></tr>
+    <tr><td><code>0038</code></td><td>model 8 mobil/speedometer (tahan)</td><td>gas, pindah gigi, gas, 4,2 dtk</td></tr>
+    <tr><td><code>0039</code></td><td>–</td><td>hening (pengisi)</td></tr>
+    <tr><td><code>0040</code></td><td>model 6 wajah/cinta_pipi</td><td>“uwu” malu + lonceng kecil, 3 dtk</td></tr>
+    <tr><td><code>0041</code></td><td>Chronos notifikasi</td><td>ding-ding naik</td></tr>
+    <tr><td><code>0042</code></td><td>Chronos instruksi navigasi baru</td><td>tiga nada naik</td></tr>
+    <tr><td><code>0043</code></td><td>Chronos panggilan masuk (diulang)</td><td>trill dering</td></tr>
+    <tr><td><code>0044</code></td><td>Chronos cari perangkat (diulang, volume 30)</td><td>bip tinggi keras</td></tr>
+    <tr><td><code>0045</code></td><td>Chronos alarm (diulang)</td><td>bip-bip-bip-bip</td></tr>
+    <tr><td><code>0046</code></td><td>Chronos tersambung</td><td>dua nada naik</td></tr>
+    <tr><td><code>0047</code></td><td>Chronos terputus</td><td>dua nada turun</td></tr>
+    <tr><td><code>0048</code></td><td>Chronos navigasi selesai</td><td>arpeggio selesai</td></tr>
   </table></div>
   <ul>
+    <li>Nomor yang tidak dipakai berisi MP3 hening. <b>Jangan dihapus</b>: tanpa pengisi urutan bergeser dan suara tertukar.</li>
+    <li>Ganti suara: timpa file bernama sama di <code>sd/mp3/</code>, lalu format dan salin ulang berurutan.</li>
     <li>Lagu di <code>/01</code> harus bernomor berurutan tanpa lubang (001, 002, 003 …).</li>
-    <li>Di macOS, hapus file <code>._*</code> dan <code>.DS_Store</code>.</li>
-    <li>Cek kartu: <code>python firmware/tools/daftar_trek.py --sd /path/kartu</code>.</li>
+    <li>Di macOS, hapus <code>._*</code> dan <code>.DS_Store</code> (<code>dot_clean</code>); ikut terhitung sebagai file.</li>
+    <li>Cek kartu: <code>python firmware/tools/daftar_trek.py --sd /path/kartu</code>. Buat ulang MP3: <code>python3 sd/buat_suara.py</code>.</li>
   </ul>
-  <p class="hint"><b>Mode cadangan</b> <code>-DMOCHI_DF_COPY_ORDER</code>: suara animasi di root kartu (<code>0001.mp3</code> …) dan diputar menurut urutan salin. Salin file root berurutan sebelum folder lain.</p>
+  <p class="hint">Semua suara dibuat dari nol oleh <code>sd/buat_suara.py</code> (numpy, tanpa sampel luar, MIT). Opsi <code>--pack mochi-themes.zip</code> memakai WAV asli paket tema <a href="https://github.com/rz7mong/mochi-rzmong/releases/tag/assets-v1">mochi-rzmong assets-v1</a> untuk 14 animasi (paket tanpa lisensi tertulis: untuk kartu sendiri). Build <code>-DMOCHI_DF_MP3_FOLDER</code>: file yang sama di <code>/MP3/0001.mp3</code> …, dicocokkan dari nama.</p>
 </section>
 
 <section class="card">
@@ -107,7 +127,8 @@ pio run -e esp32-c3-dfplayer -t upload</pre>
     <tr><td>Port tidak muncul</td><td>Chrome/Edge di komputer, kabel USB data (bukan kabel cas), tahan BOOT saat colok.</td></tr>
     <tr><td>Layar hitam</td><td>SCLK 4, MOSI 6, DC 3, RST 10, BLK 7. CS modul 8 pin ke GND. Mode berhenti juga hitam: ketuk 1×.</td></tr>
     <tr><td>Gambar terbalik / miring</td><td>Menu → Putar layar.</td></tr>
-    <tr><td>Tidak ada suara</td><td>DFPlayer VCC 5 V, RX lewat 1 kΩ ke GPIO20, TX ke GPIO21, speaker di SPK_1/SPK_2, kartu FAT32, folder <code>/MP3</code>.</td></tr>
+    <tr><td>Tidak ada suara</td><td>DFPlayer VCC 5 V, RX lewat 1 kΩ ke GPIO20, TX ke GPIO21, speaker di SPK_1/SPK_2, kartu FAT32 berisi <code>0001</code>–<code>0048</code> di root.</td></tr>
+    <tr><td>Suara tertukar</td><td>Urutan salin salah: format kartu, salin <code>sd/mp3/</code> satu per satu berurutan, baru <code>/01</code>.</td></tr>
     <tr><td>Suara tidak diulang / lagu tidak lanjut</td><td>Kabel TX modul → GPIO21 membawa pesan "trek selesai". Atau pasang BUSY ke GPIO5 + <code>-DMOCHI_PIN_DF_BUSY=5</code>.</td></tr>
     <tr><td>Pemutar: "folder /01 kosong"</td><td>Lagu harus <code>/01/001.mp3</code>, <code>/01/002.mp3</code>, …</td></tr>
     <tr><td>Ketukan tidak terbaca / selalu "tahan"</td><td>Serial monitor saat nyala menulis <code>sentuh GPIO1: …</code> (jenis yang terdeteksi). Tertulis "tombol ke GND / mengambang" padahal memakai TTP223: kabel I/O putus. Pastikan VCC TTP223 3V3, GND bersama, jangan menyentuh sensor saat menyalakan. Masih salah: paksa <code>-DMOCHI_TOUCH_ACTIVE_HIGH</code> atau <code>-DMOCHI_TOUCH_MODE=2</code>. TTP223 di balik casing: casing ≤ 2 mm, tanpa logam di atas pad.</td></tr>
@@ -121,6 +142,6 @@ pio run -e esp32-c3-dfplayer -t upload</pre>
   <p class="hint">Serial monitor 115200 lewat USB: <code>pio device monitor</code>.</p>
 </section>
 </main>
-<footer>© rzmong · MIT (kode) · Mochi DFPlayer 0.7.0 · proyek independen, terinspirasi Dasai Mochi, bukan produk resmi</footer>
+<footer>© rzmong · MIT (kode) · Mochi DFPlayer 0.7.1 · proyek independen, terinspirasi Dasai Mochi, bukan produk resmi</footer>
 </body>
 </html>

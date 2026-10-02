@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>🎵 Animasi & suara — Mochi DFPlayer</title>
-<meta name="description" content="Kelola animasi GIF, suara animasi /MP3, pemutar musik /01, dan suara Chronos /02 /03 di Mochi DFPlayer."/>
+<meta name="description" content="Kelola animasi GIF, suara animasi dan Chronos (root 0001-0048), dan pemutar musik /01 di Mochi DFPlayer."/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&amp;family=Quicksand:wght@500;700&amp;display=swap"/>
@@ -16,8 +16,8 @@
   <svg class="mochi" viewBox="0 0 120 96" aria-hidden="true"><ellipse cx="60" cy="88" rx="36" ry="5" fill="#f6c6d9" opacity=".6"/><path d="M14 66c0-30 20-52 46-52s46 22 46 52c0 14-12 20-46 20S14 80 14 66z" fill="#fff" stroke="#ffb3cf" stroke-width="3"/><rect x="33" y="34" width="54" height="36" rx="10" fill="#2b2140"/><ellipse cx="49" cy="51" rx="5" ry="6.5" fill="#7ef0c8"/><ellipse cx="71" cy="51" rx="5" ry="6.5" fill="#7ef0c8"/><path d="M53 61q7 6 14 0" stroke="#ff8fb8" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="38" cy="64" rx="5" ry="3" fill="#ffb3cf" opacity=".6"/><ellipse cx="82" cy="64" rx="5" ry="3" fill="#ffb3cf" opacity=".6"/><path d="M100 18v16a5 4 0 1 1-2-3V20l10-3v13a5 4 0 1 1-2-3V15z" fill="#ff8fb8"/></svg>
   <div class="kicker">panduan · animasi · suara · musik</div>
   <h1>🎵 Kelola <span>animasi &amp; suara</span></h1>
-  <p class="sub">Tambah animasi GIF ke firmware, beri suara tiap animasi, isi lagu untuk pemutar MP3, dan pasang suara notifikasi serta dering Chronos.</p>
-  <div class="chips"><span class="chip">🧠 ESP32-C3 Super Mini</span><span class="chip">📺 ST7789 1,3" 240×240</span><span class="chip">🎵 DFPlayer Mini</span><span class="chip">👆 TTP223</span><span class="chip">🌀 MPU6050 (opsional)</span><span class="chip">⚡ firmware 0.7.0</span></div>
+  <p class="sub">Tambah animasi GIF ke firmware, beri suara tiap animasi, isi lagu untuk pemutar MP3, dan pakai suara Chronos.</p>
+  <div class="chips"><span class="chip">🧠 ESP32-C3 Super Mini</span><span class="chip">📺 ST7789 1,3" 240×240</span><span class="chip">🎵 DFPlayer Mini</span><span class="chip">👆 TTP223</span><span class="chip">🌀 MPU6050 (opsional)</span><span class="chip">⚡ firmware 0.7.1</span></div>
 </header>
 <nav class="tabs"><div class="wrap narrow"><a href="index.html">⚡ Instalasi firmware</a><a href="panduan.html">📖 Cara pakai</a><a href="instalasi.html">🔧 Rakit &amp; kartu SD</a><a href="pemasangan.html">🧩 Demo rakit</a><a href="pemasangan-kabel.html">🔌 Diagram kabel</a><a href="kelola.html" class="on" aria-current="page">🎵 Animasi &amp; suara</a><a href="animasi.html">🎞️ Tambah animasi</a><a href="https://rz7mong.github.io/mochi-rzmong/">💗 Mochi rzmong (GIF)</a><a href="https://github.com/rz7mong/mochi-dfplayer">🐙 GitHub</a></div></nav>
 <main class="wrap narrow">
@@ -27,9 +27,9 @@
   <h2>🗂️ Di mana semuanya disimpan?</h2>
   <div class="tbl"><table><tr><th>Apa</th><th>Tempat</th><th>Ganti perlu flash ulang?</th></tr>
     <tr><td>Gambar animasi</td><td>Firmware: <code>firmware/assets/builtin/jpeg/&lt;tema&gt;/</code> (sumber GIF di <code>assets/builtin/gif/&lt;tema&gt;/</code>)</td><td class="no">Ya</td></tr>
-    <tr><td>Suara animasi</td><td>Kartu SD DFPlayer: <code>/MP3/000N.mp3</code></td><td class="yes">Tidak, cukup ganti file</td></tr>
+    <tr><td>Suara animasi</td><td>Kartu SD DFPlayer: root <code>0001</code>–<code>0048</code> (urutan salin, isi <code>sd/mp3/</code>)</td><td class="yes">Tidak, cukup ganti file</td></tr>
     <tr><td>Lagu pemutar MP3</td><td>Kartu SD: <code>/01/001.mp3</code> …</td><td class="yes">Tidak</td></tr>
-    <tr><td>Notifikasi / dering Chronos</td><td>Kartu SD: <code>/02/001.mp3</code>, <code>/03/001.mp3</code> …</td><td class="yes">Tidak</td></tr>
+    <tr><td>Suara Chronos</td><td>Kartu SD root: <code>0041</code>–<code>0048</code></td><td class="yes">Tidak</td></tr>
   </table></div>
 </section>
 
@@ -49,40 +49,66 @@ python tools/import_jpeg_clip.py wajah senyum assets/builtin/gif/wajah/senyum.gi
 ]</pre>
   Kolom: tema, nama, peran, trek. Peran <code>""</code> = biasa, <code>"dizzy"</code> = diputar saat goyang, <code>"heart"</code> = diputar saat tahan. Trek boleh dikosongkan: otomatis nomor berikutnya (sekarang <b>41</b>).</div></div>
   <div class="step"><div class="num">4</div><div><b>Build &amp; flash ulang</b>: <code>pio run -e esp32-c3-dfplayer -t upload</code>. Klip ditanam otomatis saat build. Perhatikan baris <code>ANGGARAN</code> kalau klip banyak (<a href="animasi.html">detail anggaran flash</a>).</div></div>
-  <div class="step"><div class="num">5</div><div><b>Cek nomor trek</b>: <code>python tools/daftar_trek.py</code>, lalu salin suaranya ke kartu sebagai <code>/MP3/0041.mp3</code> (sesuai nomor yang tercetak).</div></div>
+  <div class="step"><div class="num">5</div><div><b>Cek nomor trek</b>: <code>python tools/daftar_trek.py</code>, klip baru mendapat trek <code>0049</code> dst. Taruh suaranya sebagai <code>0049.mp3</code> dan salin setelah <code>0048</code> (lihat <a href="#suara">urutan salin</a>).</div></div>
   <p class="note">⚠️ Jangan menambah baris di daftar <code>"builtins"</code>. Nomor trek builtin = posisinya, jadi baris ke-19 akan memakai trek 19 yang sudah dipakai <code>wajah/senyum_kedip</code>, dan builtin GIF hanya diambil 6 frame.</p>
   <p class="info">ℹ️ Klip satu tema selalu dikelompokkan: klip baru tema lama masuk setelah kelompok temanya. <code>"boot_theme"</code> di <code>meta.json</code> menentukan model saat nyala (sekarang <code>wajah</code>, klip <code>senyum_kedip</code>). <code>"theme_order"</code> mengatur urutan tema (sekarang wajah, mobil, gundam; tema yang tidak disebut di akhir). Pakai hanya media yang boleh kamu sebarkan.</p>
 </section>
 
 <section class="card" id="suara">
-  <h2>🔊 Suara animasi (<code>/MP3</code>)</h2>
-  <div class="step"><div class="num">1</div><div>Buat folder <code>/MP3</code> di root kartu (FAT32).</div></div>
-  <div class="step"><div class="num">2</div><div>Beri nama file <b>4 digit</b> sesuai trek model: <code>0001.mp3</code>, <code>0019.mp3</code>, …</div></div>
-  <div class="step"><div class="num">3</div><div>Ganti suara kapan saja dengan menimpa file. Tidak perlu flash ulang.</div></div>
-  <div class="tbl"><table><tr><th>Model (ketuk 2×)</th><th>File <code>/MP3/</code></th><th>Klip</th></tr>
-    <tr><td>1</td><td><code>0019</code></td><td>wajah/senyum_kedip (klip saat nyala)</td></tr>
-    <tr><td>2</td><td><code>0020</code></td><td>wajah/pusing (goyang)</td></tr>
-    <tr><td>3</td><td><code>0023</code></td><td>wajah/cinta (tahan)</td></tr>
-    <tr><td>4</td><td><code>0021</code></td><td>wajah/sorot</td></tr>
-    <tr><td>5</td><td><code>0022</code></td><td>wajah/sirine</td></tr>
-    <tr><td>6</td><td><code>0040</code></td><td>wajah/cinta_pipi</td></tr>
-    <tr><td>7</td><td><code>0034</code></td><td>mobil/lampu_sorot</td></tr>
-    <tr><td>8</td><td><code>0038</code></td><td>mobil/speedometer (tahan)</td></tr>
-    <tr><td>9</td><td><code>0026</code></td><td>gundam/helm_hujan</td></tr>
-    <tr><td>10</td><td><code>0027</code></td><td>gundam/helm_siaga (tahan)</td></tr>
-    <tr><td>11</td><td><code>0028</code></td><td>gundam/isyarat</td></tr>
-    <tr><td>12</td><td><code>0029</code></td><td>gundam/kokpit</td></tr>
-    <tr><td>13</td><td><code>0030</code></td><td>gundam/kokpit_2</td></tr>
-    <tr><td>14</td><td><code>0031</code></td><td>gundam/pilot</td></tr>
-    <tr><td>–</td><td>0001–0018, 0024, 0025, 0032, 0033, 0035–0037, 0039</td><td>tidak dipakai, boleh tidak ada</td></tr>
+  <h2>🔊 Suara animasi dan Chronos (root kartu, urutan salin)</h2>
+  <p>Isi kartu siap pakai: folder <a href="https://github.com/rz7mong/mochi-dfplayer/tree/main/sd/mp3"><code>sd/mp3/</code></a> di repo (48 file, 1,4 MB). DFPlayer memutar file root menurut <b>urutan salin</b> (file ke-N yang disalin), <b>bukan nama</b>.</p>
+  <div class="step"><div class="num">1</div><div><b>Format</b> kartu FAT32 (≤ 32 GB). Kartu harus kosong.</div></div>
+  <div class="step"><div class="num">2</div><div>Salin <code>0001.mp3</code> … <code>0048.mp3</code> ke <b>root</b>, <b>berurutan satu per satu</b> (jangan seret sekaligus).</div></div>
+  <div class="step"><div class="num">3</div><div><b>Sesudahnya</b> buat folder <code>/01</code> dan salin lagu <code>001.mp3</code>, <code>002.mp3</code>, … untuk Pemutar MP3.</div></div>
+<pre># Linux (kartu di /media/SD)
+for f in sd/mp3/*.mp3; do cp "$f" /media/SD/; sync; done
+
+# Windows PowerShell (kartu di E:)
+Get-ChildItem sd\mp3\*.mp3 | Sort-Object Name | ForEach-Object { Copy-Item $_.FullName E:\ }</pre>
+  <div class="tbl"><table><tr><th>File (root)</th><th>Dipakai untuk</th><th>Suara di <code>sd/mp3/</code></th></tr>
+    <tr><td><code>0001–0018</code></td><td>–</td><td>hening 0,5 dtk (pengisi)</td></tr>
+    <tr><td><code>0019</code></td><td>model 1 wajah/senyum_kedip (saat nyala)</td><td>tawa kecil “hi-hi-hi” + denting kedip, 8 dtk</td></tr>
+    <tr><td><code>0020</code></td><td>model 2 wajah/pusing (goyang)</td><td>nada goyang menurun + per “boing”, 4,4 dtk</td></tr>
+    <tr><td><code>0021</code></td><td>model 4 wajah/sorot</td><td>desis lirik kiri-kanan + blip, 6 dtk</td></tr>
+    <tr><td><code>0022</code></td><td>model 5 wajah/sirine</td><td>sirine polisi naik-turun ×2, 3,8 dtk</td></tr>
+    <tr><td><code>0023</code></td><td>model 3 wajah/cinta (tahan)</td><td>detak jantung + arpeggio + kilau, 2,5 dtk</td></tr>
+    <tr><td><code>0024–0025</code></td><td>–</td><td>hening (pengisi)</td></tr>
+    <tr><td><code>0026</code></td><td>model 9 gundam/helm_hujan</td><td>hujan di helm + tetes + servo, 3 dtk</td></tr>
+    <tr><td><code>0027</code></td><td>model 10 gundam/helm_siaga (tahan)</td><td>servo + bip siaga, 1,6 dtk</td></tr>
+    <tr><td><code>0028</code></td><td>model 11 gundam/isyarat</td><td>sandi radio + statis, 2,6 dtk</td></tr>
+    <tr><td><code>0029</code></td><td>model 12 gundam/kokpit</td><td>dengung kokpit + blip komputer, 3 dtk</td></tr>
+    <tr><td><code>0030</code></td><td>model 13 gundam/kokpit_2</td><td>sistem menyala + dengung, 3 dtk</td></tr>
+    <tr><td><code>0031</code></td><td>model 14 gundam/pilot</td><td>servo + kunci mekanis + bip, 2,6 dtk</td></tr>
+    <tr><td><code>0032–0033</code></td><td>–</td><td>hening (pengisi)</td></tr>
+    <tr><td><code>0034</code></td><td>model 7 mobil/lampu_sorot</td><td>klik lampu + desis sorot + mesin idle, 6,7 dtk</td></tr>
+    <tr><td><code>0035–0037</code></td><td>–</td><td>hening (pengisi)</td></tr>
+    <tr><td><code>0038</code></td><td>model 8 mobil/speedometer (tahan)</td><td>gas, pindah gigi, gas, 4,2 dtk</td></tr>
+    <tr><td><code>0039</code></td><td>–</td><td>hening (pengisi)</td></tr>
+    <tr><td><code>0040</code></td><td>model 6 wajah/cinta_pipi</td><td>“uwu” malu + lonceng kecil, 3 dtk</td></tr>
+    <tr><td><code>0041</code></td><td>Chronos notifikasi</td><td>ding-ding naik</td></tr>
+    <tr><td><code>0042</code></td><td>Chronos instruksi navigasi baru</td><td>tiga nada naik</td></tr>
+    <tr><td><code>0043</code></td><td>Chronos panggilan masuk (diulang)</td><td>trill dering</td></tr>
+    <tr><td><code>0044</code></td><td>Chronos cari perangkat (diulang, volume 30)</td><td>bip tinggi keras</td></tr>
+    <tr><td><code>0045</code></td><td>Chronos alarm (diulang)</td><td>bip-bip-bip-bip</td></tr>
+    <tr><td><code>0046</code></td><td>Chronos tersambung</td><td>dua nada naik</td></tr>
+    <tr><td><code>0047</code></td><td>Chronos terputus</td><td>dua nada turun</td></tr>
+    <tr><td><code>0048</code></td><td>Chronos navigasi selesai</td><td>arpeggio selesai</td></tr>
   </table></div>
   <ul>
-    <li>Suara model diputar <b>sampai habis</b>, lalu diulang selama animasi itu tampil.</li>
+    <li>Suara model diputar <b>sampai habis</b>, lalu diulang selama animasi itu tampil (jeda hening di akhir file mengatur jarak ulang).</li>
     <li>Klip tahan dan goyang memutar suaranya sendiri, lalu suara model utama mulai lagi.</li>
-    <li>Saat pemutar musik aktif (main atau jeda), animasi tanpa suara.</li>
+    <li>Saat pemutar musik aktif (main atau jeda) atau layar Chronos tampil, animasi tanpa suara.</li>
+    <li>Klip baru otomatis mendapat trek <code>0049</code> dan seterusnya (0041–0048 milik Chronos). Salin file itu setelah <code>0048</code>, sebelum <code>/01</code>.</li>
   </ul>
+  <ul>
+    <li>Nomor yang tidak dipakai berisi MP3 hening. <b>Jangan dihapus</b>: tanpa pengisi urutan bergeser dan suara tertukar.</li>
+    <li>Ganti suara: timpa file bernama sama di <code>sd/mp3/</code>, lalu format dan salin ulang berurutan.</li>
+    <li>Lagu di <code>/01</code> harus bernomor berurutan tanpa lubang (001, 002, 003 …).</li>
+    <li>Di macOS, hapus <code>._*</code> dan <code>.DS_Store</code> (<code>dot_clean</code>); ikut terhitung sebagai file.</li>
+    <li>Cek kartu: <code>python firmware/tools/daftar_trek.py --sd /path/kartu</code>. Buat ulang MP3: <code>python3 sd/buat_suara.py</code>.</li>
+  </ul>
+  <p class="hint">Semua suara dibuat dari nol oleh <code>sd/buat_suara.py</code> (numpy, tanpa sampel luar, MIT). Opsi <code>--pack mochi-themes.zip</code> memakai WAV asli paket tema <a href="https://github.com/rz7mong/mochi-rzmong/releases/tag/assets-v1">mochi-rzmong assets-v1</a> untuk 14 animasi (paket tanpa lisensi tertulis: untuk kartu sendiri). Build <code>-DMOCHI_DF_MP3_FOLDER</code>: file yang sama di <code>/MP3/0001.mp3</code> …, dicocokkan dari nama.</p>
   <p class="tip">💡 Suara tidak diulang? Kabel <b>TX DFPlayer → GPIO21</b> membawa pesan "trek selesai". Atau pasang BUSY ke GPIO5 + <code>-DMOCHI_PIN_DF_BUSY=5</code>.</p>
-  <p class="hint"><b>Mode cadangan</b> <code>-DMOCHI_DF_COPY_ORDER</code>: file di root kartu (<code>0001.mp3</code> …) diputar menurut urutan salin. Salin berurutan sebelum folder lain.</p>
 </section>
 
 <section class="card" id="musik">
@@ -108,26 +134,31 @@ python tools/import_jpeg_clip.py wajah senyum assets/builtin/gif/wajah/senyum.gi
 </section>
 
 <section class="card" id="chronos">
-  <h2>📱 Suara Chronos (<code>/02</code> dan <code>/03</code>)</h2>
-  <div class="tbl"><table><tr><th>Folder</th><th>Isi</th><th>Kapan diputar</th><th>Sentuh</th></tr>
-    <tr><td><code>/02/001.mp3</code></td><td>suara notifikasi (pendek)</td><td>notifikasi dari HP, dan "cari perangkat"</td><td>ketuk = tutup layar notifikasi</td></tr>
-    <tr><td><code>/03/001.mp3</code> …</td><td>nada dering (boleh beberapa file)</td><td>panggilan masuk, semua file di <code>/03</code> diulang</td><td>tahan = tutup, dering berhenti</td></tr>
+  <h2>📱 Chronos: layar dan suara (<code>0041</code>–<code>0048</code>)</h2>
+  <div class="tbl"><table><tr><th>Dari HP</th><th>Di perangkat</th><th>Suara</th><th>Sentuh</th></tr>
+    <tr><td>Tersambung / terputus</td><td>info 1,5 dtk</td><td><code>0046</code> / <code>0047</code></td><td></td></tr>
+    <tr><td>Notifikasi</td><td>klip <code>wajah/cinta_pipi</code> ±1,5 dtk, lalu aplikasi, judul, pesan (bergulir), 7–30 dtk</td><td><code>0041</code></td><td>ketuk = tutup</td></tr>
+    <tr><td>Panggilan masuk</td><td>nama penelepon, berkedip</td><td><code>0043</code> diulang</td><td>ketuk/tahan = tutup + bisukan</td></tr>
+    <tr><td>Navigasi</td><td>ikon arah, jarak, petunjuk, ETA</td><td><code>0042</code> instruksi baru, <code>0048</code> selesai</td><td>ketuk = sembunyikan</td></tr>
+    <tr><td>Cari perangkat</td><td>layar berkedip 60 dtk</td><td><code>0044</code> diulang, volume 30</td><td>ketuk = berhenti</td></tr>
+    <tr><td>Alarm (dari aplikasi)</td><td>layar alarm 60 dtk</td><td><code>0045</code> diulang</td><td>ketuk = berhenti</td></tr>
+    <tr><td>Cuaca, musik HP, baterai</td><td>layar Jam HP</td><td></td><td>Jam HP: ketuk = putar/jeda, 2× = lagu berikutnya</td></tr>
   </table></div>
-  <div class="step"><div class="num">1</div><div>Salin file ke <code>/02</code> dan <code>/03</code>.</div></div>
+  <div class="step"><div class="num">1</div><div>Pastikan <code>0041</code>–<code>0048</code> ada di root (sudah termasuk di <code>sd/mp3/</code>).</div></div>
   <div class="step"><div class="num">2</div><div>Tahan 2 dtk → menu → <b>Chronos BLE</b> → ketuk 2× sampai ON.</div></div>
   <div class="step"><div class="num">3</div><div>Di aplikasi Chronos (Android), sambungkan <code>rzmong dfplayer</code>.</div></div>
-  <p class="info">ℹ️ Notifikasi dan panggilan memotong musik; setelahnya lagu diulang dari awal trek. Tanpa <code>/02/001.mp3</code>, notifikasi tetap tampil tanpa suara.</p>
+  <p class="info">ℹ️ Layar Chronos memotong musik; setelahnya lagu diulang dari awal trek. Notifikasi tidak memotong dering panggilan. Mode Jangan Ganggu di aplikasi membisukan suara notifikasi.</p>
 </section>
 
 <section class="card" id="cek">
   <h2>🧰 Cek kartu dan nomor trek</h2>
 <pre>cd firmware
 python tools/daftar_trek.py                  # tabel model → trek → nama file
-python tools/daftar_trek.py --sd /media/SD   # cek /MP3, /01, /02, /03 dan sampah macOS</pre>
+python tools/daftar_trek.py --sd /media/SD   # cek root 0001-0048, /01 dan sampah macOS</pre>
   <p class="hint">Skrip ini hanya membaca. Sumbernya <code>include/jpeg_clips.h</code> hasil build, atau <code>assets/meta.json</code> kalau belum build.</p>
   <p class="note">⚠️ Di macOS, hapus file <code>._*</code> dan <code>.DS_Store</code> dari kartu. DFPlayer bisa menghitungnya sebagai trek.</p>
 </section>
 </main>
-<footer>© rzmong · MIT (kode) · Mochi DFPlayer 0.7.0 · proyek independen, terinspirasi Dasai Mochi, bukan produk resmi</footer>
+<footer>© rzmong · MIT (kode) · Mochi DFPlayer 0.7.1 · proyek independen, terinspirasi Dasai Mochi, bukan produk resmi</footer>
 </body>
 </html>

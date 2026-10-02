@@ -17,7 +17,7 @@
   <div class="kicker">panduan · menu · musik · chronos</div>
   <h1>📖 Cara <span>pakai</span></h1>
   <p class="sub">Semua dengan satu tombol sentuh: animasi, menu, pemutar MP3, dan Chronos.</p>
-  <div class="chips"><span class="chip">🧠 ESP32-C3 Super Mini</span><span class="chip">📺 ST7789 1,3" 240×240</span><span class="chip">🎵 DFPlayer Mini</span><span class="chip">📱 Chronos BLE</span><span class="chip">⚡ firmware 0.7.0</span></div>
+  <div class="chips"><span class="chip">🧠 ESP32-C3 Super Mini</span><span class="chip">📺 ST7789 1,3" 240×240</span><span class="chip">🎵 DFPlayer Mini</span><span class="chip">📱 Chronos BLE</span><span class="chip">⚡ firmware 0.7.1</span></div>
 </header>
 <nav class="tabs"><div class="wrap narrow"><a href="index.html">⚡ Instalasi firmware</a><a href="panduan.html" class="on" aria-current="page">📖 Cara pakai</a><a href="instalasi.html">🔧 Rakit &amp; kartu SD</a><a href="pemasangan.html">🧩 Demo rakit</a><a href="pemasangan-kabel.html">🔌 Diagram kabel</a><a href="kelola.html">🎵 Animasi &amp; suara</a><a href="animasi.html">🎞️ Tambah animasi</a><a href="https://rz7mong.github.io/mochi-rzmong/">💗 Mochi rzmong (GIF)</a><a href="https://github.com/rz7mong/mochi-dfplayer">🐙 GitHub</a></div></nav>
 <main class="wrap narrow">
@@ -73,16 +73,19 @@
   <div class="step"><div class="num">1</div><div>Pasang aplikasi <b>Chronos</b> (fbiego) di HP Android.</div></div>
   <div class="step"><div class="num">2</div><div>Tahan 2 dtk → menu → <b>Chronos BLE</b> → ketuk 2× sampai ON.</div></div>
   <div class="step"><div class="num">3</div><div>Di aplikasi, sambungkan perangkat <code>rzmong dfplayer</code>.</div></div>
-  <div class="step"><div class="num">4</div><div>Opsional: menu → <b>Jam HP</b> untuk layar jam (tanggal, hari, jam, baterai HP).</div></div>
+  <div class="step"><div class="num">4</div><div>Opsional: menu → <b>Jam HP</b> untuk layar jam (tanggal, hari, jam, baterai HP, cuaca, lagu di HP).</div></div>
   <div class="tbl"><table><tr><th>Dari HP</th><th>Di perangkat</th><th>Sentuh</th></tr>
-    <tr><td>Notifikasi</td><td>Layar 6 dtk + suara <code>/02/001.mp3</code></td><td>ketuk = tutup</td></tr>
-    <tr><td>Panggilan</td><td>Layar panggilan + dering <code>/03</code></td><td>tahan = tutup</td></tr>
-    <tr><td>Navigasi</td><td>Ikon arah, jarak, petunjuk, ETA</td><td>ketuk 2× = sembunyi</td></tr>
-    <tr><td>Cari perangkat</td><td>Layar berkedip + suara notifikasi</td><td></td></tr>
+    <tr><td>Tersambung / terputus</td><td>Info singkat + suara <code>0046</code> / <code>0047</code></td><td></td></tr>
+    <tr><td>Notifikasi</td><td>Klip <code>cinta_pipi</code>, lalu teks (bergulir) + suara <code>0041</code></td><td>ketuk = tutup</td></tr>
+    <tr><td>Panggilan</td><td>Layar panggilan + dering <code>0043</code> diulang</td><td>ketuk/tahan = tutup + bisukan</td></tr>
+    <tr><td>Navigasi</td><td>Ikon arah, jarak, petunjuk, ETA + suara <code>0042</code>, selesai <code>0048</code></td><td>ketuk = sembunyi</td></tr>
+    <tr><td>Cari perangkat</td><td>Layar berkedip + <code>0044</code> keras, 60 dtk</td><td>ketuk = berhenti</td></tr>
+    <tr><td>Alarm</td><td>Layar alarm + <code>0045</code>, 60 dtk</td><td>ketuk = berhenti</td></tr>
+    <tr><td>Musik di HP</td><td>Judul lagu di layar Jam HP</td><td>Jam HP: ketuk = putar/jeda, 2× = berikutnya</td></tr>
   </table></div>
-  <p class="hint">Chronos mati secara bawaan. Notifikasi dan panggilan memotong musik; sesudahnya lagu diulang dari awal trek.</p>
+  <p class="hint">Chronos mati secara bawaan. Layar Chronos memotong musik; sesudahnya lagu diulang dari awal trek. Semua suara ada di root kartu (lihat <a href="instalasi.html#sd">Kartu SD</a>).</p>
 </section>
 </main>
-<footer>© rzmong · MIT (kode) · Mochi DFPlayer 0.7.0 · proyek independen, terinspirasi Dasai Mochi, bukan produk resmi</footer>
+<footer>© rzmong · MIT (kode) · Mochi DFPlayer 0.7.1 · proyek independen, terinspirasi Dasai Mochi, bukan produk resmi</footer>
 </body>
 </html>

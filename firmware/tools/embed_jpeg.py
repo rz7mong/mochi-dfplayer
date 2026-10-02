@@ -61,7 +61,8 @@ order += [(jt, js, "jpeg", r, tr) for jt, js, r, tr in jents if (jt, js) not in 
 theme_order = meta.get("theme_order", [])  # opsional: urutan tema model, mis. ["wajah", "mobil", "gundam"]
 if theme_order:  # sort stabil: urutan klip di dalam tema tetap
     order.sort(key=lambda o: theme_order.index(o[0]) if o[0] in theme_order else len(theme_order))
-nxt = max(len(builtins), max((tr for *_, tr in jents), default=0)) + 1
+CHRONOS_TRK = range(41, 49)  # 0041-0048 = suara Chronos (TRK_* di MochiRzmong.h), jangan dipakai klip
+nxt = max(len(builtins), max((tr for *_, tr in jents), default=0), CHRONOS_TRK[-1]) + 1
 tracks = {}
 for jt, js, r, tr in jents:
     if (jt, js) in builtins: continue
@@ -125,6 +126,7 @@ for i, c in enumerate(clips):
     seq = c["seq"]
     if not seq: raise SystemExit(f"{theme}/{stem}: tidak ada frame")
     if len(seq) > 65535: raise SystemExit(f"{theme}/{stem}: {len(seq)} frame, maks 65535")
+    if track in CHRONOS_TRK: print(f"PERINGATAN: {theme}/{stem} memakai trek {track:04d}, bentrok dengan suara Chronos 0041-0048")
     if not 1 <= track <= 3000: raise SystemExit(f"{theme}/{stem}: trek {track} di luar 1..3000 (batas DFPlayer folder MP3)")
     if c["delay"] > 65535: raise SystemExit(f"{theme}/{stem}: delay terlalu besar")
     used = sorted(set(seq)); names = {}

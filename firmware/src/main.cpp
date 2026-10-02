@@ -46,11 +46,8 @@ static int volume = 28;                   // 0..30, sama untuk animasi dan musik
 static int rot = MOCHI_DEFAULT_ROTATION;
 bool chronosOn = false, clockOn = false, chronosNav = true;
 
-// ---------- status Chronos (dipakai chronos_ui.inc) ----------
-bool chronoConn = false, ringerOn = false;
-String notifApp, notifTitle, notifMsg, ringerName;
-uint32_t notifUntil = 0;
 bool uiDirty = true;
+static int clockDrawn = -1;
 
 // ---------- UI ----------
 enum class Ui : uint8_t { Anim, Clock, Menu, Player };
@@ -70,9 +67,8 @@ static bool mEmpty = false;               // folder /01 kosong / tidak ada
 static uint32_t notifSoundAt = 0;
 static bool musicSession() { return mState != MState::Stopped; }
 
-void soundNotif();
-void soundRinger(bool on);
-#include "chronos_ui.inc"
+bool overlayActive();
+extern bool chronoConn;
 
 static void savePrefs() {
   prefs.putUChar("vol", volume);
@@ -266,7 +262,12 @@ static bool drawFrame(int c, int f) {
 }
 
 // Suara animasi hanya jika tidak ada musik, panggilan, atau notifikasi yang sedang berbunyi.
-static bool animSoundAllowed() { return !musicSession() && !ringerOn && dfOwner != Owner::Notif; }
+// Chronos UI (overlay notifikasi/panggilan/navigasi/cari/alarm). Butuh drawFrame() di atas.
+#include "chronos_ui.inc"
+
+static bool animSoundAllowed() {
+  return !musicSession() && dfOwner != Owner::Notif && dfOwner != Owner::Ring && !overlayActive();
+}
 static void playAudio(int c) {
   if (!animSoundAllowed()) return;
   if (mochiDfPlayTrack(JPEG_CLIPS[c].track)) dfOwner = Owner::Anim;
@@ -439,14 +440,29 @@ static void resumeAfterInterrupt() {
   else if (mState == MState::Paused) mState = MState::Stopped;  // posisi jeda hilang setelah diselingi
   else if (ui == Ui::Anim && mode == Mode::Playing) playAudio(clip);
 }
-// Hook dari chronos_ui.inc
-void soundNotif() {
-  if (ringerOn) return;
-  if (mochiDfPlayNotif()) { dfOwner = Owner::Notif; notifSoundAt = millis(); }
+// Hook dari chronos_ui.inc. Suara Chronos = trek urutan salin 0041-0048 di root kartu.
+// loop: panggilan/cari/alarm diulang sampai overlay ditutup. vol >= 0: volume sementara (cari = 30).
+static bool tempVol = false;
+void overlaySound(int track, bool loop, int vol) {
+  if (dfOwner == Owner::Ring && !loop) return;   // notifikasi tidak memotong dering
+  if (vol >= 0 && vol != volume) { mochiDfVolume(vol); tempVol = true; }
+  else if (tempVol) { mochiDfVolume(volume); tempVol = false; }
+  if (loop) {
+    if (mochiDfLoopTrack(track)) dfOwner = Owner::Ring;
+  } else if (mochiDfPlayTrack(track)) {
+    dfOwner = Owner::Notif;
+    notifSoundAt = millis();
+  }
 }
-void soundRinger(bool on) {
-  if (on) { mochiDfPlayRinger(true); dfOwner = Owner::Ring; return; }
-  if (dfOwner == Owner::Ring) { mochiDfStop(); resumeAfterInterrupt(); }
+void overlaySoundEnd() {
+  if (dfOwner == Owner::Ring) { mochiDfStop(); dfOwner = Owner::None; }
+  if (tempVol) { mochiDfVolume(volume); tempVol = false; }
+}
+void overlayClosed() {
+  if (dfOwner != Owner::Music && dfOwner != Owner::Notif) resumeAfterInterrupt();
+  forceRedraw();
+  clockDrawn = -1;
+  if (ui == Ui::Anim && mode == Mode::Stopped) { tft.fillScreen(TFT_BLACK); backlight(false); }
 }
 
 static void serviceSound() {
@@ -678,13 +694,13 @@ static void digitR(int x, int y, int d) {
   else if (d == 8) { ring(x, y, w, h / 2 + 2, t); ring(x, y + h / 2 - 2, w, h / 2 + 2, t); }
   else { ring(x, y, w, h / 2 + 2, t); blob(x + w - t, y, t, h); blob(x, y + h - t, w, t); }
 }
-static int clockDrawn = -1;
 static void drawClock(bool full) {
   bool linked = chronosOn && watch.isRunning() && watch.isConnected();
   int h = linked ? watch.getHour(true) : 0, m = linked ? watch.getMinute() : 0, s = linked ? watch.getSecond() : 0;
   int sig = linked ? (h * 3600 + m * 60 + s) : -2;
-  if (!full && sig == clockDrawn) return;
+  if (full || sig != clockDrawn) {
   if (full) tft.fillScreen(TFT_BLACK);
+  if (sig / 60 != clockDrawn / 60) clockInfoDirty = true;   // baterai HP tiap menit
   clockDrawn = sig;
   tft.setTextColor(TFT_WHITE, TFT_BLACK);
   if (linked) {
@@ -711,16 +727,38 @@ static void drawClock(bool full) {
   int blink = (s % 5 == 0) ? 0 : (s % 5 == 1) ? 2 : 6;
   eye(78, 132, blink);
   eye(162, 132, blink);
-  tft.fillRect(60, 170, 120, 40, TFT_BLACK);
+  }
+  bool msg = clockMsgUntil && (int32_t)(millis() - clockMsgUntil) < 0;
+  if (!msg && clockMsgUntil) { clockMsgUntil = 0; clockInfoDirty = true; }
+  if (!full && !clockInfoDirty) return;
+  clockInfoDirty = false;
+  tft.fillRect(0, 160, 240, 80, TFT_BLACK);
   if (linked) {
-    char nb[12];
-    snprintf(nb, sizeof(nb), "%d%%", watch.getPhoneBattery());
-    tft.drawCentreString(nb, 120, 176, 4);
+    // baris 1: baterai HP + cuaca, baris 2: musik HP
+    char nb[48];
+    if (weather.ok) {
+      int ic = weather.icon >= 0 && weather.icon < 8 ? weather.icon : 0;
+      snprintf(nb, sizeof(nb), "HP %d%%  %dC %s", watch.getPhoneBattery(), weather.temp, CUACA[ic]);
+    } else {
+      snprintf(nb, sizeof(nb), "HP %d%%", watch.getPhoneBattery());
+    }
+    tft.drawCentreString(fitText(nb, 2, 232), 120, 166, 2);
+    if (weather.ok && weather.city.length()) {
+      tft.setTextColor(C_DIM, TFT_BLACK);
+      snprintf(nb, sizeof(nb), "%d/%dC", weather.high, weather.low);
+      tft.drawCentreString(fitText(toAscii(weather.city) + "  " + nb, 1, 232), 120, 184, 1);
+    }
+    tft.setTextColor(msg ? C_SEL : C_TEAL, TFT_BLACK);
+    String mu = msg ? clockMsg
+                    : music.ok ? String(music.playing ? "> " : "|| ") + toAscii(music.title) +
+                                     (music.artist.length() ? " - " + toAscii(music.artist) : String(""))
+                               : String("musik HP: ketuk = putar/jeda");
+    tft.drawCentreString(fitText(mu, 2, 232), 120, 198, 2);
   } else {
     tft.drawCentreString(chronosOn ? "sambungkan Chronos" : "Chronos BLE mati", 120, 182, 2);
   }
   tft.setTextColor(0x4A69, TFT_BLACK);
-  tft.drawCentreString("tahan 2 dtk = menu", 120, 222, 1);
+  tft.drawCentreString(linked ? "ketuk putar/jeda  2x lagu  tahan 2s menu" : "tahan 2 dtk = menu", 120, 226, 1);
 }
 static void showAbout() {
   backlight(true);
@@ -738,10 +776,10 @@ static void showAbout() {
   snprintf(b, sizeof(b), "Chronos: %s", chronosOn ? (chronoConn ? "tersambung" : "menunggu HP") : "mati"); line(b);
   if (chronoConn) { snprintf(b, sizeof(b), "Baterai HP: %d%%", watch.getPhoneBattery()); line(b); }
   snprintf(b, sizeof(b), "Trek animasi: %s",
-#ifdef MOCHI_DF_COPY_ORDER
-           "urutan salin"
-#else
+#ifdef MOCHI_DF_MP3_FOLDER
            "/MP3/000N.mp3"
+#else
+           "urutan salin"
 #endif
   ); line(b);
   tft.setTextColor(C_DIM, C_BG);
@@ -812,36 +850,11 @@ static void playerAction(uint8_t b) {
 // Overlay Chronos (menutup layar apa pun)
 // =====================================================================
 static bool serviceOverlay(Ev ev) {
-  if (!chronosOn) return false;
-  static uint8_t shown = 0;  // 1 notif, 2 panggilan, 3 navigasi, 4 cari
-  static uint32_t drewNotif = 0;
-  static String navSig;
-  uint8_t want = 0;
-  if (findUntil) want = 4;
-  else if (ringerOn) want = 2;
-  else if (notifUntil && (int32_t)(millis() - notifUntil) < 0) want = 1;
-  else if (chronosNav && navActive && !navHide) want = 3;
-  if (notifUntil && want != 1 && (int32_t)(millis() - notifUntil) >= 0) notifUntil = 0;
-  if (!want) {
-    if (shown) { shown = 0; forceRedraw(); if (ui == Ui::Anim && mode == Mode::Stopped) { tft.fillScreen(TFT_BLACK); backlight(false); } }
-    return false;
-  }
+  if (!serviceChronosOverlay()) return false;
   backlight(true);
-  if (ui == Ui::Anim) holdEnd();
-  if (want == 4) { serviceChronosFind(); shown = 4; return true; }
-  if (want == 2) {
-    if (shown != 2) drawChronosRinger();
-    if (ev == Ev::HoldStart) { ringerOn = false; soundRinger(false); }
-  } else if (want == 1) {
-    if (shown != 1 || drewNotif != notifUntil) { drawChronosNotif(); drewNotif = notifUntil; }
-    if (ev == Ev::Tap1 || ev == Ev::Tap2 || ev == Ev::HoldStart) notifUntil = 0;
-  } else {
-    String sig = navTitle + "|" + navDist + "|" + navDir;
-    if (shown != 3 || sig != navSig) { navDirty = true; navSig = sig; }
-    drawChronosNav();
-    if (ev == Ev::Tap2) navHide = true;
-  }
-  shown = want;
+  if (ui == Ui::Anim && holdClip) holdEnd();
+  // Ketuk / tahan = tutup overlay teratas (panggilan: hanya bisukan; tolak panggilan tidak didukung Chronos).
+  if (ev == Ev::Tap1 || ev == Ev::Tap2 || ev == Ev::HoldStart) dismissOverlay();
   return true;
 }
 
@@ -870,6 +883,7 @@ void setup() {
   randomSeed(esp_random());
   chronosSetupCallbacks();
   if (chronosOn) chronosApply();
+  overlaySoundEnd();
   model = bootModel();
   Serial.printf("Mochi DFPlayer %s, %d model, rotasi %d, Chronos %s\n", MOCHI_VERSION, JPEG_CLIP_COUNT, rot,
                 chronosOn ? "ON" : "OFF");
@@ -895,6 +909,10 @@ void loop() {
       break;
     case Ui::Clock:
       if (ev == Ev::Long) { openMenu(); break; }
+      if ((ev == Ev::Tap1 || ev == Ev::Tap2) && chronoConn) {   // kontrol musik di HP
+        watch.musicControl(ev == Ev::Tap1 ? MUSIC_TOGGLE : MUSIC_NEXT);
+        clockMessage(ev == Ev::Tap1 ? "musik HP: putar/jeda" : "musik HP: berikutnya");
+      }
       drawClock(uiDirty);
       uiDirty = false;
       delay(20);

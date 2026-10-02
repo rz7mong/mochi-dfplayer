@@ -18,7 +18,8 @@ static uint32_t lastFinishAt = 0;
 static bool errPending = false;
 static uint16_t errCode = 0;
 static bool busyWasPlaying = false;
-static int musicCount = -2;  // -2 = belum ditanya
+static int musicCount = -2;
+static uint16_t loopTrack = 0;  // != 0: trek yang sedang diulang  // -2 = belum ditanya
 static const uint32_t DF_BOOT_MS = 1200;
 
 static void dfGap() {
@@ -101,6 +102,7 @@ void mochiDfStop() {
   if (!dfOk) return;
   dfGap();
   dfPlayer.stop();
+  loopTrack = 0;
   finished = false;
   busyWasPlaying = false;
 }
@@ -121,12 +123,28 @@ bool mochiDfPlayTrack(uint16_t track) {
   if (!dfOk || track == 0) return false;
   sendVolumeIfNeeded();
   dfGap();
-#ifdef MOCHI_DF_COPY_ORDER
-  dfPlayer.play(track);
-#else
+#ifdef MOCHI_DF_MP3_FOLDER
   dfPlayer.playMp3Folder(track);
+#else
+  dfPlayer.play(track);  // bawaan: urutan salin di root (0x03)
 #endif
   markPlay();
+  loopTrack = 0;
+  return true;
+}
+
+// Trek diulang terus sampai mochiDfStop() / trek lain (dering panggilan, cari perangkat, alarm).
+bool mochiDfLoopTrack(uint16_t track) {
+  if (!dfOk || track == 0) return false;
+  sendVolumeIfNeeded();
+  dfGap();
+#ifdef MOCHI_DF_MP3_FOLDER
+  dfPlayer.playMp3Folder(track);  // /MP3 tidak punya perintah ulang: diputar lagi saat selesai
+#else
+  dfPlayer.loop(track);           // 0x08: ulang satu trek (urutan salin)
+#endif
+  markPlay();
+  loopTrack = track;
   return true;
 }
 
@@ -136,6 +154,7 @@ bool mochiDfPlayMusic(uint16_t file) {
   dfGap();
   dfPlayer.playFolder(MOCHI_DF_FOLDER_MUSIC, file);
   markPlay();
+  loopTrack = 0;
   return true;
 }
 
@@ -152,27 +171,16 @@ int mochiDfMusicCount(bool refresh) {
   return n;
 }
 
-bool mochiDfPlayNotif() {
-  if (!dfOk) return false;
-  sendVolumeIfNeeded();
-  dfGap();
-  dfPlayer.playFolder(MOCHI_DF_FOLDER_NOTIF, 1);
-  markPlay();
-  return true;
-}
-
-void mochiDfPlayRinger(bool on) {
-  if (!dfOk) return;
-  if (!on) { mochiDfStop(); return; }
-  sendVolumeIfNeeded();
-  dfGap();
-  dfPlayer.loopFolder(MOCHI_DF_FOLDER_RING);
-  markPlay();
-}
-
 bool mochiDfTakeFinished() {
   if (!finished) return false;
   finished = false;
+  if (loopTrack) {
+#ifdef MOCHI_DF_MP3_FOLDER
+    uint16_t t = loopTrack;
+    mochiDfLoopTrack(t);
+#endif
+    return false;  // trek ulang tidak dilaporkan selesai
+  }
   return true;
 }
 

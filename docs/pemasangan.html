@@ -15,10 +15,10 @@
 <header class="hero wrap">
   <div class="verswitch" role="navigation" aria-label="Panduan rakit"><a href="pemasangan.html" class="on">🧩 Demo rakit langkah demi langkah</a><a href="pemasangan-kabel.html">🔌 Diagram &amp; tabel kabel</a></div>
   <svg class="mochi" viewBox="0 0 120 96" aria-hidden="true"><ellipse cx="60" cy="88" rx="36" ry="5" fill="#f6c6d9" opacity=".6"/><path d="M14 66c0-30 20-52 46-52s46 22 46 52c0 14-12 20-46 20S14 80 14 66z" fill="#fff" stroke="#ffb3cf" stroke-width="3"/><rect x="33" y="34" width="54" height="36" rx="10" fill="#2b2140"/><ellipse cx="49" cy="51" rx="5" ry="6.5" fill="#7ef0c8"/><ellipse cx="71" cy="51" rx="5" ry="6.5" fill="#7ef0c8"/><path d="M53 61q7 6 14 0" stroke="#ff8fb8" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="38" cy="64" rx="5" ry="3" fill="#ffb3cf" opacity=".6"/><ellipse cx="82" cy="64" rx="5" ry="3" fill="#ffb3cf" opacity=".6"/><path d="M100 18v16a5 4 0 1 1-2-3V20l10-3v13a5 4 0 1 1-2-3V15z" fill="#ff8fb8"/></svg>
-  <div class="kicker">demo rakit · dfplayer · v0.7.0</div>
+  <div class="kicker">demo rakit · dfplayer · v0.7.1</div>
   <h1>🧩 Demo <span>Cara Pemasangan</span> Mochi DFPlayer</h1>
   <p class="sub">Panduan rakit interaktif dengan <b>kabel lepas</b>: ESP32-C3 Super Mini + layar ST7789 1,3" + TTP223 + DFPlayer Mini + speaker 8 Ω, dan MPU6050 kalau mau. Urutannya: daftar komponen, solder modul satu per satu, siapkan kartu SD, flash, lalu uji nyala pertama. Semua pin dicek dengan <code>firmware/include/MochiRzmong.h</code> dan <code>User_Setup_ST7789.h</code>.</p>
-  <div class="chips"><span class="chip">🧠 ESP32-C3 Super Mini</span><span class="chip">📺 ST7789 1,3" 240×240</span><span class="chip">🎵 DFPlayer Mini</span><span class="chip">👆 TTP223</span><span class="chip">🌀 MPU6050 (opsional)</span><span class="chip">⚡ firmware 0.7.0</span></div>
+  <div class="chips"><span class="chip">🧠 ESP32-C3 Super Mini</span><span class="chip">📺 ST7789 1,3" 240×240</span><span class="chip">🎵 DFPlayer Mini</span><span class="chip">👆 TTP223</span><span class="chip">🌀 MPU6050 (opsional)</span><span class="chip">⚡ firmware 0.7.1</span></div>
 </header>
 <nav class="tabs"><div class="wrap "><a href="index.html">⚡ Instalasi firmware</a><a href="panduan.html">📖 Cara pakai</a><a href="instalasi.html">🔧 Rakit &amp; kartu SD</a><a href="pemasangan.html" class="on" aria-current="page">🧩 Demo rakit</a><a href="pemasangan-kabel.html">🔌 Diagram kabel</a><a href="kelola.html">🎵 Animasi &amp; suara</a><a href="animasi.html">🎞️ Tambah animasi</a><a href="https://rz7mong.github.io/mochi-rzmong/">💗 Mochi rzmong (GIF)</a><a href="https://github.com/rz7mong/mochi-dfplayer">🐙 GitHub</a></div></nav>
 <main class="wrap">
@@ -52,11 +52,9 @@
   <h2>💾 Siapkan kartu SD DFPlayer</h2>
   <div class="card">
     <div class="step"><div class="num">1</div><div>Pakai kartu microSD <b>≤ 32 GB</b>, format <b>FAT32</b>.</div></div>
-    <div class="step"><div class="num">2</div><div>Buat folder dan salin MP3 dengan nama bernomor. File dicocokkan dari <b>nama</b>, jadi urutan salin tidak penting.
-<pre class="tree">/MP3/0001.mp3 … 0040.mp3   suara animasi (nomor = trek model)
-/01/001.mp3 … 255.mp3      lagu untuk Pemutar MP3
-/02/001.mp3                suara notifikasi Chronos
-/03/001.mp3 …              nada dering panggilan Chronos</pre></div></div>
+    <div class="step"><div class="num">2</div><div>Format kartu, salin isi <code>sd/mp3/</code> ke root <b>berurutan</b> (DFPlayer memakai urutan salin), lalu folder lagu <code>/01</code>.
+<pre class="tree">/0001.mp3 … /0048.mp3      suara animasi + Chronos, disalin PERTAMA
+/01/001.mp3 …              lagu Pemutar MP3, disalin SESUDAHNYA</pre></div></div>
     <div class="step"><div class="num">3</div><div>Di macOS, hapus file <code>._*</code> dan <code>.DS_Store</code>. Cek isi kartu: <code>python firmware/tools/daftar_trek.py --sd /path/ke/kartu</code>.</div></div>
     <div class="step"><div class="num">4</div><div>Masukkan kartu ke slot DFPlayer <b>sebelum</b> menyalakan perangkat.</div></div>
     <p class="hint">Nomor trek tiap model dan cara menambah suara: <a href="kelola.html#suara">Animasi &amp; suara</a>.</p>
@@ -79,11 +77,11 @@
   <div class="card">
     <div class="tbl"><table><tr><th>Cek</th><th>Yang harus terjadi</th><th>Kalau tidak</th></tr>
       <tr><td>Layar</td><td>Lampu latar nyala, klip <code>wajah/senyum_kedip</code> langsung main</td><td>Cek SCL 4, SDA 6, DC 3, RES 10, BLK 7, VCC 3V3. Modul 8 pin: CS ke GND</td></tr>
-      <tr><td>Suara</td><td>Suara model terdengar dari speaker (<code>/MP3/0019.mp3</code> untuk <code>wajah/senyum_kedip</code>)</td><td>VCC DFPlayer 5V, GPIO20 → 1 kΩ → RX, kartu FAT32, folder <code>/MP3</code></td></tr>
+      <tr><td>Suara</td><td>Suara model terdengar dari speaker (<code>0019.mp3</code> untuk <code>wajah/senyum_kedip</code>)</td><td>VCC DFPlayer 5V, GPIO20 → 1 kΩ → RX, kartu FAT32, <code>0001</code>–<code>0048</code> di root disalin berurutan</td></tr>
       <tr><td>Ketuk 1×</td><td>Animasi berhenti, layar gelap. Ketuk lagi: main</td><td>Cabut-colok tanpa menyentuh sensor (deteksi jenis sensor saat nyala). Kabel I/O → GPIO1, VCC 3V3</td></tr>
       <tr><td>Ketuk 2×</td><td>Model berikutnya</td><td>Ketuk lebih cepat (jeda ≤ 0,35 dtk)</td></tr>
       <tr><td>Tahan 2 dtk</td><td>Menu terbuka</td><td>Kalau langsung "tahan" terus: polaritas sentuh terbalik</td></tr>
-      <tr><td>Serial 115200</td><td><code>Mochi DFPlayer 0.7.0, 14 model …</code>, <code>sentuh GPIO1: …</code>, <code>MPU6050 siap</code> (kalau dipasang)</td><td><code>MPU6050 tidak ada</code>: cek SDA 8, SCL 9, 3V3</td></tr>
+      <tr><td>Serial 115200</td><td><code>Mochi DFPlayer 0.7.1, 14 model …</code>, <code>sentuh GPIO1: …</code>, <code>MPU6050 siap</code> (kalau dipasang)</td><td><code>MPU6050 tidak ada</code>: cek SDA 8, SCL 9, 3V3</td></tr>
     </table></div>
     <p class="hint">Serial monitor lewat USB: <code>pio device monitor</code> (115200). Daftar gejala lain: <a href="instalasi.html#masalah">Kalau ada masalah</a>.</p>
   </div>
@@ -101,7 +99,7 @@
   </div>
 </section>
 </main>
-<footer>© rzmong · MIT (kode) · Mochi DFPlayer 0.7.0 · proyek independen, terinspirasi Dasai Mochi, bukan produk resmi</footer>
+<footer>© rzmong · MIT (kode) · Mochi DFPlayer 0.7.1 · proyek independen, terinspirasi Dasai Mochi, bukan produk resmi</footer>
 <script src="./wiring.js?v=1"></script>
 <script>
 (function(){
@@ -109,15 +107,14 @@ const MW=MochiWiring, $=id=>document.getElementById(id);
 const PREV=['esp','tft','ttp','df','dfpwr','spk','mpu'];
 const SDILL=`<svg viewBox="0 0 640 420" xmlns="http://www.w3.org/2000/svg" font-family="Nunito,system-ui,sans-serif" role="img" aria-label="Isi kartu SD"><rect width="640" height="420" rx="14" fill="#fffafc"/>
 <g transform="translate(40 60)"><path d="M0 14a14 14 0 0 1 14-14h120l40 40v240a14 14 0 0 1-14 14H14a14 14 0 0 1-14-14z" fill="#334155"/><rect x="18" y="0" width="12" height="34" fill="#e6c35c"/><rect x="40" y="0" width="12" height="34" fill="#e6c35c"/><rect x="62" y="0" width="12" height="34" fill="#e6c35c"/><rect x="84" y="0" width="12" height="34" fill="#e6c35c"/><text x="87" y="170" font-size="26" fill="#fff" font-weight="800" text-anchor="middle">microSD</text><text x="87" y="200" font-size="16" fill="#cbd5e1" text-anchor="middle">FAT32 · ≤ 32 GB</text></g>
-<g font-size="17" fill="#3b2a3a"><text x="260" y="70" font-weight="800">📁 /MP3</text><text x="290" y="96" fill="#8a7488">0001.mp3 … 0040.mp3 · suara animasi</text>
+<g font-size="17" fill="#3b2a3a"><text x="260" y="70" font-weight="800">📄 /0001 … /0048.mp3</text><text x="290" y="96" fill="#8a7488">suara animasi + Chronos (salin dulu)</text>
 <text x="260" y="146" font-weight="800">📁 /01</text><text x="290" y="172" fill="#8a7488">001.mp3 … 255.mp3 · pemutar MP3</text>
-<text x="260" y="222" font-weight="800">📁 /02</text><text x="290" y="248" fill="#8a7488">001.mp3 · notifikasi Chronos</text>
-<text x="260" y="298" font-weight="800">📁 /03</text><text x="290" y="324" fill="#8a7488">001.mp3 … · dering panggilan</text></g>
-<text x="320" y="392" font-size="15" fill="#ff5c98" font-weight="800" text-anchor="middle">nama file menentukan nomor trek, urutan salin tidak penting</text></svg>`;
+</g>
+<text x="320" y="392" font-size="15" fill="#ff5c98" font-weight="800" text-anchor="middle">format dulu, salin 0001…0048 berurutan, baru /01</text></svg>`;
 const FLASHILL=`<svg viewBox="0 0 640 420" xmlns="http://www.w3.org/2000/svg" font-family="Nunito,system-ui,sans-serif" role="img" aria-label="Flash dari browser"><rect width="640" height="420" rx="14" fill="#fffafc"/>
 <rect x="40" y="60" width="330" height="210" rx="12" fill="#1f2937"/><rect x="56" y="76" width="298" height="178" rx="6" fill="#fff"/><rect x="20" y="270" width="370" height="18" rx="8" fill="#9ca3af"/>
 <rect x="72" y="92" width="266" height="22" rx="6" fill="#ffd3e4"/><text x="82" y="108" font-size="12" fill="#3b2a3a">Chrome / Edge · Instalasi firmware</text>
-<rect x="110" y="150" width="190" height="42" rx="14" fill="#ff5c98"/><text x="205" y="177" font-size="16" fill="#fff" font-weight="800" text-anchor="middle">Install 0.7.0</text>
+<rect x="110" y="150" width="190" height="42" rx="14" fill="#ff5c98"/><text x="205" y="177" font-size="16" fill="#fff" font-weight="800" text-anchor="middle">Install 0.7.1</text>
 <text x="205" y="222" font-size="12" fill="#8a7488" text-anchor="middle">pilih port → Erase → Install</text>
 <path d="M390 279 C470 279 450 200 500 200" stroke="#475569" stroke-width="7" fill="none" stroke-linecap="round"/>
 <rect x="490" y="120" width="110" height="170" rx="10" fill="#1d212b"/><rect x="520" y="104" width="50" height="30" rx="7" fill="#c9ced8"/><text x="545" y="232" font-size="12" fill="#fff" text-anchor="middle" font-weight="700">ESP32-C3</text>
@@ -127,8 +124,8 @@ const BOOTILL=`<svg viewBox="0 0 640 420" xmlns="http://www.w3.org/2000/svg" fon
 <rect x="60" y="50" width="250" height="250" rx="18" fill="#1d4fa8"/><rect x="80" y="70" width="210" height="210" rx="8" fill="#0b1020"/>
 <g transform="translate(185 175)"><ellipse cx="-34" cy="-8" rx="13" ry="18" fill="#7ef0c8"/><ellipse cx="34" cy="-8" rx="13" ry="18" fill="#7ef0c8"/><path d="M-14 24q14 12 28 0" stroke="#ff8fb8" stroke-width="5" fill="none" stroke-linecap="round"/></g>
 <path d="M330 150q20-20 0-40M345 165q36-36 0-70" stroke="#ff8fb8" stroke-width="5" fill="none" stroke-linecap="round"/>
-<g font-size="15" fill="#3b2a3a"><text x="380" y="90" font-weight="800">✅ senyum_kedip main</text><text x="380" y="125" font-weight="800">🔊 suara /MP3/0019</text><text x="380" y="160" font-weight="800">👆 ketuk 1× = berhenti</text><text x="380" y="195" font-weight="800">👆👆 ketuk 2× = model</text><text x="380" y="230" font-weight="800">✋ tahan 2 dtk = menu</text></g>
-<rect x="60" y="320" width="520" height="60" rx="10" fill="#1f2937"/><text x="76" y="345" font-size="12" fill="#a7f3d0" font-family="ui-monospace,monospace">Mochi DFPlayer 0.7.0, 14 model, rotasi 2, Chronos OFF</text><text x="76" y="366" font-size="12" fill="#a7f3d0" font-family="ui-monospace,monospace">MPU6050 siap</text></svg>`;
+<g font-size="15" fill="#3b2a3a"><text x="380" y="90" font-weight="800">✅ senyum_kedip main</text><text x="380" y="125" font-weight="800">🔊 suara 0019</text><text x="380" y="160" font-weight="800">👆 ketuk 1× = berhenti</text><text x="380" y="195" font-weight="800">👆👆 ketuk 2× = model</text><text x="380" y="230" font-weight="800">✋ tahan 2 dtk = menu</text></g>
+<rect x="60" y="320" width="520" height="60" rx="10" fill="#1f2937"/><text x="76" y="345" font-size="12" fill="#a7f3d0" font-family="ui-monospace,monospace">Mochi DFPlayer 0.7.1, 14 model, rotasi 2, Chronos OFF</text><text x="76" y="366" font-size="12" fill="#a7f3d0" font-family="ui-monospace,monospace">MPU6050 siap</text></svg>`;
 const S=[
 {id:'prep',kick:'Langkah 0 · Persiapan',title:'Alat & aturan dasar',show:[],
  body:`<ul><li>Solder, timah, kabel tipis (silikon / AWG 26–28), multimeter, resistor <b>1 kΩ</b> (1–2 buah), elko <b>100–470 µF ≥ 10 V</b>.</li><li>Kerjakan dengan <b>USB tercabut</b>. Colok hanya saat uji.</li><li>Urutan: layar → sentuh → DFPlayer (data, lalu daya) → speaker → MPU6050 (opsional) → cek multimeter.</li></ul><div class="info">ℹ️ Cek pin di firmware: <code>MochiRzmong.h</code> (sentuh, DFPlayer, MPU6050) dan <code>User_Setup_ST7789.h</code> (layar).</div>`},
@@ -149,7 +146,7 @@ const S=[
 {id:'cek',kick:'Langkah 8 · Cek',title:'Cek multimeter sebelum colok',show:MW.ALL,all:true,
  body:`<ul><li>5V–GND dan 3V3–GND <b>tidak boleh short</b>.</li><li>SPK_1 / SPK_2 <b>tidak</b> tersambung ke GND.</li><li>Resistor 1 kΩ ada di antara GPIO20 dan RX.</li><li>Tidak ada kabel di GPIO9 yang menuju GND.</li></ul>`},
 {id:'sd',kick:'Langkah 9 · Kartu SD',title:'Isi kartu microSD DFPlayer',ill:SDILL,
- body:`<ul><li>FAT32, ≤ 32 GB. Folder <code>/MP3</code>, <code>/01</code>, <code>/02</code>, <code>/03</code>.</li><li>Nama file bernomor: 4 digit di <code>/MP3</code>, 3 digit di folder angka.</li><li>Cek: <code>python firmware/tools/daftar_trek.py --sd /path/kartu</code>.</li></ul><p><a href="#kartu-sd">Detail kartu SD ↓</a></p>`},
+ body:`<ul><li>FAT32, ≤ 32 GB. Root <code>0001</code>–<code>0048</code> (isi <code>sd/mp3/</code>, disalin berurutan), lalu folder <code>/01</code>.</li><li>Nama file bernomor: 4 digit di root, 3 digit di <code>/01</code>. Yang menentukan trek adalah urutan salin, jadi salin satu per satu.</li><li>Cek: <code>python firmware/tools/daftar_trek.py --sd /path/kartu</code>.</li></ul><p><a href="#kartu-sd">Detail kartu SD ↓</a></p>`},
 {id:'flash',kick:'Langkah 10 · Flash',title:'Pasang firmware dari browser',ill:FLASHILL,
  body:`<ul><li>Chrome/Edge di komputer → <a href="index.html#flash">Instalasi firmware</a>.</li><li>Tahan BOOT, colok USB-C, lepas BOOT, klik Install, pilih port.</li><li>Centang <b>Erase</b> untuk pemasangan pertama.</li></ul>`},
 {id:'boot',kick:'Langkah 11 · Uji',title:'Uji nyala pertama',ill:BOOTILL,

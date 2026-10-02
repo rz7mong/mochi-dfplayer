@@ -13,7 +13,7 @@ Teman meja **ESP32-C3 Super Mini** + layar **ST7789 1,3" 240×240** dengan **sua
 </p>
 <p align="center"><sub>Pratinjau kecil klip di firmware (wajah, mobil, gundam). Di perangkat semuanya frame JPEG 240 lebar.</sub></p>
 
-**Firmware 0.7.0** · **MIT © rzmong** · Situs + pemasang browser: **https://rz7mong.github.io/mochi-dfplayer/** (sumber di [`docs/`](docs/))
+**Firmware 0.7.1** · **MIT © rzmong** · Situs + pemasang browser: **https://rz7mong.github.io/mochi-dfplayer/** (sumber di [`docs/`](docs/))
 
 ### 📚 Panduan di situs
 
@@ -22,15 +22,15 @@ Teman meja **ESP32-C3 Super Mini** + layar **ST7789 1,3" 240×240** dengan **sua
 | ⚡ [Instalasi firmware](https://rz7mong.github.io/mochi-dfplayer/) ([`docs/index.html`](docs/index.html)) | Flash dari browser, setelah flash, kalau gagal |
 | 🧩 [Demo rakit](https://rz7mong.github.io/mochi-dfplayer/pemasangan.html) ([`docs/pemasangan.html`](docs/pemasangan.html)) | Komponen → solder tiap modul → kartu SD → flash → uji nyala, langkah demi langkah |
 | 🔌 [Diagram kabel](https://rz7mong.github.io/mochi-dfplayer/pemasangan-kabel.html) ([`docs/pemasangan-kabel.html`](docs/pemasangan-kabel.html)) | Diagram lengkap, tabel pin per modul / per GPIO, tips |
-| 🎵 [Animasi &amp; suara](https://rz7mong.github.io/mochi-dfplayer/kelola.html) ([`docs/kelola.html`](docs/kelola.html)) | Tambah GIF, suara `/MP3`, pemutar musik `/01`, suara Chronos `/02` `/03` |
+| 🎵 [Animasi &amp; suara](https://rz7mong.github.io/mochi-dfplayer/kelola.html) ([`docs/kelola.html`](docs/kelola.html)) | Tambah GIF, suara animasi + Chronos (root `0001`–`0048`), pemutar musik `/01` |
 | 📖 [Cara pakai](https://rz7mong.github.io/mochi-dfplayer/panduan.html) · 🔧 [Rakit &amp; kartu SD](https://rz7mong.github.io/mochi-dfplayer/instalasi.html) · 🎞️ [Tambah animasi](https://rz7mong.github.io/mochi-dfplayer/animasi.html) | Menu, gerakan, kartu SD, anggaran flash |
 
 ## ✨ Fitur
 
 - **14 model animasi** di flash: 6 wajah, 2 mobil, 6 gundam (nama Indonesia). JPEG lebar 240, tempo per klip. Saat nyala langsung `wajah/senyum_kedip`.
-- **Suara MP3 per model** dari kartu microSD DFPlayer (`/MP3/0001.mp3` …), **diputar sampai habis** lalu diulang. Tidak lagi dipotong tiap putaran gambar.
+- **Suara MP3 per model** dari kartu microSD DFPlayer (root `0001.mp3` … `0048.mp3`, menurut **urutan salin**), **diputar sampai habis** lalu diulang. **Semua 14 animasi punya suara** (isi kartu siap salin di [`sd/mp3/`](sd/mp3/)).
 - **Pemutar MP3** di menu: putar/jeda, berikut/sebelum, volume, mode *ulang semua / ulang 1 / acak*, layar nomor trek dan volume. Lagu dari folder `/01`, terpisah dari suara animasi. Musik tetap jalan saat kembali ke animasi.
-- **Chronos (BLE)**: jam dan tanggal dari HP, baterai HP, notifikasi, panggilan masuk, navigasi, cari perangkat.
+- **Chronos (BLE)**: jam dan tanggal dari HP, baterai HP, cuaca, kontrol musik HP, notifikasi (dibuka klip `cinta_pipi`), panggilan masuk, navigasi, cari perangkat, alarm, suara sambung/putus.
 - **Satu tombol sentuh**: ketuk, ketuk 2×, tahan, tahan 2 detik (menu). TTP223 tanpa solder: jenis sensor dideteksi otomatis saat nyala.
 - **Goyang** (opsional, MPU6050): klip "pusing" tema itu (tema tanpa klip pusing: klip lain di tema yang sama).
 - **Pengaturan tersimpan** (volume, rotasi, Chronos, Jam HP, mode musik, lagu terakhir).
@@ -100,39 +100,71 @@ Rakit langkah demi langkah: [Demo rakit](https://rz7mong.github.io/mochi-dfplaye
 <a id="kartu-sd"></a>
 ## 💾 Kartu SD DFPlayer
 
-Format **FAT32**, lalu buat struktur ini:
+Isi kartu siap pakai ada di [`sd/mp3/`](sd/mp3/) (48 file, 1,4 MB). Firmware memutar file root menurut **urutan salin** (perintah DFPlayer 0x03: "file ke-N yang disalin"), **bukan nama**. Jadi:
+
+1. **Format** kartu FAT32 (≤ 32 GB), kartu harus kosong.
+2. Salin `sd/mp3/0001.mp3` … `0048.mp3` ke **root**, **berurutan, satu per satu** (jangan seret sekaligus; Explorer/Finder bisa menyalin acak).
+3. **Baru setelah itu** buat folder `/01` dan salin lagu `001.mp3`, `002.mp3`, … (folder ikut terhitung di urutan global, jadi harus sesudah root).
+
+```bash
+# Linux (kartu di /media/SD)
+for f in sd/mp3/*.mp3; do cp "$f" /media/SD/; sync; done
+mkdir /media/SD/01 && cp lagu/*.mp3 /media/SD/01/
+```
+
+```powershell
+# Windows PowerShell (kartu di E:)
+Get-ChildItem sd\mp3\*.mp3 | Sort-Object Name | ForEach-Object { Copy-Item $_.FullName E:\ }
+New-Item -ItemType Directory E:\01; Copy-Item lagu\*.mp3 E:\01\
+```
 
 ```
-/MP3/0001.mp3 … 0040.mp3   suara animasi (nomor = trek model, lihat tabel)
-/01/001.mp3 … 255.mp3      lagu untuk Pemutar MP3
-/02/001.mp3                suara notifikasi Chronos
-/03/001.mp3 …              nada dering panggilan Chronos (diulang)
+/0001.mp3 … /0048.mp3      root: suara animasi + suara Chronos (tabel di bawah), disalin PERTAMA
+/01/001.mp3 … 255.mp3      lagu untuk Pemutar MP3, disalin SESUDAH root
 ```
 
-- File dicocokkan dari **nama**, jadi urutan salin tidak penting. Nama folder `MP3`, `01`, `02`, `03`; nama file diawali nomor 4 digit (`/MP3`) atau 3 digit (folder angka).
+- Nomor yang tidak dipakai berisi MP3 hening 0,5 dtk. **Jangan dihapus**: tanpa pengisi, urutan salin bergeser dan suara tertukar.
+- Ganti suara: timpa file dengan nama yang sama lalu ulangi langkah 1–3 (format dulu), supaya urutannya tetap.
 - Nomor lagu di `/01` **harus berurutan tanpa lubang** (001, 002, 003 …). "Berikutnya" berhenti di lubang pertama lalu kembali ke 001.
-- Di macOS, hapus file `._*` dan `.DS_Store`.
+- Di macOS, hapus file `._*` dan `.DS_Store` (ikut terhitung sebagai file): `dot_clean /Volumes/SD`.
 - Cek kartu: `python firmware/tools/daftar_trek.py --sd /path/ke/kartu`.
+- Buat ulang semua MP3: `python3 sd/buat_suara.py` (numpy + ffmpeg).
+- Ingin dicocokkan dari **nama** (urutan bebas)? Build dengan `-DMOCHI_DF_MP3_FOLDER` dan taruh file yang sama di `/MP3/0001.mp3` … (catatan: loop dering/cari/alarm lalu diulang oleh firmware, bukan modul).
 
-| Model (ketuk 2×) | File `/MP3/` | Klip |
-|---|---|---|
-| 1 | `0019` | wajah/senyum_kedip (klip saat nyala) |
-| 2 | `0020` | wajah/pusing (goyang) |
-| 3 | `0023` | wajah/cinta (tahan) |
-| 4 | `0021` | wajah/sorot |
-| 5 | `0022` | wajah/sirine |
-| 6 | `0040` | wajah/cinta_pipi |
-| 7 | `0034` | mobil/lampu_sorot |
-| 8 | `0038` | mobil/speedometer (tahan) |
-| 9 | `0026` | gundam/helm_hujan |
-| 10 | `0027` | gundam/helm_siaga (tahan) |
-| 11 | `0028` | gundam/isyarat |
-| 12 | `0029` | gundam/kokpit |
-| 13 | `0030` | gundam/kokpit_2 |
-| 14 | `0031` | gundam/pilot |
-| – | 0001–0018, 0024, 0025, 0032, 0033, 0035–0037, 0039 | tidak dipakai, boleh tidak ada |
+**Tabel kartu SD (semua nomor)**
 
-**Mode cadangan urutan salin** (`-DMOCHI_DF_COPY_ORDER`): suara animasi ditaruh di **root** (`0001.mp3` …) dan diputar menurut **urutan salin** FAT, bukan nama. Format kartu, salin file root berurutan **sebelum** folder lain. Tabel trek: `python firmware/tools/daftar_trek.py --copy-order`.
+| File | Dipakai untuk | Suara (`sd/mp3/`) | Sumber |
+|---|---|---|---|
+| `0001`–`0018` | – | hening 0,5 dtk (pengisi) | sintetis |
+| `0019` | model 1 wajah/senyum_kedip (klip saat nyala) | tawa kecil "hi-hi-hi" + denting kedip, 8 dtk | sintetis |
+| `0020` | model 2 wajah/pusing (goyang) | nada goyang menurun + per "boing", 4,4 dtk | sintetis |
+| `0021` | model 4 wajah/sorot | desis lirik kiri-kanan + blip, 6 dtk | sintetis |
+| `0022` | model 5 wajah/sirine | sirine polisi naik-turun ×2, 3,8 dtk | sintetis |
+| `0023` | model 3 wajah/cinta (tahan) | detak jantung + arpeggio + kilau, 2,5 dtk | sintetis |
+| `0024`–`0025` | – | hening (pengisi) | sintetis |
+| `0026` | model 9 gundam/helm_hujan | hujan di helm + tetes + servo, 3 dtk | sintetis |
+| `0027` | model 10 gundam/helm_siaga (tahan) | servo + bip siaga, 1,6 dtk | sintetis |
+| `0028` | model 11 gundam/isyarat | sandi radio + statis, 2,6 dtk | sintetis |
+| `0029` | model 12 gundam/kokpit | dengung kokpit + blip komputer, 3 dtk | sintetis |
+| `0030` | model 13 gundam/kokpit_2 | sistem menyala (sapuan naik) + dengung, 3 dtk | sintetis |
+| `0031` | model 14 gundam/pilot | servo + kunci mekanis + bip, 2,6 dtk | sintetis |
+| `0032`–`0033` | – | hening (pengisi) | sintetis |
+| `0034` | model 7 mobil/lampu_sorot | klik lampu + desis sorot + mesin idle, 6,7 dtk | sintetis |
+| `0035`–`0037` | – | hening (pengisi) | sintetis |
+| `0038` | model 8 mobil/speedometer (tahan) | gas, pindah gigi, gas, 4,2 dtk | sintetis |
+| `0039` | – | hening (pengisi) | sintetis |
+| `0040` | model 6 wajah/cinta_pipi | "uwu" malu + lonceng kecil, 3 dtk | sintetis |
+| `0041` | Chronos notifikasi | ding-ding naik | sintetis |
+| `0042` | Chronos instruksi navigasi baru | tiga nada naik | sintetis |
+| `0043` | Chronos panggilan masuk (diulang) | trill dering | sintetis |
+| `0044` | Chronos cari perangkat (diulang, volume 30) | bip tinggi keras | sintetis |
+| `0045` | Chronos alarm (diulang) | bip-bip-bip-bip | sintetis |
+| `0046` | Chronos tersambung | dua nada naik | sintetis |
+| `0047` | Chronos terputus | dua nada turun | sintetis |
+| `0048` | Chronos navigasi selesai | arpeggio selesai | sintetis |
+
+"Sintetis" = dibuat dari nol oleh [`sd/buat_suara.py`](sd/buat_suara.py) (numpy, tanpa sampel luar), MIT seperti kode. Suara animasi diberi jeda hening di akhir karena firmware mengulang trek saat selesai.
+Alternatif: `python3 sd/buat_suara.py --pack mochi-themes.zip` mengganti 14 suara animasi dengan potongan WAV asli dari paket tema rzmong ([mochi-rzmong `assets-v1`](https://github.com/rz7mong/mochi-rzmong/releases/tag/assets-v1): mis. `gundam/kokpit.wav`, `polisi/police.wav`, `mobil/headlights.wav`, `wajah/love_hearts_kiss.wav`). Paket itu tidak mencantumkan lisensi, jadi hasilnya tidak dimasukkan ke repo; pakai untuk kartu sendiri.
 
 ## 👆 Cara main
 
@@ -179,17 +211,22 @@ Tombol berurutan: **⏯ putar/jeda · ⏭ berikutnya · ⏮ sebelumnya · 🔊+ 
 1. Pasang aplikasi **Chronos** (fbiego) di HP Android.
 2. Di perangkat: tahan 2 dtk → menu → **Chronos BLE** → ketuk 2× (jadi ON).
 3. Di aplikasi Chronos, sambungkan perangkat **`rzmong dfplayer`**.
-4. Opsional: menu → **Jam HP** untuk layar jam (tanggal, hari, jam:menit, baterai HP).
+4. Opsional: menu → **Jam HP** untuk layar jam (tanggal, hari, jam:menit, mata berkedip, baterai HP, cuaca, lagu di HP).
 
-| Dari HP | Di perangkat | Sentuh |
-|---|---|---|
-| Notifikasi | Layar notifikasi 6 dtk + suara `/02/001.mp3` | ketuk = tutup |
-| Panggilan masuk | Layar panggilan + dering `/03` | tahan = tutup (dering berhenti) |
-| Navigasi yang diteruskan aplikasi Chronos | Ikon arah, jarak, petunjuk, ETA | ketuk 2× = sembunyikan |
-| Cari perangkat | Layar berkedip + suara notifikasi | |
-| Waktu, baterai HP | Layar Jam HP dan Tentang | |
+| Dari HP | Di perangkat | Suara | Sentuh |
+|---|---|---|---|
+| Tersambung / terputus | Info 1,5 dtk | `0046` / `0047` | |
+| Notifikasi | Klip `wajah/cinta_pipi` ±1,5 dtk, lalu aplikasi, judul, pesan (teks panjang bergulir), 7–30 dtk | `0041` | ketuk = tutup |
+| Panggilan masuk | Nama penelepon, layar berkedip | `0043` diulang | ketuk/tahan = tutup + bisukan (menolak panggilan tidak didukung aplikasi) |
+| Navigasi (menu "Tampil navigasi" ON) | Ikon arah, jarak, petunjuk, ETA | `0042` tiap instruksi baru, `0048` saat selesai | ketuk = sembunyikan sampai navigasi berikutnya |
+| Cari perangkat | Layar berkedip 60 dtk | `0044` diulang, volume 30 | ketuk = berhenti |
+| Alarm (diatur di aplikasi) | Layar alarm berkedip 60 dtk | `0045` diulang | ketuk = berhenti |
+| Waktu, baterai HP, cuaca | Layar Jam HP dan Tentang | | |
+| Musik di HP | Judul lagu di layar Jam HP | | Jam HP: ketuk = putar/jeda, ketuk 2× = lagu berikutnya |
 
-Chronos mati secara bawaan (hemat daya). Notifikasi dan panggilan memotong musik; setelah selesai, lagu diulang dari awal trek.
+Prioritas layar: cari > panggilan > alarm > notifikasi > navigasi > info. Selama layar Chronos tampil, suara animasi diam; musik dari pemutar dipotong lalu diulang dari awal trek setelahnya. Notifikasi tidak memotong dering panggilan. Mode Jangan Ganggu di aplikasi membisukan suara notifikasi.
+
+Chronos mati secara bawaan (hemat daya).
 
 ## ⚡ Flash
 
@@ -210,14 +247,14 @@ Saat build, `extra_script.py` menjalankan `tools/embed_jpeg.py` yang menanam kli
 
 | Flag | Fungsi |
 |---|---|
-| `-DMOCHI_DF_COPY_ORDER` | Suara animasi di root, menurut urutan salin (mode lama) |
+| `-DMOCHI_DF_MP3_FOLDER` | Suara di `/MP3/0001.mp3` …, dicocokkan dari nama (bawaan: root, urutan salin) |
 | `-DMOCHI_PIN_DF_BUSY=5` | Pakai pin BUSY DFPlayer di GPIO5 untuk deteksi trek selesai |
 | `-DMOCHI_TOUCH_ACTIVE_HIGH` | Paksa sentuh HIGH = ditekan, dengan pull-down (bawaan: deteksi otomatis saat nyala) |
 | `-DMOCHI_TOUCH_MODE=2` | Paksa sentuh LOW = ditekan, dengan pull-up (tombol ke GND / TTP223 pad A) |
 | `-DMOCHI_DEFAULT_ROTATION=0` | Rotasi awal layar (0–3, bawaan 2 = pin LCD di bawah, tatakan GMT130). Menu "Putar layar" menimpanya |
 | `-DMOCHI_BLE_NAME=\"nama\"` | Nama perangkat di aplikasi Chronos |
 
-**Ukuran flash.** App 0x3F0000 (4.128.768 B, partisi terbesar di flash 4 MB). Build 0.7.0: **94,5%** flash (3.900.202 B), RAM 12,4%. Klip JPEG mentah 3,43 MB (14 klip) tidak muat bersama BLE, jadi `embed_jpeg.py` punya **anggaran** (`custom_jpeg_budget = 3300000` di `platformio.ini`). Jika total klip melebihinya, frame yang **nyaris sama** dengan frame sebelumnya (saat ini ≤ 0,3% piksel berbeda, jadi 3,26 MB) dipakai ulang. Jumlah frame dan tempo tetap; file aset tidak diubah. Hasilnya tercetak saat build (`ANGGARAN: …`).
+**Ukuran flash.** App 0x3F0000 (4.128.768 B, partisi terbesar di flash 4 MB). Build 0.7.1: **94,7%** flash (3.910.770 B), RAM 12,9%. Klip JPEG mentah 3,43 MB (14 klip) tidak muat bersama BLE, jadi `embed_jpeg.py` punya **anggaran** (`custom_jpeg_budget = 3300000` di `platformio.ini`). Jika total klip melebihinya, frame yang **nyaris sama** dengan frame sebelumnya (saat ini ≤ 0,3% piksel berbeda, jadi 3,26 MB) dipakai ulang. Jumlah frame dan tempo tetap; file aset tidak diubah. Hasilnya tercetak saat build (`ANGGARAN: …`).
 
 **Perbarui `docs/firmware/firmware.bin` setelah build:**
 
@@ -245,7 +282,7 @@ Animasi ditanam di firmware, jadi alurnya **impor → daftarkan → build → fl
    Opsi: `--resize`, `--crop`, `--step`, `--hold`, `--delay` (lihat `--help`). Frame lebih kecil dari 240×240 digambar di tengah.
 2. Daftarkan di `firmware/assets/meta.json` → `"jpeg_clips"`: `["<tema>", "<nama>", "", <trek>]`. Peran: `""` biasa, `"dizzy"` saat goyang, `"heart"` saat tahan. Trek boleh dikosongkan (otomatis nomor berikutnya). Tambahkan di **akhir** `"jpeg_clips"`, jangan di `"builtins"` (nomor trek builtin = posisinya, jadi baris baru akan bentrok dengan trek 19 `wajah/senyum_kedip`). Panduan lengkap: [Animasi & suara](https://rz7mong.github.io/mochi-dfplayer/kelola.html).
 3. Build + flash: `pio run -e esp32-c3-dfplayer -t upload`. Perhatikan baris `ANGGARAN` jika klip banyak.
-4. `python tools/daftar_trek.py` untuk melihat nomor trek, lalu salin `/MP3/000N.mp3` ke kartu.
+4. `python tools/daftar_trek.py` untuk melihat nomor trek, taruh suaranya sebagai `sd/mp3/000N.mp3` (nomor 0001–0040 yang masih hening, atau tambah di `KLIP` dalam `sd/buat_suara.py`), lalu salin ulang kartu sesuai [urutan salin](#kartu-sd). Nomor 0041–0048 dipakai Chronos.
 
 Aturan: klip satu tema selalu dikelompokkan. `meta.json` `"theme_order"` mengatur urutan tema (sekarang wajah, mobil, gundam; tema lain di akhir), `"boot_theme"` menentukan model saat nyala (sekarang `wajah`). Pakai hanya media yang boleh kamu sebarkan ([THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)).
 
@@ -256,7 +293,8 @@ Aturan: klip satu tema selalu dikelompokkan. `meta.json` `"theme_order"` mengatu
 | Port tidak muncul | Chrome/Edge di komputer, kabel USB data, tahan BOOT saat colok. Linux: tambahkan user ke grup `dialout`. Tutup monitor serial lain |
 | Layar hitam | SCLK 4, MOSI 6, DC 3, RST 10, BLK 7; CS modul 8 pin ke GND. Mode berhenti juga hitam: ketuk 1× |
 | Gambar terbalik/miring | Menu → Putar layar, atau `-DMOCHI_DEFAULT_ROTATION` |
-| Tidak ada suara | DFPlayer VCC 5 V, GPIO20 →(1 kΩ)→ RX, TX → GPIO21, speaker SPK_1/SPK_2, kartu FAT32, folder `/MP3`. Serial: `DFPlayer menjawab` |
+| Tidak ada suara | DFPlayer VCC 5 V, GPIO20 →(1 kΩ)→ RX, TX → GPIO21, speaker SPK_1/SPK_2, kartu FAT32 berisi `0001`–`0048` di root. Serial: `DFPlayer menjawab` |
+| Suara tertukar (mis. animasi berbunyi dering) | Urutan salin salah: format kartu, salin `sd/mp3/` satu per satu berurutan, baru `/01`. Hapus `._*` di macOS |
 | Suara tidak diulang / lagu tidak lanjut | Kabel TX modul → GPIO21 (pesan "trek selesai"), atau pasang BUSY + `-DMOCHI_PIN_DF_BUSY=5` |
 | Pemutar: "folder /01 kosong" | Lagu harus `/01/001.mp3`, `/01/002.mp3`, … |
 | Ketukan tidak terbaca / selalu "tahan" | Lihat log `sentuh GPIO1: …` dan [catatan sentuh](#catatan-sentuh). "tombol ke GND / mengambang" padahal TTP223 = kabel I/O putus. VCC TTP223 3V3. Casing di atas TTP223 ≤ 2 mm, tanpa logam |
@@ -272,8 +310,9 @@ Aturan: klip satu tema selalu dikelompokkan. `meta.json` `"theme_order"` mengatu
 | Path | Isi |
 |---|---|
 | `firmware/src/main.cpp` | Animasi, sentuh, goyang, menu, pemutar MP3, jam, overlay Chronos |
-| `firmware/include/chronos_ui.inc` | Layar + callback Chronos (dari mochi-rzmong) |
-| `firmware/lib/MochiDfPlayer/` | DFPlayer: trek animasi, folder musik, notifikasi, dering, deteksi trek selesai |
+| `firmware/include/chronos_ui.inc` | Layar + callback Chronos: notifikasi, panggilan, navigasi, cari, alarm, cuaca, musik |
+| `firmware/lib/MochiDfPlayer/` | DFPlayer: trek urutan salin, trek diulang, folder musik, deteksi trek selesai |
+| `sd/mp3/`, `sd/buat_suara.py` | Isi kartu SD siap salin (0001–0048) dan pembuatnya |
 | `firmware/assets/` | Klip JPEG (`builtin/jpeg/`), GIF sumber, `meta.json` |
 | `firmware/tools/` | `import_jpeg_clip.py`, `embed_jpeg.py`, `daftar_trek.py` |
 | `docs/` | Situs GitHub Pages + pemasang browser (`docs/firmware/`) |

@@ -1,6 +1,6 @@
 {
   "name": "Mochi DFPlayer",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "funding_url": "https://github.com/rz7mong/mochi-dfplayer",
   "new_install_prompt_erase": true,
   "builds": [
