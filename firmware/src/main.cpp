@@ -132,6 +132,11 @@ int32_t gifRead(GIFFILE *p,uint8_t *buf,int32_t len){int n=gifFile.read(buf,len)
 int32_t gifSeek(GIFFILE *p,int32_t pos){gifFile.seek(pos); p->iPos=gifFile.position(); return p->iPos;}
 
 
+static bool frameWait(int delayMs, uint32_t t0, uint32_t maxMs);
+static int findBuiltin(const char *theme,const char *stem){
+  for(int i=0;i<DEFAULT_GIF_COUNT;i++) if(strcmp(DEFAULT_GIFS[i].stem,stem)==0 && (!theme||strcmp(DEFAULT_GIFS[i].theme,theme)==0)) return i;
+  return -1;
+}
 static int jpegClip = 0, jpegFrame = 0;
 bool jpegPush(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t *bitmap){
   if(y>=H) return 0;
