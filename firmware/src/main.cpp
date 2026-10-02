@@ -1,4 +1,4 @@
-// Mochi DFPlayer 0.5.9 — perilaku pemutar sama pikapet / bangdc90.
+// Mochi DFPlayer (versi: MOCHI_VERSION di include/MochiRzmong.h) — perilaku pemutar sama pikapet / bangdc90.
 // Aset JPEG tetap milik repo ini, bukan frame video mereka.
 #include <Arduino.h>
 #include <Wire.h>
@@ -12,8 +12,19 @@
 
 TFT_eSPI tft;
 
-static const uint8_t FRAME_MS = 100;
-static const uint8_t HOLD_MS = 400;
+// uint16_t, bukan uint8_t: 400 tidak muat di uint8_t (jadi 144 ms, tap biasa terbaca "tahan").
+static const uint16_t FRAME_MS = 100;
+static const uint16_t HOLD_MS = 400;
+static const uint16_t DEBOUNCE_MS = 15;
+// Sentuh default active-low (tombol ke GND, atau TTP223 dengan jumper A disolder).
+// TTP223 bawaan pabrik (HIGH saat disentuh, seperti mochi-rzmong): build_flags = -DMOCHI_TOUCH_ACTIVE_HIGH
+#ifdef MOCHI_TOUCH_ACTIVE_HIGH
+static const int TOUCH_DOWN = HIGH;
+static const int TOUCH_PINMODE = INPUT_PULLDOWN;
+#else
+static const int TOUCH_DOWN = LOW;
+static const int TOUCH_PINMODE = INPUT_PULLUP;
+#endif
 static const float SHAKE_G = 1.2f;
 static const uint32_t SHAKE_WINDOW_MS = 1000;
 static const uint32_t SHAKE_COOLDOWN_MS = 1000;
@@ -157,10 +168,15 @@ static bool shakeNow() {
 }
 
 static void readButton() {
-  bool down = digitalRead(MOCHI_PIN_TOUCH) == LOW;
+  bool down = digitalRead(MOCHI_PIN_TOUCH) == TOUCH_DOWN;
   uint32_t now = millis();
-  if (down != pressed) debounceAt = now;
-  if (now - debounceAt < 15) return;
+  // Debounce dibanding bacaan mentah sebelumnya (lastBtn), bukan status stabil.
+  // Versi lama membandingkan dengan `pressed`, sehingga timer selalu direset dan sentuhan tidak pernah terbaca.
+  if ((down ? LOW : HIGH) != lastBtn) {
+    lastBtn = down ? LOW : HIGH;
+    debounceAt = now;
+  }
+  if (now - debounceAt < DEBOUNCE_MS) return;
   pressed = down;
   if (pressed) {
     if (!held && pressAt == 0) pressAt = now;
@@ -195,7 +211,7 @@ void setup() {
   pinMode(MOCHI_PIN_TFT_BL, OUTPUT);
   digitalWrite(MOCHI_PIN_TFT_BL, HIGH);
   Serial.begin(115200);
-  pinMode(MOCHI_PIN_TOUCH, INPUT_PULLUP);
+  pinMode(MOCHI_PIN_TOUCH, TOUCH_PINMODE);
   SPI.begin(MOCHI_PIN_TFT_SCLK, -1, MOCHI_PIN_TFT_MOSI, -1);
   tft.init();
   tft.setRotation(0);
@@ -211,7 +227,7 @@ void setup() {
   mochiDfSetVolume(20, true);
   mpuInit();
   startMain();
-  Serial.printf("edisi Indonesia, %d model\n", JPEG_CLIP_COUNT);
+  Serial.printf("Mochi DFPlayer %s, edisi Indonesia, %d model\n", MOCHI_VERSION, JPEG_CLIP_COUNT);
 }
 
 void loop() {

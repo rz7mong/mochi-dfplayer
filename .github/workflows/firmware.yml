@@ -1,0 +1,46 @@
+# Build firmware Mochi DFPlayer di setiap push / PR yang menyentuh firmware.
+# Hanya build + artefak. Tidak commit, tidak push, tidak membuat release.
+# Artefak "mochi-dfplayer-firmware" berisi firmware.bin gabungan (offset 0x0) untuk docs/firmware/.
+name: Build firmware
+on:
+  push:
+    branches: [main]
+    paths: ['firmware/**', '.github/workflows/firmware.yml']
+  pull_request:
+    paths: ['firmware/**', '.github/workflows/firmware.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.platformio
+            ~/.cache/pip
+          key: pio-${{ runner.os }}-${{ hashFiles('firmware/platformio.ini') }}
+      - name: Pasang PlatformIO
+        run: pip install -U platformio pillow esptool
+      - name: Build ESP32-C3 (aset di-embed otomatis oleh extra_script.py)
+        working-directory: firmware
+        run: pio run -e esp32-c3-dfplayer
+      - name: Gabung jadi satu firmware.bin (offset 0x0)
+        run: |
+          B=firmware/.pio/build/esp32-c3-dfplayer
+          BOOTAPP=$(find "$HOME/.platformio/packages" -name boot_app0.bin | head -1)
+          mkdir -p out
+          python -m esptool --chip esp32c3 merge_bin -o out/firmware.bin --flash_mode dio --flash_size 4MB \
+            0x0 "$B/bootloader.bin" 0x8000 "$B/partitions.bin" 0xe000 "$BOOTAPP" 0x10000 "$B/firmware.bin"
+          cp docs/firmware/manifest.json out/ 2>/dev/null || true
+          python firmware/tools/daftar_trek.py > out/daftar_trek.txt
+          ls -la out
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mochi-dfplayer-firmware
+          path: out/

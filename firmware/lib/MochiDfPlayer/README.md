@@ -1,23 +1,27 @@
 # MochiDfPlayer
 
-Library suara untuk build `esp32-c3-dfplayer`. Firmware GIF, menu, sentuh, SD, dan Chronos sama dengan MAX98357. Suara tidak dicampur ke `firmware/src/main.cpp`.
+Jalur suara DFPlayer Mini (UART 9600) untuk build `esp32-c3-dfplayer`.
 
-```bash
-cd firmware
-pio run -e esp32-c3-dfplayer -t upload
-```
+Kabel: VCC 5V, GND, RX modul ← GPIO20 lewat ±1 kΩ, TX modul → GPIO21, speaker di SPK_1/SPK_2.
 
-Kabel: VCC 5V, GND, RX modul <- GPIO20 lewat ~1k, TX modul -> GPIO21, speaker di SPK. Lepas MAX98357.
+## Yang dipakai firmware sekarang
 
-## SD modul (FAT32)
+`src/main.cpp` hanya memanggil `mochiDfInit()`, `mochiDfSetVolume()`, `mochiDfStop()`, dan `mochiDfPlayTrack(n)`.
+
+- `mochiDfPlayTrack(n)` memutar trek ke-n di **root** kartu (`0001.mp3` … ), menurut **urutan salin** FAT (perintah `0x03`).
+- Build dengan `-DMOCHI_DF_MP3_FOLDER` agar memutar `/MP3/000n.mp3` menurut **nama file** (perintah `0x12`).
+- Volume dikirim sekali saat init (28 dari 30) dan hanya dikirim ulang jika berubah. Ada jeda ≥ 80 ms antarperintah.
+- `begin()` dipanggil tanpa ACK, jadi firmware tidak tahu apakah modul benar-benar tersambung.
+
+## Fungsi lain (belum dipakai `main.cpp`)
+
+Sisa dari firmware MAX98357 dan disimpan untuk fitur berikutnya (menu, Chronos, pemutar musik). Struktur folder yang mereka harapkan:
 
 | Folder | Isi |
 |---|---|
-| 01/001.mp3 .. 011.mp3 | reaksi: raspberry, squint, love_hearts_kiss, angry_2, smirk, sleepy, yawn_tired, rainbow, pong, revs, hadouken_hit |
-| 02/001.mp3 .. | ekspresi wajah, nomor = indeks bawaan + 1 |
-| 06/001.mp3 .. 009.mp3 | tema: wajah, gundam, mobil, polisi, musik, neon, anime, makanan, intro |
-| 03/001.mp3 | notifikasi Chronos |
-| 04/001.mp3 | dering Chronos, diulang sampai ditutup |
-| 05/001.mp3 .. | lagu pemutar |
-
-Ganti tema, ekspresi, atau reaksi memutar file pasangannya. Notifikasi dan dering Chronos memutar 03 dan 04. Menu Musik memutar folder 05 (putar/jeda, berikut, sebelumnya). API: `POST /api/music` body `{"action":"play"|"next"|"prev"|"toggle"|"stop"}`.
+| `01/001.mp3` … `011.mp3` | reaksi (`mochiDfPlayReact`) |
+| `02/001.mp3` … | ekspresi wajah (`mochiDfPlayFace`) |
+| `03/001.mp3` | notifikasi (`mochiDfPlayNotif`) |
+| `04/001.mp3` | dering, diulang (`mochiDfPlayRinger`) |
+| `05/001.mp3` … | lagu (`mochiDfMusicStart/Next/Prev/Toggle`) |
+| `06/001.mp3` … `009.mp3` | tema (`mochiDfPlayTheme`) |

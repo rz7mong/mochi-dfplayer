@@ -1,2 +1,6 @@
 
 firmware/include/jpeg_clips.h
+firmware/include/defaults_gif.h
+firmware/include/jingle.h
+firmware/.pio/
+__pycache__/

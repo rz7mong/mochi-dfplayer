@@ -14,6 +14,11 @@
  *   03/001       notifikasi Chronos
  *   04/001       dering Chronos (diulang)
  *   05/001..     lagu pemutar MP3
+ *
+ * Pemutar JPEG (src/main.cpp) memakai mochiDfPlayTrack(n):
+ *   default            -> perintah 0x03 play(n): file ke-n menurut URUTAN SALIN di FAT root,
+ *                         bukan nama file. Salin 0001.mp3, 0002.mp3, ... satu per satu, berurutan.
+ *   -DMOCHI_DF_MP3_FOLDER -> perintah 0x12 playMp3Folder(n): /MP3/0001.mp3 dst., dicocokkan dari NAMA file.
  */
 static const int DF_RX = MOCHI_PIN_DF_RX;
 static const int DF_TX = MOCHI_PIN_DF_TX;
@@ -31,6 +36,11 @@ static bool musicOn = false;
 static bool ringOn = false;
 static int musicFile = 1;
 static uint32_t dfLastCmd = 0;
+// Volume 0..30 yang diminta (dfVol(20) = 28, sama seperti volume tetap 28 sebelumnya).
+static int dfVolWanted = 28;
+static int dfVolSent = -1;
+// DFPlayer butuh waktu sesudah daya masuk untuk membaca kartu SD; perintah sebelum itu diabaikan modul.
+static const uint32_t DF_BOOT_MS = 1200;
 
 static void dfGap() {
   uint32_t now = millis();
@@ -55,16 +65,23 @@ static void dfPlay(int folder, int file) {
 bool mochiDfInit() {
   dfSerial.begin(9600, SERIAL_8N1, DF_RX, DF_TX);
   delay(200);
+  // Tunggu modul selesai boot (dihitung dari nyala ESP), supaya perintah awal tidak hilang.
+  if (millis() < DF_BOOT_MS) delay(DF_BOOT_MS - millis());
+  // isACK=false: begin() selalu true walau modul tidak tersambung (tidak ada jawaban yang dicek).
   dfOk = dfPlayer.begin(dfSerial, false, false);
   if (!dfOk) {
     Serial.println("DFPlayer tidak jawab");
     return false;
   }
   dfPlayer.setTimeOut(500);
+  dfGap();
   dfPlayer.EQ(DFPLAYER_EQ_NORMAL);
+  dfGap();
   dfPlayer.outputDevice(DFPLAYER_DEVICE_SD);
-  dfPlayer.volume(dfVol(12));
-  Serial.println("DFPlayer siap");
+  dfGap();
+  dfPlayer.volume(dfVolWanted);
+  dfVolSent = dfVolWanted;
+  Serial.println("DFPlayer siap (UART dikirim, tanpa ACK)");
   return true;
 }
 
@@ -79,10 +96,16 @@ void mochiDfStop() {
 void mochiDfService() {}
 
 void mochiDfSetVolume(int vol21, bool on) {
+  if (on) dfVolWanted = dfVol(vol21);
   if (!dfOk) return;
+  int v = on ? dfVolWanted : 0;
   dfGap();
-  dfPlayer.volume(on ? dfVol(vol21) : 0);
-  if (!on) dfPlayer.pause();
+  dfPlayer.volume(v);
+  dfVolSent = v;
+  if (!on) {
+    dfGap();
+    dfPlayer.pause();
+  }
 }
 
 bool mochiDfPlayReact(int reactIndex) {
@@ -198,8 +221,18 @@ bool mochiDfPlayTrack(uint8_t track) {
   }
   musicOn = false;
   ringOn = false;
+  // Dulu volume(28) dikirim tiap trek tepat sebelum play() tanpa jeda; modul bisa menelan perintah kedua.
+  // Sekarang volume hanya dikirim jika berubah, dan selalu ada jeda antarperintah.
+  if (dfVolSent != dfVolWanted) {
+    dfGap();
+    dfPlayer.volume(dfVolWanted);
+    dfVolSent = dfVolWanted;
+  }
   dfGap();
-  dfPlayer.volume(28);
+#ifdef MOCHI_DF_MP3_FOLDER
+  dfPlayer.playMp3Folder(track);
+#else
   dfPlayer.play(track);
+#endif
   return true;
 }
