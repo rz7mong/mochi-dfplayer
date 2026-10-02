@@ -5,7 +5,8 @@
 #ifndef MOCHI_AP_PASS  /* override: build_flags = -DMOCHI_AP_PASS=\"sandibaru123\" */
 #define MOCHI_AP_PASS "rzmong123"
 #endif
-#define MOCHI_VERSION "0.6.4"
+#define MOCHI_VERSION "0.6.5"
+/* v0.6.5: gundam 8 adegan 240x240 (huykhoong gundam.mp4), dasai tinggal video03, video07, video2. */
 /* v0.6.4: gundam rzmong dihapus; wajah/mobil semua frame q80; dasai 15 klip 240x120 q75. */
 /* v0.6.3: gundam 12 klip penuh, dasai 160x80 (11 klip), tempo/trek per klip, app 0x3F0000 tanpa spiffs.
  * v0.6.2: tema "mochi" 5 klip JPEG penuh (full1, chongmat1, video17, video18, xoadau1), model awal full1.

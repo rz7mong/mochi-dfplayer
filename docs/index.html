@@ -14,14 +14,14 @@ a{color:#9cf}
 </style>
 <main>
 <h1>Mochi DFPlayer</h1>
-<p>Edisi bahasa Indonesia. ESP32-C3 + ST7789 1,3 inci 240×240. Gambar 34 model JPEG 240×240 di flash. Suara DFPlayer Mini.</p>
+<p>Edisi bahasa Indonesia. ESP32-C3 + ST7789 1,3 inci 240×240. Gambar 30 model JPEG 240×240 di flash. Suara DFPlayer Mini.</p>
 <p>Halaman instalasi: <a href="instalasi.html">instalasi.html</a>. Belum ada pemasang lewat browser.</p>
 <pre>cd firmware
 pio run -e esp32-c3-dfplayer -t upload</pre>
 <h2>Cara main</h2>
 <ul>
 <li>Ketuk singkat: putar atau berhenti. Berhenti mematikan lampu latar.</li>
-<li>Ketuk dua kali: model berikutnya. 10 wajah, 4 mobil, 5 mochi, 15 dasai. Nyala langsung di mochi/full1.</li>
+<li>Ketuk dua kali: model berikutnya. 10 wajah, 8 gundam, 4 mobil, 5 mochi, 3 dasai. Nyala langsung di mochi/full1.</li>
 <li>Tahan: klip terakhir tema itu, sampai dilepas.</li>
 <li>Goyang tiga kali dalam 1 detik: klip lain di tema yang sama, sekali.</li>
 </ul>
@@ -44,5 +44,5 @@ pio run -e esp32-c3-dfplayer -t upload</pre>
 <tr><td>MPU6050 VCC</td><td>3V3</td></tr>
 </table>
 <h2>Kartu suara</h2>
-<p><code>0001</code>–<code>0010</code>, <code>0015</code>–<code>0023</code>, <code>0032</code>–<code>0046</code> (.mp3) di root kartu FAT32. Nomor trek tetap per klip, lihat tabel di README.</p>
+<p><code>0001</code>–<code>0027</code>, <code>0034</code>, <code>0038</code>, <code>0040</code> (.mp3) di root kartu FAT32. Nomor trek tetap per klip, lihat tabel di README.</p>
 </main>

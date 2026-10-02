@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Impor klip JPEG 240x240 siap pakai (tanpa batas 6 frame) ke assets/builtin/jpeg/<theme>/<stem>.{mjpeg,json}.
 
-Sumber: header C berisi array frame JPEG (`NAME_jpg_frame_N[] PROGMEM` + `NAME_frames[]`), folder *.jpg, atau GIF.
+Sumber: header C berisi array frame JPEG (`NAME_jpg_frame_N[] PROGMEM` + `NAME_frames[]`), folder *.jpg / *.png, atau GIF.
   python3 tools/import_jpeg_clip.py mochi full1 path/full1.h
   python3 tools/import_jpeg_clip.py mochi video17 folder_frame/
   python3 tools/import_jpeg_clip.py gundam kokpit kokpit.gif --quality 75
@@ -26,6 +26,7 @@ ap.add_argument("--quality", type=int, default=0, help="encode ulang (lossy); GI
 ap.add_argument("--step", type=int, default=1, help="ambil 1 dari tiap N frame, tempo tetap (delay x N)")
 ap.add_argument("--smooth", type=float, default=0, help="blur Gaussian (px) sebelum encode, hilangkan dither GIF")
 ap.add_argument("--resize", default="", help="WxH, mis. 240x120: Lanczos + unsharp ringan (perlu --quality)")
+ap.add_argument("--sharpen", type=int, default=60, help="persen unsharp setelah --resize (0 = tanpa)")
 ap.add_argument("--crop", default="", help="WxH potong tengah setelah resize, mis. 240x240")
 ap.add_argument("--subsampling", type=int, default=2, help="0 = 4:4:4 (warna tajam), 2 = 4:2:0")
 ap.add_argument("--outdir", default="", help="default assets/builtin/jpeg")
@@ -35,6 +36,11 @@ src = pathlib.Path(a.src)
 images = None  # GIF: daftar (PIL image, jumlah slot)
 if src.is_dir():
     frames = [p.read_bytes() for p in sorted(src.glob("*.jpg"))]
+    pngs = sorted(src.glob("*.png"))
+    if not frames and pngs:  # folder PNG (mis. hasil ffmpeg dari MP4): selalu di-encode
+        images = [(Image.open(p).convert("RGB"), 1) for p in pngs]
+        frames = [None] * len(images)
+        if not a.quality: a.quality = 80
 elif src.suffix.lower() == ".gif":
     g = Image.open(src); durs, imgs = [], []
     for i in range(g.n_frames):
@@ -79,7 +85,8 @@ for fi, raw in enumerate(frames):
     im, slots = images[fi] if images else (Image.open(io.BytesIO(raw)).convert("RGB"), 1)
     if a.resize:
         w, h = map(int, a.resize.lower().split("x"))
-        im = im.resize((w, h), Image.LANCZOS).filter(ImageFilter.UnsharpMask(radius=1.0, percent=60, threshold=2))
+        im = im.resize((w, h), Image.LANCZOS)
+        if a.sharpen: im = im.filter(ImageFilter.UnsharpMask(radius=1.0, percent=a.sharpen, threshold=2))
     if a.crop:
         w, h = map(int, a.crop.lower().split("x")); l, t = (im.width - w) // 2, (im.height - h) // 2
         im = im.crop((l, t, l + w, t + h))
