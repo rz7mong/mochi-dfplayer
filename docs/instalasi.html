@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="id">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Instalasi Mochi DFPlayer</title>
+<style>
+body{font:16px/1.45 system-ui;margin:0;background:#111;color:#eee}
+main{max-width:42rem;margin:auto;padding:1.2rem}
+code,pre{background:#222;border-radius:8px}
+pre{padding:.8rem;overflow:auto}
+table{border-collapse:collapse;width:100%}
+td,th{border-bottom:1px solid #333;text-align:left;padding:.35rem}
+a{color:#9cf}
+</style>
+<main>
+<p><a href="index.html">Beranda</a></p>
+<h1>Instalasi</h1>
+<p>Belum ada pemasang lewat browser. Firmware DFPlayer belum dipaketkan sebagai berkas <code>.bin</code>. Jangan pakai installer <a href="https://rz7mong.github.io/mochi-rzmong/">mochi-rzmong</a>: itu firmware MAX98357.</p>
+<h2>1. Rakit</h2>
+<table>
+<tr><th>Net</th><th>Sambungan</th></tr>
+<tr><td>TFT SCLK</td><td>GPIO4</td></tr>
+<tr><td>TFT MOSI</td><td>GPIO6</td></tr>
+<tr><td>TFT CS</td><td>GPIO7</td></tr>
+<tr><td>TFT DC</td><td>GPIO10</td></tr>
+<tr><td>TFT RST</td><td>GPIO0</td></tr>
+<tr><td>BLK</td><td>3V3</td></tr>
+<tr><td>Sentuh</td><td>GPIO1</td></tr>
+<tr><td>DFPlayer RX</td><td>GPIO20 lewat ~1 kΩ</td></tr>
+<tr><td>DFPlayer TX</td><td>GPIO21</td></tr>
+<tr><td>DFPlayer VCC</td><td>5 V</td></tr>
+<tr><td>GND</td><td>gabung</td></tr>
+</table>
+<p>SD ESP, GPIO2, GPIO8, dan GPIO9 kosong.</p>
+<h2>2. Kartu DFPlayer</h2>
+<ul>
+<li><code>02/001.mp3</code> sampai <code>02/018.mp3</code> untuk 18 klip JPEG</li>
+<li><code>03/001.mp3</code> notifikasi, <code>04/001.mp3</code> dering</li>
+<li><code>05</code> lagu, <code>06</code> suara tema</li>
+</ul>
+<h2>3. Flash</h2>
+<pre>cd firmware
+pio run -e esp32-c3-dfplayer -t upload</pre>
+<p>Tahan BOOT saat colok USB-C jika unduhan gagal. Port serial memakai USB CDC, bukan UART0.</p>
+<h2>4. Setelah nyala</h2>
+<ol>
+<li>Sambungkan Wi-Fi <code>rzmong mochi</code> / <code>rzmong123</code></li>
+<li>Buka <a href="http://192.168.4.1/">http://192.168.4.1/</a></li>
+<li>Pilih tema wajah, gundam, atau mobil, lalu simpan</li>
+</ol>
+</main>
