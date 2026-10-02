@@ -589,10 +589,14 @@ static void drawMenu() {
 }
 
 // Tombol pemutar: ketuk = jalankan tombol yang disorot, tahan = sorot tombol berikutnya, tahan 2 dtk = menu.
-enum : uint8_t { B_PLAY, B_NEXT, B_PREV, B_VUP, B_VDN, B_MODE, B_STOP, B_COUNT };
-static const char *const BTN_NAME[B_COUNT] = {"Putar / jeda", "Trek berikutnya", "Trek sebelumnya", "Volume +",
-                                               "Volume -", "Mode putar", "Berhenti"};
+// Pilih nomor hanya menyentuh /01 (bukan trek animasi di root). Musik tetap jalan saat kembali ke animasi.
+enum : uint8_t { B_PLAY, B_NEXT, B_PREV, B_PICK, B_VUP, B_VDN, B_MODE, B_STOP, B_COUNT };
+static const char *const BTN_NAME[B_COUNT] = {"Putar / jeda", "Trek berikutnya", "Trek sebelumnya", "Pilih nomor",
+                                               "Volume +", "Volume -", "Mode putar", "Berhenti"};
 static uint8_t pFocus = B_PLAY;
+static bool picking = false;
+static uint8_t pickDigit = 0;
+static uint8_t pickDigs[3] = {0, 0, 1};
 
 static void glyph(uint8_t b, int cx, int cy, uint16_t c) {
   switch (b) {
@@ -619,7 +623,33 @@ static void glyph(uint8_t b, int cx, int cy, uint16_t c) {
       }
       break;
     case B_STOP: tft.fillRect(cx - 6, cy - 6, 12, 12, c); break;
+    case B_PICK:
+      tft.drawRoundRect(cx - 7, cy - 8, 14, 16, 2, c);
+      tft.drawFastHLine(cx - 4, cy - 2, 8, c);
+      tft.drawFastHLine(cx - 4, cy + 2, 8, c);
+      break;
   }
+}
+static void startPick() {
+  ensureMusicCount();
+  int n = mTrack;
+  if (n < 1) n = 1;
+  if (n > 255) n = 255;
+  pickDigs[0] = n / 100;
+  pickDigs[1] = (n / 10) % 10;
+  pickDigs[2] = n % 10;
+  pickDigit = 2;
+  picking = true;
+  uiDirty = true;
+}
+static int pickValue() { return pickDigs[0] * 100 + pickDigs[1] * 10 + pickDigs[2]; }
+static void confirmPick() {
+  int n = pickValue();
+  if (n < 1) n = 1;
+  if (mCount > 0 && n > mCount) n = mCount;
+  if (n > 255) n = 255;
+  picking = false;
+  musicPlay(n);  // /01 saja; tidak menyentuh trek animasi di root
 }
 static void drawEq() {
   static uint8_t ph = 0;
@@ -637,11 +667,16 @@ static void drawPlayer() {
   tft.drawCentreString("PEMUTAR MP3", 120, 4, 2);
   tft.drawCentreString("kartu DFPlayer, folder /01", 120, 22, 1);
   char b[24];
-  snprintf(b, sizeof(b), "%03d", mTrack);
-  tft.setTextColor(C_TEXT, C_BG);
+  if (picking) snprintf(b, sizeof(b), "%d%d%d", pickDigs[0], pickDigs[1], pickDigs[2]);
+  else snprintf(b, sizeof(b), "%03d", mTrack);
+  tft.setTextColor(picking ? C_YEL : C_TEXT, C_BG);
   tft.setTextSize(2);
   tft.drawString(b, 14, 42, 4);
   tft.setTextSize(1);
+  if (picking) {
+    int dx = 14 + pickDigit * 24;
+    tft.drawFastHLine(dx, 90, 20, C_YEL);
+  }
   tft.setTextColor(C_DIM, C_BG);
   if (mEmpty) snprintf(b, sizeof(b), "folder /01 kosong");
   else if (mCount > 0) snprintf(b, sizeof(b), "dari %d lagu", mCount);
@@ -665,14 +700,14 @@ static void drawPlayer() {
   tft.setTextColor(C_SEL, C_BG);
   tft.drawCentreString(BTN_NAME[pFocus], 120, 168, 2);
   for (int i = 0; i < B_COUNT; i++) {
-    int x = 6 + i * 33, y = 188;
-    bool f = i == pFocus;
-    if (f) tft.fillRoundRect(x, y, 30, 30, 8, C_SEL);
-    else { tft.fillRoundRect(x, y, 30, 30, 8, C_BG); tft.drawRoundRect(x, y, 30, 30, 8, C_DIM); }
-    glyph(i, x + 15, y + 15, f ? TFT_BLACK : C_TEXT);
+    int x = 4 + i * 29, y = 188;
+    bool f = i == pFocus && !picking;
+    if (f) tft.fillRoundRect(x, y, 27, 30, 8, C_SEL);
+    else { tft.fillRoundRect(x, y, 27, 30, 8, C_BG); tft.drawRoundRect(x, y, 27, 30, 8, C_DIM); }
+    glyph(i, x + 13, y + 15, f ? TFT_BLACK : C_TEXT);
   }
   tft.setTextColor(C_DIM, C_BG);
-  tft.drawCentreString("ketuk=jalankan  tahan=pindah  2 dtk=menu", 120, 226, 1);
+  tft.drawCentreString(picking ? "ketuk=angka  tahan=digit  2 dtk=batal" : "ketuk=jalankan  tahan=pindah  2 dtk=menu", 120, 226, 1);
 }
 
 static const char *const WD[7] = {"MIN", "SEN", "SEL", "RAB", "KAM", "JUM", "SAB"};
@@ -854,12 +889,21 @@ static void playerAction(uint8_t b) {
     case B_PLAY: musicToggle(); break;
     case B_NEXT: musicNext(); break;
     case B_PREV: musicPrev(); break;
+    case B_PICK: startPick(); return;
     case B_VUP: setVolume(volume + 2); break;
     case B_VDN: setVolume(volume - 2); break;
     case B_MODE: mMode = (mMode + 1) % 3; prefs.putUChar("mmode", mMode); break;
     case B_STOP: musicStop(); break;
   }
   uiDirty = true;
+}
+static void playerPickTap() {
+  pickDigs[pickDigit] = (pickDigs[pickDigit] + 1) % 10;
+  uiDirty = true;
+}
+static void playerPickHold() {
+  if (pickDigit < 2) { pickDigit++; uiDirty = true; return; }
+  confirmPick();
 }
 
 // =====================================================================
@@ -941,7 +985,11 @@ void loop() {
       delay(15);
       break;
     case Ui::Player: {
-      if (ev == Ev::Tap1) playerAction(pFocus);
+      if (picking) {
+        if (ev == Ev::Tap1) playerPickTap();
+        else if (ev == Ev::HoldEnd) playerPickHold();
+        else if (ev == Ev::Long) { picking = false; uiDirty = true; }
+      } else if (ev == Ev::Tap1) playerAction(pFocus);
       else if (ev == Ev::HoldEnd) { pFocus = (pFocus + 1) % B_COUNT; uiDirty = true; }
       else if (ev == Ev::Long) { openMenu(); break; }
       if (uiDirty) { uiDirty = false; drawPlayer(); }

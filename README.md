@@ -13,7 +13,7 @@ Teman meja **ESP32-C3 Super Mini** + layar **ST7789 1,3" 240×240** dengan **sua
 </p>
 <p align="center"><sub>Pratinjau kecil klip di firmware (wajah, mobil, gundam). Di perangkat semuanya frame JPEG 240 lebar.</sub></p>
 
-**Firmware 0.7.2** · **MIT © rzmong** · Situs + pemasang browser: **https://rz7mong.github.io/mochi-dfplayer/** (sumber di [`docs/`](docs/))
+**Firmware 0.7.3** · **MIT © rzmong** · Situs + pemasang browser: **https://rz7mong.github.io/mochi-dfplayer/** (sumber di [`docs/`](docs/))
 
 ### 📚 Panduan di situs
 
@@ -195,7 +195,7 @@ Suara model diputar sampai habis lalu diulang. Klip goyang/tahan memutar suarany
 | Putar layar | Rotasi 0° / 90° / 180° / 270° |
 | Tentang | Versi, nama BLE, status Chronos, baterai HP |
 
-**Pemutar MP3** — layar menampilkan nomor trek, jumlah lagu, status, mode, volume, dan 7 tombol.
+**Pemutar MP3** — layar menampilkan nomor trek, jumlah lagu, status, mode, volume, dan 8 tombol.
 
 | Gerakan | Hasil |
 |---|---|
@@ -203,7 +203,11 @@ Suara model diputar sampai habis lalu diulang. Klip goyang/tahan memutar suarany
 | Tahan 0,4–2 dtk lalu lepas | Sorot tombol berikutnya |
 | Tahan 2 dtk | Kembali ke menu (musik tetap jalan) |
 
-Tombol berurutan: **⏯ putar/jeda · ⏭ berikutnya · ⏮ sebelumnya · 🔊+ · 🔉− · mode (ulang semua → ulang 1 → acak) · ■ berhenti**. Saat masuk, sorotan di ⏯. Ketuk berulang di 🔊+ untuk menaikkan volume cepat.
+Tombol berurutan: **⏯ putar/jeda · ⏭ berikutnya · ⏮ sebelumnya · # pilih nomor · 🔊+ · 🔉− · mode (ulang semua → ulang 1 → acak) · ■ berhenti**. Saat masuk, sorotan di ⏯. Ketuk berulang di 🔊+ untuk menaikkan volume cepat.
+
+**Pilih nomor trek** (tombol #): ketuk menaikkan digit yang disorot (0–9), tahan pindah ke digit berikutnya. Tahan pada digit ketiga memutar nomor itu di folder `/01` saja (1–255, dipotong ke jumlah lagu bila sudah terbaca). Tahan 2 detik membatalkan. Trek animasi di root tidak ikut terpilih.
+
+Musik dari `/01` tetap jalan saat kembali ke animasi (menu → Kembali ke animasi). Gambar animasi bergerak; suara ekspresi animasi diam sampai musik dihentikan.
 
 <a id="chronos"></a>
 ## 📱 Chronos
