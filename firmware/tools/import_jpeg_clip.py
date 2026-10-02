@@ -2,8 +2,8 @@
 """Impor klip JPEG 240x240 siap pakai (tanpa batas 6 frame) ke assets/builtin/jpeg/<theme>/<stem>.{mjpeg,json}.
 
 Sumber: header C berisi array frame JPEG (`NAME_jpg_frame_N[] PROGMEM` + `NAME_frames[]`), folder *.jpg / *.png, atau GIF.
-  python3 tools/import_jpeg_clip.py mochi full1 path/full1.h
-  python3 tools/import_jpeg_clip.py mochi video17 folder_frame/
+  python3 tools/import_jpeg_clip.py wajah senyum_kedip path/full1.h
+  python3 tools/import_jpeg_clip.py wajah sorot folder_frame/
   python3 tools/import_jpeg_clip.py gundam kokpit kokpit.gif --quality 75
 Frame boleh lebih kecil dari 240x240 (mis. 160x80); firmware menggambarnya di tengah layar dengan latar hitam (x/y di json).
 GIF: tiap frame diulang round(durasi/delay) slot supaya tempo asli terjaga; default delay = durasi frame terpendek.

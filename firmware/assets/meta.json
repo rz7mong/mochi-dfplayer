@@ -135,6 +135,54 @@
   ],
   "jpeg_clips": [
     [
+      "wajah",
+      "senyum_kedip",
+      "",
+      19
+    ],
+    [
+      "wajah",
+      "pusing",
+      "dizzy",
+      20
+    ],
+    [
+      "wajah",
+      "cinta",
+      "heart",
+      23
+    ],
+    [
+      "wajah",
+      "sorot",
+      "",
+      21
+    ],
+    [
+      "wajah",
+      "sirine",
+      "",
+      22
+    ],
+    [
+      "wajah",
+      "cinta_pipi",
+      "",
+      40
+    ],
+    [
+      "mobil",
+      "lampu_sorot",
+      "",
+      34
+    ],
+    [
+      "mobil",
+      "speedometer",
+      "",
+      38
+    ],
+    [
       "gundam",
       "helm_hujan",
       "",
@@ -169,57 +217,9 @@
       "pilot",
       "",
       31
-    ],
-    [
-      "mochi",
-      "full1",
-      "",
-      19
-    ],
-    [
-      "mochi",
-      "chongmat1",
-      "dizzy",
-      20
-    ],
-    [
-      "mochi",
-      "video17",
-      "",
-      21
-    ],
-    [
-      "mochi",
-      "video18",
-      "",
-      22
-    ],
-    [
-      "mochi",
-      "xoadau1",
-      "heart",
-      23
-    ],
-    [
-      "dasai",
-      "video03",
-      "",
-      34
-    ],
-    [
-      "dasai",
-      "video07",
-      "",
-      38
-    ],
-    [
-      "dasai",
-      "video2",
-      "heart",
-      40
     ]
   ],
-  "boot_theme": "mochi",
+  "boot_theme": "wajah",
   "skip_builtins": [
     "gundam/blade",
     "gundam/titan",
@@ -239,5 +239,10 @@
     "mobil/turbo",
     "mobil/headlights",
     "mobil/speed_3"
+  ],
+  "theme_order": [
+    "wajah",
+    "mobil",
+    "gundam"
   ]
 }

@@ -41,9 +41,9 @@ Code license **does not** automatically cover media inside Release `assets-v1` o
 
 If you fork this repo, replace theme packs with your own media before publishing.
 
-## Klip JPEG tema mochi, gundam, dasai
+## Klip JPEG tema wajah, mobil, gundam
 
-`firmware/assets/builtin/jpeg/mochi/` (full1, chongmat1, xoadau1, video17, video18) ditambahkan pemilik repo dari berkasnya sendiri. Klip ini tidak termasuk lisensi MIT kode. Pastikan hak distribusinya sebelum dibagikan ulang.
+`firmware/assets/builtin/jpeg/wajah/` senyum_kedip, pusing, cinta, sorot, sirine (dulu mochi/full1, chongmat1, xoadau1, video17, video18) ditambahkan pemilik repo dari berkasnya sendiri. Klip ini tidak termasuk lisensi MIT kode. Pastikan hak distribusinya sebelum dibagikan ulang.
 
-- `dasai/`: dikonversi dari header `video*.h` di [bangdc90/dasai_mochi_tft](https://github.com/bangdc90/dasai_mochi_tft). Repo itu tidak mencantumkan lisensi; tampaknya diambil dari video produk Dasai Mochi. Pastikan izin sebelum distribusi ulang.
+- `mobil/` lampu_sorot, speedometer dan `wajah/cinta_pipi` (dulu dasai/video03, video07, video2): dikonversi dari header `video*.h` di [bangdc90/dasai_mochi_tft](https://github.com/bangdc90/dasai_mochi_tft). Repo itu tidak mencantumkan lisensi; tampaknya diambil dari video produk Dasai Mochi. Pastikan izin sebelum distribusi ulang.
 - `gundam/` (helm_hujan, helm_siaga, isyarat, kokpit, kokpit_2, pilot): dikonversi dari `gif/gundam/` di rilis `assets-v1` repo rz7mong/mochi-rzmong milik pemilik repo.

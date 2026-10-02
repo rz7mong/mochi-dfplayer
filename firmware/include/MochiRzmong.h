@@ -5,7 +5,8 @@
 #ifndef MOCHI_AP_PASS  /* override: build_flags = -DMOCHI_AP_PASS=\"sandibaru123\" */
 #define MOCHI_AP_PASS "rzmong123"
 #endif
-#define MOCHI_VERSION "0.6.8"
+#define MOCHI_VERSION "0.6.9"
+/* v0.6.9: nama Indonesia: wajah (senyum_kedip awal, pusing, cinta, sorot, sirine, cinta_pipi), mobil (lampu_sorot, speedometer), gundam. Trek tetap. */
 /* v0.6.8: wajah dan mobil dihapus; 14 model (6 gundam, 5 mochi, 3 dasai); dasai semua frame 40 ms q80. */
 /* v0.6.7: gundam tinggal helm_hujan, helm_siaga (tahan), isyarat, kokpit, kokpit_2, pilot. */
 /* v0.6.6: gundam kembali ke 12 GIF rzmong, semua frame, 240x240 bersih (blur 1,2 + unsharp, q82). */
