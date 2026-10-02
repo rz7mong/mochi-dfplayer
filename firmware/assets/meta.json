@@ -132,5 +132,33 @@
       "mobil",
       "speed_3"
     ]
-  ]
+  ],
+  "jpeg_clips": [
+    [
+      "mochi",
+      "full1",
+      ""
+    ],
+    [
+      "mochi",
+      "chongmat1",
+      "dizzy"
+    ],
+    [
+      "mochi",
+      "video17",
+      ""
+    ],
+    [
+      "mochi",
+      "video18",
+      ""
+    ],
+    [
+      "mochi",
+      "xoadau1",
+      "heart"
+    ]
+  ],
+  "boot_theme": "mochi"
 }

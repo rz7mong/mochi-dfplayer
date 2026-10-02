@@ -1,5 +1,5 @@
-// Mochi DFPlayer 0.5.9 — perilaku pemutar sama pikapet / bangdc90.
-// Aset JPEG tetap milik repo ini, bukan frame video mereka.
+// Mochi DFPlayer 0.6.2 — perilaku pemutar sama pikapet / bangdc90.
+// Tema "mochi": 5 klip JPEG penuh dari pemilik repo (full1 utama, chongmat1 goyang, xoadau1 tahan).
 #include <Arduino.h>
 #include <Wire.h>
 #include <SPI.h>
@@ -54,12 +54,27 @@ static int themeEnd(int i) {
   while (e + 1 < JPEG_CLIP_COUNT && strcmp(JPEG_CLIPS[e + 1].theme, JPEG_CLIPS[s].theme) == 0) e++;
   return e;
 }
+static int roleClip(uint8_t role) {
+  for (int i = themeStart(model), e = themeEnd(model); i <= e; i++)
+    if (JPEG_CLIPS[i].role == role) return i;
+  return -1;
+}
 static int mainClip() { return model; }
 static int dizzyClip() {
+  int r = roleClip(JPEG_ROLE_DIZZY);
+  if (r >= 0) return r;
   int s = themeStart(model), e = themeEnd(model);
   return e > s ? s + 1 + ((model - s) % (e - s)) : model;
 }
-static int heartClip() { return themeEnd(model); }
+static int heartClip() {
+  int r = roleClip(JPEG_ROLE_HEART);
+  return r >= 0 ? r : themeEnd(model);
+}
+static int bootModel() {
+  for (int i = 0; i < JPEG_CLIP_COUNT; i++)
+    if (strcmp(JPEG_CLIPS[i].theme, JPEG_BOOT_THEME) == 0) return i;
+  return 0;
+}
 
 static void backlight(bool on) { digitalWrite(MOCHI_PIN_TFT_BL, on ? HIGH : LOW); }
 
@@ -210,6 +225,7 @@ void setup() {
   mochiDfInit();
   mochiDfSetVolume(20, true);
   mpuInit();
+  model = bootModel();
   startMain();
   Serial.printf("edisi Indonesia, %d model\n", JPEG_CLIP_COUNT);
 }
