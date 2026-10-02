@@ -136,123 +136,51 @@
   "jpeg_clips": [
     [
       "wajah",
-      "vid_00",
+      "senyum_kedip",
       "",
-      1
+      19
     ],
     [
       "wajah",
-      "vid_01",
-      "",
-      2
+      "pusing",
+      "dizzy",
+      20
     ],
     [
       "wajah",
-      "vid_10",
-      "",
-      3
-    ],
-    [
-      "wajah",
-      "vid_11",
-      "",
-      4
-    ],
-    [
-      "wajah",
-      "vid_20",
-      "",
-      5
-    ],
-    [
-      "wajah",
-      "vid_21",
-      "",
-      6
-    ],
-    [
-      "wajah",
-      "vid_30",
-      "",
-      7
-    ],
-    [
-      "wajah",
-      "vid_31",
-      "",
-      8
-    ],
-    [
-      "wajah",
-      "vid_40",
-      "",
-      9
-    ],
-    [
-      "wajah",
-      "vid_41",
-      "",
-      10
-    ],
-    [
-      "mobil",
-      "car",
-      "",
-      15
-    ],
-    [
-      "mobil",
-      "turbo",
-      "",
-      16
-    ],
-    [
-      "mobil",
-      "headlights",
-      "",
-      17
-    ],
-    [
-      "mobil",
-      "speed_3",
-      "",
-      18
-    ],
-    [
-      "gundam",
-      "blade",
-      "",
-      11
-    ],
-    [
-      "gundam",
-      "titan",
-      "",
-      12
-    ],
-    [
-      "gundam",
-      "hadouken_hit",
-      "",
-      13
-    ],
-    [
-      "gundam",
-      "mecha_doc",
+      "cinta",
       "heart",
-      14
+      23
     ],
     [
-      "gundam",
-      "equip",
+      "wajah",
+      "sorot",
       "",
-      24
+      21
     ],
     [
-      "gundam",
-      "hadouken_miss",
+      "wajah",
+      "sirine",
       "",
-      25
+      22
+    ],
+    [
+      "wajah",
+      "cinta_pipi",
+      "",
+      40
+    ],
+    [
+      "mobil",
+      "lampu_sorot",
+      "",
+      34
+    ],
+    [
+      "mobil",
+      "speedometer",
+      "",
+      38
     ],
     [
       "gundam",
@@ -263,7 +191,7 @@
     [
       "gundam",
       "helm_siaga",
-      "",
+      "heart",
       27
     ],
     [
@@ -289,55 +217,32 @@
       "pilot",
       "",
       31
-    ],
-    [
-      "mochi",
-      "full1",
-      "",
-      19
-    ],
-    [
-      "mochi",
-      "chongmat1",
-      "dizzy",
-      20
-    ],
-    [
-      "mochi",
-      "video17",
-      "",
-      21
-    ],
-    [
-      "mochi",
-      "video18",
-      "",
-      22
-    ],
-    [
-      "mochi",
-      "xoadau1",
-      "heart",
-      23
-    ],
-    [
-      "dasai",
-      "video03",
-      "",
-      34
-    ],
-    [
-      "dasai",
-      "video07",
-      "",
-      38
-    ],
-    [
-      "dasai",
-      "video2",
-      "heart",
-      40
     ]
   ],
-  "boot_theme": "mochi"
+  "boot_theme": "wajah",
+  "skip_builtins": [
+    "gundam/blade",
+    "gundam/titan",
+    "gundam/hadouken_hit",
+    "gundam/mecha_doc",
+    "wajah/vid_00",
+    "wajah/vid_01",
+    "wajah/vid_10",
+    "wajah/vid_11",
+    "wajah/vid_20",
+    "wajah/vid_21",
+    "wajah/vid_30",
+    "wajah/vid_31",
+    "wajah/vid_40",
+    "wajah/vid_41",
+    "mobil/car",
+    "mobil/turbo",
+    "mobil/headlights",
+    "mobil/speed_3"
+  ],
+  "theme_order": [
+    "wajah",
+    "mobil",
+    "gundam"
+  ]
 }

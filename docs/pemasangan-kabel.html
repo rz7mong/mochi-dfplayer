@@ -52,7 +52,7 @@
     <div class="tip">🔋 <b>Kapasitor 100–470 µF</b> dekat VCC–GND DFPlayer: mencegah reset dan bunyi "plok".</div>
     <div class="tip">🔗 <b>GND bersama</b>: semua GND modul disatukan ke GND ESP.</div>
     <div class="tip">📏 <b>Kabel SPI pendek</b> (SCL, SDA, DC, RES). SPI 40 MHz; kabel panjang = gambar bergaris atau layar putih.</div>
-    <div class="tip">👆 <b>TTP223</b>: solder jumper <b>A</b> (output jadi LOW saat disentuh), atau build <code>-DMOCHI_TOUCH_ACTIVE_HIGH</code>.</div>
+    <div class="tip">👆 <b>TTP223</b>: tanpa solder. Firmware mendeteksi aktif HIGH / aktif LOW / tombol ke GND saat nyala; jangan sentuh sensor ±1 detik setelah nyala.</div>
   </div>
 </section>
 
@@ -61,11 +61,11 @@
   <div class="card">
     <p>Tulis di akhir <code>build_flags</code> di <code>firmware/platformio.ini</code>, lalu <code>pio run -e esp32-c3-dfplayer -t upload</code>.</p>
     <div class="tbl"><table><tr><th>Flag</th><th>Kapan dipakai</th></tr>
-      <tr><td><code>-DMOCHI_TOUCH_ACTIVE_HIGH</code></td><td>TTP223 bawaan pabrik (HIGH saat disentuh), jumper A tidak disolder</td></tr>
+      <tr><td><code>-DMOCHI_TOUCH_ACTIVE_HIGH</code></td><td>Paksa sentuh aktif HIGH (pull-down), lewati deteksi otomatis. <code>-DMOCHI_TOUCH_MODE=2</code> = paksa aktif LOW + pull-up</td></tr>
       <tr><td><code>-DMOCHI_PIN_DF_BUSY=5</code></td><td>Pin BUSY DFPlayer disambung ke GPIO5</td></tr>
-      <tr><td><code>-DMOCHI_DEFAULT_ROTATION=2</code></td><td>Layar dipasang terbalik (pin di bawah)</td></tr>
+      <tr><td><code>-DMOCHI_DEFAULT_ROTATION=0</code></td><td>Layar tegak, pin di atas (bawaan 2 = pin di bawah, tatakan GMT130)</td></tr>
     </table></div>
-    <p class="hint">Pemasang browser memakai build bawaan: sentuh active-low, tanpa BUSY, rotasi 0.</p>
+    <p class="hint">Pemasang browser memakai build bawaan: sentuh deteksi otomatis, tanpa BUSY, rotasi 2 (bisa diubah di Menu → Putar layar).</p>
   </div>
 </section>
 </main>
@@ -82,7 +82,7 @@ const TB={
   ['📺 ST7789','SCL','GPIO4','SPI clock (TFT_SCLK)','G4'],['📺 ST7789','SDA','GPIO6','SPI data (TFT_MOSI)','G6'],['📺 ST7789','DC','GPIO3','','G3'],
   ['📺 ST7789','RES','GPIO10','reset','G10'],['📺 ST7789','BLK','GPIO7','lampu latar, HIGH = nyala','G7'],['📺 ST7789','CS','GND','hanya modul 8 pin (firmware CS = −1)','GND'],
   ['📺 ST7789','VCC','3V3','','3V3'],['📺 ST7789','GND','GND','','GND'],
-  ['👆 TTP223','OUT (I/O)','GPIO1','solder jumper A, atau <code>-DMOCHI_TOUCH_ACTIVE_HIGH</code>','G1'],['👆 TTP223','VCC','3V3','','3V3'],['👆 TTP223','GND','GND','','GND'],
+  ['👆 TTP223','OUT (I/O)','GPIO1','tanpa solder, jenis dideteksi saat nyala','G1'],['👆 TTP223','VCC','3V3','','3V3'],['👆 TTP223','GND','GND','','GND'],
   ['🎵 DFPlayer','RX','GPIO20 lewat <b>1 kΩ</b>','ESP TX → RX modul','G20'],['🎵 DFPlayer','TX','GPIO21','1 kΩ opsional. Wajib untuk deteksi "trek selesai"','G21'],
   ['🎵 DFPlayer','BUSY','GPIO5 (opsional)','build <code>-DMOCHI_PIN_DF_BUSY=5</code>','G5'],['🎵 DFPlayer','VCC','5V / VBUS','bukan 3V3. Kapasitor 100–470 µF ke GND','5V'],
   ['🎵 DFPlayer','GND','GND','','GND'],['🎵 DFPlayer','SPK_1 / SPK_2','speaker 8 Ω 1–3 W','jangan ke GND','SPK'],

@@ -30,7 +30,7 @@
     <div class="part"><span class="q">1×</span><h3>🔊 Speaker 8 Ω</h3><p>Kecil, 0,5–3 W, ke SPK_1/SPK_2.</p></div>
     <div class="part"><span class="q">1×</span><h3>💾 Kartu microSD</h3><p>FAT32, ≤ 32 GB.</p></div>
     <div class="part"><span class="q">1×</span><h3>🟫 Resistor 1 kΩ</h3><p>Di jalur GPIO20 → RX DFPlayer.</p></div>
-    <div class="part"><span class="q">1×</span><h3>👆 Tombol / TTP223</h3><p>Ke GPIO1, active-low.</p><span class="tag">lihat catatan sentuh</span></div>
+    <div class="part"><span class="q">1×</span><h3>👆 Tombol / TTP223</h3><p>Ke GPIO1, tanpa solder.</p><span class="tag">lihat catatan sentuh</span></div>
     <div class="part"><span class="q">1×</span><h3>🌀 MPU6050</h3><p>Untuk fitur goyang. Tanpa modul ini, fitur goyang mati sendiri.</p><span class="tag opt">opsional</span></div>
   </div>
 </section>
@@ -47,7 +47,7 @@
 <tr><td>TFT CS</td><td>tidak dipakai</td><td>Jika modul punya kaki CS, sambungkan ke GND</td></tr>
 <tr><td>TFT BLK (lampu latar)</td><td><b>GPIO7</b></td><td>HIGH nyala, LOW mati saat berhenti</td></tr>
 <tr><td>TFT VCC</td><td>3V3</td><td></td></tr>
-<tr><td>Sentuh / tombol</td><td><b>GPIO1</b></td><td>Active-low: tombol ke GND, atau TTP223 dengan jumper A disolder</td></tr>
+<tr><td>Sentuh / tombol</td><td><b>GPIO1</b></td><td>TTP223 (tanpa solder) atau tombol ke GND; jenisnya dideteksi saat nyala</td></tr>
 <tr><td>DFPlayer RX</td><td><b>GPIO20</b> lewat resistor ±1 kΩ</td><td>ESP TX → RX modul</td></tr>
 <tr><td>DFPlayer TX</td><td><b>GPIO21</b></td><td>TX modul → ESP RX. Wajib agar "trek selesai" terdeteksi</td></tr>
 <tr><td>DFPlayer BUSY</td><td>GPIO5 (opsional)</td><td>Build dengan <code>-DMOCHI_PIN_DF_BUSY=5</code></td></tr>
@@ -58,7 +58,7 @@
 <tr><td>GND</td><td>gabung semua</td><td>ESP, layar, DFPlayer, MPU6050, sentuh</td></tr>
   </table></div>
   <p class="note">⚠️ GPIO9 adalah pin strap: jangan ditarik ke GND saat boot. GPIO20/21 adalah UART0 bawaan chip; log ESP dibaca lewat USB CDC.</p>
-  <p class="info">ℹ️ <b>Catatan sentuh:</b> firmware membaca GPIO1 sebagai <b>LOW = ditekan</b> (pull-up internal). Modul TTP223 bawaan pabrik justru HIGH saat disentuh; solder jumper <b>A</b> agar active-low, atau build dengan <code>-DMOCHI_TOUCH_ACTIVE_HIGH</code>.</p>
+  <p class="info">ℹ️ <b>Catatan sentuh:</b> firmware <b>mendeteksi jenis sensor sendiri saat nyala</b>: GPIO1 dibaca sebentar dengan pull-up lalu pull-down, sehingga TTP223 bawaan pabrik (HIGH saat disentuh), TTP223 dengan pad/jumper A disolder (LOW saat disentuh), maupun tombol tekan ke GND langsung jalan tanpa solder apa pun. Syaratnya: <b>jangan sentuh sensor ±1 detik setelah nyala</b> (TTP223 juga mengkalibrasi diri saat itu). Kalau terlanjur dan sensor terbaca tersentuh terus, firmware membalik polaritas sendiri setelah 10 detik. Paksa manual lewat <code>build_flags</code>: <code>-DMOCHI_TOUCH_ACTIVE_HIGH</code> (aktif HIGH) atau <code>-DMOCHI_TOUCH_MODE=2</code> (aktif LOW + pull-up).</p>
 </section>
 
 <section class="card" id="sd">
@@ -69,12 +69,21 @@
 /02/001.mp3                suara notifikasi Chronos
 /03/001.mp3 …              nada dering panggilan Chronos</pre>
   <div class="tbl"><table><tr><th>Model (ketuk 2×)</th><th>File <code>/MP3/</code></th><th>Klip</th></tr>
-    <tr><td>1–10</td><td><code>0001</code>–<code>0010</code></td><td>wajah vid_00, vid_01, vid_10, vid_11, vid_20, vid_21, vid_30, vid_31, vid_40, vid_41</td></tr>
-    <tr><td>11–14</td><td><code>0011</code>–<code>0014</code></td><td>gundam blade, titan, hadouken_hit, mecha_doc (tahan)</td></tr>
-    <tr><td>15–22</td><td><code>0024</code>–<code>0031</code></td><td>gundam equip, hadouken_miss, helm_hujan, helm_siaga, isyarat, kokpit, kokpit_2, pilot</td></tr>
-    <tr><td>23–26</td><td><code>0015</code>–<code>0018</code></td><td>mobil car, turbo, headlights, speed_3</td></tr>
-    <tr><td>27–31</td><td><code>0019</code>–<code>0023</code></td><td>mochi full1, chongmat1 (goyang), video17, video18, xoadau1 (tahan)</td></tr>
-    <tr><td>32–34</td><td><code>0034</code>, <code>0038</code>, <code>0040</code></td><td>dasai video03, video07, video2 (tahan)</td></tr>
+    <tr><td>1</td><td><code>0019</code></td><td>wajah/senyum_kedip (klip saat nyala)</td></tr>
+    <tr><td>2</td><td><code>0020</code></td><td>wajah/pusing (goyang)</td></tr>
+    <tr><td>3</td><td><code>0023</code></td><td>wajah/cinta (tahan)</td></tr>
+    <tr><td>4</td><td><code>0021</code></td><td>wajah/sorot</td></tr>
+    <tr><td>5</td><td><code>0022</code></td><td>wajah/sirine</td></tr>
+    <tr><td>6</td><td><code>0040</code></td><td>wajah/cinta_pipi</td></tr>
+    <tr><td>7</td><td><code>0034</code></td><td>mobil/lampu_sorot</td></tr>
+    <tr><td>8</td><td><code>0038</code></td><td>mobil/speedometer (tahan)</td></tr>
+    <tr><td>9</td><td><code>0026</code></td><td>gundam/helm_hujan</td></tr>
+    <tr><td>10</td><td><code>0027</code></td><td>gundam/helm_siaga (tahan)</td></tr>
+    <tr><td>11</td><td><code>0028</code></td><td>gundam/isyarat</td></tr>
+    <tr><td>12</td><td><code>0029</code></td><td>gundam/kokpit</td></tr>
+    <tr><td>13</td><td><code>0030</code></td><td>gundam/kokpit_2</td></tr>
+    <tr><td>14</td><td><code>0031</code></td><td>gundam/pilot</td></tr>
+    <tr><td>–</td><td>0001–0018, 0024, 0025, 0032, 0033, 0035–0037, 0039</td><td>tidak dipakai, boleh tidak ada</td></tr>
   </table></div>
   <ul>
     <li>Lagu di <code>/01</code> harus bernomor berurutan tanpa lubang (001, 002, 003 …).</li>
@@ -101,7 +110,11 @@ pio run -e esp32-c3-dfplayer -t upload</pre>
     <tr><td>Tidak ada suara</td><td>DFPlayer VCC 5 V, RX lewat 1 kΩ ke GPIO20, TX ke GPIO21, speaker di SPK_1/SPK_2, kartu FAT32, folder <code>/MP3</code>.</td></tr>
     <tr><td>Suara tidak diulang / lagu tidak lanjut</td><td>Kabel TX modul → GPIO21 membawa pesan "trek selesai". Atau pasang BUSY ke GPIO5 + <code>-DMOCHI_PIN_DF_BUSY=5</code>.</td></tr>
     <tr><td>Pemutar: "folder /01 kosong"</td><td>Lagu harus <code>/01/001.mp3</code>, <code>/01/002.mp3</code>, …</td></tr>
-    <tr><td>Ketukan tidak terbaca / selalu "tahan"</td><td>Polaritas sentuh: lihat catatan TTP223 di atas.</td></tr>
+    <tr><td>Ketukan tidak terbaca / selalu "tahan"</td><td>Serial monitor saat nyala menulis <code>sentuh GPIO1: …</code> (jenis yang terdeteksi). Tertulis "tombol ke GND / mengambang" padahal memakai TTP223: kabel I/O putus. Pastikan VCC TTP223 3V3, GND bersama, jangan menyentuh sensor saat menyalakan. Masih salah: paksa <code>-DMOCHI_TOUCH_ACTIVE_HIGH</code> atau <code>-DMOCHI_TOUCH_MODE=2</code>. TTP223 di balik casing: casing ≤ 2 mm, tanpa logam di atas pad.</td></tr>
+    <tr><td>Bunyi letup / ESP reset saat suara mulai</td><td>Daya USB kurang: kabel/charger lebih baik, tambah kapasitor elektrolit 100–470 µF di VCC–GND DFPlayer.</td></tr>
+    <tr><td>Warna negatif / merah-biru tertukar</td><td>Di <code>firmware/include/User_Setup_ST7789.h</code>: ganti <code>TFT_INVERSION_ON</code> → <code>TFT_INVERSION_OFF</code> (warna negatif), atau <code>TFT_RGB_ORDER</code> <code>TFT_BGR</code> → <code>TFT_RGB</code> (merah/biru tertukar). Build ulang.</td></tr>
+    <tr><td>Layar putih / tanpa gambar</td><td>Pastikan modul ST7789 240×240 (bukan 240×320 atau ST7735), VCC 3V3.</td></tr>
+    <tr><td>Build: <code>No module named PIL</code></td><td>Pasang Pillow ke Python PlatformIO: <code>~/.platformio/penv/bin/pip install pillow</code> (Windows: <code>%USERPROFILE%\.platformio\penv\Scripts\pip install pillow</code>).</td></tr>
     <tr><td>Chronos tidak menemukan perangkat</td><td>Menu → Chronos BLE harus ON. Nama <code>rzmong dfplayer</code>.</td></tr>
     <tr><td>Goyang tidak bereaksi</td><td>Serial monitor harus menulis <code>MPU6050 siap</code>. SDA 8, SCL 9, alamat 0x68.</td></tr>
   </table></div>

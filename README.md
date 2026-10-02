@@ -6,12 +6,12 @@
 Teman meja **ESP32-C3 Super Mini** + layar **ST7789 1,3" 240×240** dengan **suara MP3 lewat DFPlayer Mini**. Animasi disimpan sebagai **frame JPEG penuh warna di firmware**, jadi lebih tajam daripada GIF. Ada **pemutar MP3** di menu layar dan **Chronos (BLE)** untuk jam, notifikasi, panggilan, dan navigasi dari HP. Edisi bahasa Indonesia. Proyek independen yang terinspirasi Dasai Mochi, bukan produk resmi.
 
 <p align="center">
-  <img src="firmware/assets/builtin/gif/wajah/vid_00.gif" width="120" alt="wajah vid_00">
-  <img src="firmware/assets/builtin/gif/wajah/vid_20.gif" width="120" alt="wajah vid_20">
-  <img src="firmware/assets/builtin/gif/mobil/turbo.gif" width="120" alt="mobil turbo">
-  <img src="firmware/assets/builtin/gif/mobil/headlights.gif" width="120" alt="mobil headlights">
+  <img src="docs/img/senyum_kedip.gif" width="120" alt="wajah senyum_kedip">
+  <img src="docs/img/cinta.gif" width="120" alt="wajah cinta">
+  <img src="docs/img/lampu_sorot.gif" width="120" alt="mobil lampu_sorot">
+  <img src="docs/img/kokpit.gif" width="120" alt="gundam kokpit">
 </p>
-<p align="center"><sub>GIF sumber tema wajah dan mobil. Di perangkat semuanya jadi frame JPEG.</sub></p>
+<p align="center"><sub>Pratinjau kecil klip di firmware (wajah, mobil, gundam). Di perangkat semuanya frame JPEG 240 lebar.</sub></p>
 
 **Firmware 0.7.0** · **MIT © rzmong** · Situs + pemasang browser: **https://rz7mong.github.io/mochi-dfplayer/** (sumber di [`docs/`](docs/))
 
@@ -27,11 +27,11 @@ Teman meja **ESP32-C3 Super Mini** + layar **ST7789 1,3" 240×240** dengan **sua
 
 ## ✨ Fitur
 
-- **34 model animasi** di flash: 10 wajah, 12 gundam, 4 mobil, 5 mochi, 3 dasai. JPEG lebar 240, tempo per klip. Saat nyala langsung `mochi/full1`.
+- **14 model animasi** di flash: 6 wajah, 2 mobil, 6 gundam (nama Indonesia). JPEG lebar 240, tempo per klip. Saat nyala langsung `wajah/senyum_kedip`.
 - **Suara MP3 per model** dari kartu microSD DFPlayer (`/MP3/0001.mp3` …), **diputar sampai habis** lalu diulang. Tidak lagi dipotong tiap putaran gambar.
 - **Pemutar MP3** di menu: putar/jeda, berikut/sebelum, volume, mode *ulang semua / ulang 1 / acak*, layar nomor trek dan volume. Lagu dari folder `/01`, terpisah dari suara animasi. Musik tetap jalan saat kembali ke animasi.
 - **Chronos (BLE)**: jam dan tanggal dari HP, baterai HP, notifikasi, panggilan masuk, navigasi, cari perangkat.
-- **Satu tombol sentuh**: ketuk, ketuk 2×, tahan, tahan 2 detik (menu).
+- **Satu tombol sentuh**: ketuk, ketuk 2×, tahan, tahan 2 detik (menu). TTP223 tanpa solder: jenis sensor dideteksi otomatis saat nyala.
 - **Goyang** (opsional, MPU6050): klip "pusing" tema itu (tema tanpa klip pusing: klip lain di tema yang sama).
 - **Pengaturan tersimpan** (volume, rotasi, Chronos, Jam HP, mode musik, lagu terakhir).
 - **Pasang dari browser** (ESP Web Tools) atau build sendiri dengan PlatformIO.
@@ -57,11 +57,13 @@ Teman meja **ESP32-C3 Super Mini** + layar **ST7789 1,3" 240×240** dengan **sua
 | 1 | ESP32-C3 Super Mini | flash 4 MB, USB-C, BLE |
 | 1 | Layar ST7789 1,3" IPS 240×240 | SPI 7 pin (tanpa CS) atau 8 pin |
 | 1 | DFPlayer Mini | slot microSD + amplifier 3 W |
-| 1 | Speaker 8 Ω | 0,5–3 W |
+| 1 | Speaker 8 Ω (4 Ω juga bisa) | 0,5–3 W, ke SPK_1 / SPK_2 |
 | 1 | Kartu microSD | FAT32, ≤ 32 GB |
 | 1 | Resistor 1 kΩ | jalur GPIO20 → RX DFPlayer |
-| 1 | Tombol atau TTP223 | ke GPIO1, active-low ([catatan](#catatan-sentuh)) |
-| 1 | MPU6050 | opsional, untuk goyang |
+| 1 | Tombol atau TTP223 | ke GPIO1, tanpa solder; jenis dideteksi saat nyala ([catatan](#catatan-sentuh)) |
+| 1 | MPU6050 (GY-521) | opsional, untuk goyang. Tanpa modul ini goyang mati, yang lain jalan |
+| 1 | Elko 100–470 µF | disarankan, di VCC–GND DFPlayer (mengurangi letup / reset saat volume keras) |
+| 2 | Resistor 4,7 kΩ | opsional, pull-up SDA/SCL ke 3V3 jika modul MPU6050 belum punya |
 
 ## 🔌 Kabel
 
@@ -80,7 +82,7 @@ Rakit langkah demi langkah: [Demo rakit](https://rz7mong.github.io/mochi-dfplaye
 | TFT CS | tidak dipakai | modul 8 pin: kaki CS ke GND |
 | TFT BLK (lampu latar) | GPIO7 | HIGH nyala, LOW mati saat berhenti |
 | TFT VCC | 3V3 | |
-| Sentuh / tombol | GPIO1 | active-low (pull-up internal) |
+| Sentuh / tombol | GPIO1 | polaritas dideteksi otomatis saat nyala |
 | DFPlayer RX | GPIO20 lewat ±1 kΩ | ESP TX → RX modul |
 | DFPlayer TX | GPIO21 | TX modul → ESP RX. **Wajib** agar "trek selesai" terdeteksi |
 | DFPlayer BUSY | GPIO5 (opsional) | aktifkan dengan `-DMOCHI_PIN_DF_BUSY=5` |
@@ -93,7 +95,7 @@ Rakit langkah demi langkah: [Demo rakit](https://rz7mong.github.io/mochi-dfplaye
 - **GPIO9** pin strap: jangan ditarik ke GND saat boot.
 - **GPIO20/21** adalah UART0 bawaan chip. Log ESP keluar lewat **USB CDC**, bukan UART0.
 
-<a id="catatan-sentuh"></a>**Catatan sentuh:** firmware membaca GPIO1 sebagai **LOW = ditekan**. Modul TTP223 bawaan pabrik justru HIGH saat disentuh (seperti di mochi-rzmong). Solder jumper **A** di TTP223 agar active-low, atau build dengan `-DMOCHI_TOUCH_ACTIVE_HIGH`.
+<a id="catatan-sentuh"></a>**Catatan sentuh:** saat nyala firmware membaca GPIO1 ±0,2 detik dengan pull-up lalu pull-down untuk mengenali jenis sensor: TTP223 bawaan pabrik (HIGH saat disentuh), TTP223 dengan pad A disolder (LOW saat disentuh), atau tombol tekan ke GND. Jadi **TTP223 tidak perlu disolder**. Syaratnya: jangan sentuh sensor ±1 detik setelah nyala (TTP223 juga mengkalibrasi diri). Kalau terlanjur dan sensor terbaca tersentuh terus, polaritas dibalik otomatis setelah 10 detik. Paksa manual: `-DMOCHI_TOUCH_ACTIVE_HIGH` (aktif HIGH) atau `-DMOCHI_TOUCH_MODE=2` (aktif LOW + pull-up). Serial monitor menulis jenis yang terdeteksi: `sentuh GPIO1: …`.
 
 <a id="kartu-sd"></a>
 ## 💾 Kartu SD DFPlayer
@@ -114,12 +116,21 @@ Format **FAT32**, lalu buat struktur ini:
 
 | Model (ketuk 2×) | File `/MP3/` | Klip |
 |---|---|---|
-| 1–10 | `0001`–`0010` | wajah vid_00, vid_01, vid_10, vid_11, vid_20, vid_21, vid_30, vid_31, vid_40, vid_41 |
-| 11–14 | `0011`–`0014` | gundam blade, titan, hadouken_hit, mecha_doc (tahan) |
-| 15–22 | `0024`–`0031` | gundam equip, hadouken_miss, helm_hujan, helm_siaga, isyarat, kokpit, kokpit_2, pilot |
-| 23–26 | `0015`–`0018` | mobil car, turbo, headlights, speed_3 |
-| 27–31 | `0019`–`0023` | mochi full1, chongmat1 (goyang), video17, video18, xoadau1 (tahan) |
-| 32–34 | `0034`, `0038`, `0040` | dasai video03, video07, video2 (tahan) |
+| 1 | `0019` | wajah/senyum_kedip (klip saat nyala) |
+| 2 | `0020` | wajah/pusing (goyang) |
+| 3 | `0023` | wajah/cinta (tahan) |
+| 4 | `0021` | wajah/sorot |
+| 5 | `0022` | wajah/sirine |
+| 6 | `0040` | wajah/cinta_pipi |
+| 7 | `0034` | mobil/lampu_sorot |
+| 8 | `0038` | mobil/speedometer (tahan) |
+| 9 | `0026` | gundam/helm_hujan |
+| 10 | `0027` | gundam/helm_siaga (tahan) |
+| 11 | `0028` | gundam/isyarat |
+| 12 | `0029` | gundam/kokpit |
+| 13 | `0030` | gundam/kokpit_2 |
+| 14 | `0031` | gundam/pilot |
+| – | 0001–0018, 0024, 0025, 0032, 0033, 0035–0037, 0039 | tidak dipakai, boleh tidak ada |
 
 **Mode cadangan urutan salin** (`-DMOCHI_DF_COPY_ORDER`): suara animasi ditaruh di **root** (`0001.mp3` …) dan diputar menurut **urutan salin** FAT, bukan nama. Format kartu, salin file root berurutan **sebelum** folder lain. Tabel trek: `python firmware/tools/daftar_trek.py --copy-order`.
 
@@ -134,6 +145,8 @@ Format **FAT32**, lalu buat struktur ini:
 | Tahan ≥ 0,4 dtk | Klip "tahan" tema itu berulang sampai dilepas |
 | Tahan 2 dtk | **Buka menu** |
 | Goyang 3× dalam 1 dtk | Klip "goyang" tema itu sekali, lalu kembali (perlu MPU6050) |
+
+Sentuhan dalam 0,8 dtk pertama setelah nyala diabaikan; jika sensor sudah tersentuh saat nyala, firmware menunggu dilepas dulu. Tema mobil tidak punya klip goyang/tahan khusus: tahan memakai klip terakhirnya (speedometer), goyang memakai klip berikutnya.
 
 Suara model diputar sampai habis lalu diulang. Klip goyang/tahan memutar suaranya sendiri; setelah selesai suara model utama mulai lagi dari awal. Saat pemutar musik aktif (main atau jeda), animasi tanpa suara.
 
@@ -199,11 +212,12 @@ Saat build, `extra_script.py` menjalankan `tools/embed_jpeg.py` yang menanam kli
 |---|---|
 | `-DMOCHI_DF_COPY_ORDER` | Suara animasi di root, menurut urutan salin (mode lama) |
 | `-DMOCHI_PIN_DF_BUSY=5` | Pakai pin BUSY DFPlayer di GPIO5 untuk deteksi trek selesai |
-| `-DMOCHI_TOUCH_ACTIVE_HIGH` | Sentuh HIGH = ditekan (TTP223 bawaan pabrik), dengan pull-down |
-| `-DMOCHI_DEFAULT_ROTATION=2` | Rotasi awal layar (0–3). Menu "Putar layar" menimpanya |
+| `-DMOCHI_TOUCH_ACTIVE_HIGH` | Paksa sentuh HIGH = ditekan, dengan pull-down (bawaan: deteksi otomatis saat nyala) |
+| `-DMOCHI_TOUCH_MODE=2` | Paksa sentuh LOW = ditekan, dengan pull-up (tombol ke GND / TTP223 pad A) |
+| `-DMOCHI_DEFAULT_ROTATION=0` | Rotasi awal layar (0–3, bawaan 2 = pin LCD di bawah, tatakan GMT130). Menu "Putar layar" menimpanya |
 | `-DMOCHI_BLE_NAME=\"nama\"` | Nama perangkat di aplikasi Chronos |
 
-**Ukuran flash.** App 0x3F0000 (4.128.768 B, partisi terbesar di flash 4 MB). Build 0.7.0: **95,1%** flash, RAM 12,4%. Klip JPEG mentah 3,75 MB tidak muat bersama BLE, jadi `embed_jpeg.py` punya **anggaran** (`custom_jpeg_budget = 3300000` di `platformio.ini`). Jika total klip melebihinya, frame yang **nyaris sama** dengan frame sebelumnya (saat ini ≤ 1,2% piksel berbeda) dipakai ulang. Jumlah frame dan tempo tetap; file aset tidak diubah. Hasilnya tercetak saat build (`ANGGARAN: …`).
+**Ukuran flash.** App 0x3F0000 (4.128.768 B, partisi terbesar di flash 4 MB). Build 0.7.0: **94,5%** flash (3.900.202 B), RAM 12,4%. Klip JPEG mentah 3,43 MB (14 klip) tidak muat bersama BLE, jadi `embed_jpeg.py` punya **anggaran** (`custom_jpeg_budget = 3300000` di `platformio.ini`). Jika total klip melebihinya, frame yang **nyaris sama** dengan frame sebelumnya (saat ini ≤ 0,3% piksel berbeda, jadi 3,26 MB) dipakai ulang. Jumlah frame dan tempo tetap; file aset tidak diubah. Hasilnya tercetak saat build (`ANGGARAN: …`).
 
 **Perbarui `docs/firmware/firmware.bin` setelah build:**
 
@@ -229,23 +243,26 @@ Animasi ditanam di firmware, jadi alurnya **impor → daftarkan → build → fl
    python tools/import_jpeg_clip.py <tema> <nama> folder_frame/
    ```
    Opsi: `--resize`, `--crop`, `--step`, `--hold`, `--delay` (lihat `--help`). Frame lebih kecil dari 240×240 digambar di tengah.
-2. Daftarkan di `firmware/assets/meta.json` → `"jpeg_clips"`: `["<tema>", "<nama>", "", <trek>]`. Peran: `""` biasa, `"dizzy"` saat goyang, `"heart"` saat tahan. Trek boleh dikosongkan (otomatis nomor berikutnya). Tambahkan di **akhir** `"jpeg_clips"`, jangan di `"builtins"` (nomor trek builtin = posisinya, jadi baris baru akan bentrok dengan trek 19 `mochi/full1`). Panduan lengkap: [Animasi & suara](https://rz7mong.github.io/mochi-dfplayer/kelola.html).
+2. Daftarkan di `firmware/assets/meta.json` → `"jpeg_clips"`: `["<tema>", "<nama>", "", <trek>]`. Peran: `""` biasa, `"dizzy"` saat goyang, `"heart"` saat tahan. Trek boleh dikosongkan (otomatis nomor berikutnya). Tambahkan di **akhir** `"jpeg_clips"`, jangan di `"builtins"` (nomor trek builtin = posisinya, jadi baris baru akan bentrok dengan trek 19 `wajah/senyum_kedip`). Panduan lengkap: [Animasi & suara](https://rz7mong.github.io/mochi-dfplayer/kelola.html).
 3. Build + flash: `pio run -e esp32-c3-dfplayer -t upload`. Perhatikan baris `ANGGARAN` jika klip banyak.
 4. `python tools/daftar_trek.py` untuk melihat nomor trek, lalu salin `/MP3/000N.mp3` ke kartu.
 
-Aturan: klip satu tema selalu dikelompokkan; tema baru masuk di akhir urutan model. `meta.json` `"boot_theme"` menentukan model saat nyala. Pakai hanya media yang boleh kamu sebarkan ([THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)).
+Aturan: klip satu tema selalu dikelompokkan. `meta.json` `"theme_order"` mengatur urutan tema (sekarang wajah, mobil, gundam; tema lain di akhir), `"boot_theme"` menentukan model saat nyala (sekarang `wajah`). Pakai hanya media yang boleh kamu sebarkan ([THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)).
 
 ## 🛠️ Kalau ada masalah
 
 | Gejala | Cek |
 |---|---|
-| Port tidak muncul | Chrome/Edge di komputer, kabel USB data, tahan BOOT saat colok |
+| Port tidak muncul | Chrome/Edge di komputer, kabel USB data, tahan BOOT saat colok. Linux: tambahkan user ke grup `dialout`. Tutup monitor serial lain |
 | Layar hitam | SCLK 4, MOSI 6, DC 3, RST 10, BLK 7; CS modul 8 pin ke GND. Mode berhenti juga hitam: ketuk 1× |
 | Gambar terbalik/miring | Menu → Putar layar, atau `-DMOCHI_DEFAULT_ROTATION` |
 | Tidak ada suara | DFPlayer VCC 5 V, GPIO20 →(1 kΩ)→ RX, TX → GPIO21, speaker SPK_1/SPK_2, kartu FAT32, folder `/MP3`. Serial: `DFPlayer menjawab` |
 | Suara tidak diulang / lagu tidak lanjut | Kabel TX modul → GPIO21 (pesan "trek selesai"), atau pasang BUSY + `-DMOCHI_PIN_DF_BUSY=5` |
 | Pemutar: "folder /01 kosong" | Lagu harus `/01/001.mp3`, `/01/002.mp3`, … |
-| Ketukan tidak terbaca / selalu "tahan" | Polaritas sentuh, lihat [catatan sentuh](#catatan-sentuh) |
+| Ketukan tidak terbaca / selalu "tahan" | Lihat log `sentuh GPIO1: …` dan [catatan sentuh](#catatan-sentuh). "tombol ke GND / mengambang" padahal TTP223 = kabel I/O putus. VCC TTP223 3V3. Casing di atas TTP223 ≤ 2 mm, tanpa logam |
+| Bunyi letup / ESP reset saat suara mulai | Daya USB kurang: kabel/charger lebih baik, kapasitor 100–470 µF di VCC–GND DFPlayer |
+| Warna negatif / merah-biru tertukar | `User_Setup_ST7789.h`: `TFT_INVERSION_ON` → `TFT_INVERSION_OFF`, atau `TFT_RGB_ORDER` `TFT_BGR` → `TFT_RGB` |
+| Build: `No module named PIL` | `~/.platformio/penv/bin/pip install pillow` (Python milik PlatformIO) |
 | Chronos tidak menemukan perangkat | Menu → Chronos BLE harus ON. Nama `rzmong dfplayer` |
 | Goyang tidak bereaksi | Serial harus menulis `MPU6050 siap`. SDA 8, SCL 9 |
 | Build: `tidak muat di anggaran` | Klip terlalu banyak. Kurangi klip atau atur `custom_jpeg_budget` (lalu cek ukuran app) |
@@ -261,4 +278,4 @@ Aturan: klip satu tema selalu dikelompokkan; tema baru masuk di akhir urutan mod
 | `firmware/tools/` | `import_jpeg_clip.py`, `embed_jpeg.py`, `daftar_trek.py` |
 | `docs/` | Situs GitHub Pages + pemasang browser (`docs/firmware/`) |
 
-MIT © rzmong untuk kode. Klip gundam, dasai, dan mochi punya catatan hak tersendiri di [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+MIT © rzmong untuk kode. Klip wajah, mobil, dan gundam punya catatan hak tersendiri di [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

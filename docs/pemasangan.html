@@ -70,7 +70,7 @@
     <div class="step"><div class="num">2</div><div>Tahan tombol <b>BOOT</b> di ESP32-C3, colok USB-C, lalu lepas BOOT.</div></div>
     <div class="step"><div class="num">3</div><div>Klik <b>Install</b>, pilih port, centang <b>Erase</b> untuk pemasangan pertama, tunggu sampai selesai.</div></div>
     <div class="step"><div class="num">4</div><div>Cabut lalu colok lagi USB-C.</div></div>
-    <p class="tip">💡 Pakai sentuh TTP223 bawaan pabrik tanpa solder jumper A? Build sendiri dengan <code>-DMOCHI_TOUCH_ACTIVE_HIGH</code> (lihat <a href="index.html#build">build sendiri</a>). Pin BUSY ke GPIO5? Tambahkan <code>-DMOCHI_PIN_DF_BUSY=5</code>.</p>
+    <p class="tip">💡 TTP223 tidak perlu disolder: jenis sensor dideteksi saat nyala. Mau memaksa? Build sendiri dengan <code>-DMOCHI_TOUCH_ACTIVE_HIGH</code> (lihat <a href="index.html#build">build sendiri</a>). Pin BUSY ke GPIO5? Tambahkan <code>-DMOCHI_PIN_DF_BUSY=5</code>.</p>
   </div>
 </section>
 
@@ -78,12 +78,12 @@
   <h2>✅ Uji nyala pertama</h2>
   <div class="card">
     <div class="tbl"><table><tr><th>Cek</th><th>Yang harus terjadi</th><th>Kalau tidak</th></tr>
-      <tr><td>Layar</td><td>Lampu latar nyala, klip <code>mochi/full1</code> langsung main</td><td>Cek SCL 4, SDA 6, DC 3, RES 10, BLK 7, VCC 3V3. Modul 8 pin: CS ke GND</td></tr>
-      <tr><td>Suara</td><td>Suara model terdengar dari speaker (<code>/MP3/0019.mp3</code> untuk <code>mochi/full1</code>)</td><td>VCC DFPlayer 5V, GPIO20 → 1 kΩ → RX, kartu FAT32, folder <code>/MP3</code></td></tr>
-      <tr><td>Ketuk 1×</td><td>Animasi berhenti, layar gelap. Ketuk lagi: main</td><td>Polaritas TTP223: solder jumper A atau build <code>-DMOCHI_TOUCH_ACTIVE_HIGH</code></td></tr>
+      <tr><td>Layar</td><td>Lampu latar nyala, klip <code>wajah/senyum_kedip</code> langsung main</td><td>Cek SCL 4, SDA 6, DC 3, RES 10, BLK 7, VCC 3V3. Modul 8 pin: CS ke GND</td></tr>
+      <tr><td>Suara</td><td>Suara model terdengar dari speaker (<code>/MP3/0019.mp3</code> untuk <code>wajah/senyum_kedip</code>)</td><td>VCC DFPlayer 5V, GPIO20 → 1 kΩ → RX, kartu FAT32, folder <code>/MP3</code></td></tr>
+      <tr><td>Ketuk 1×</td><td>Animasi berhenti, layar gelap. Ketuk lagi: main</td><td>Cabut-colok tanpa menyentuh sensor (deteksi jenis sensor saat nyala). Kabel I/O → GPIO1, VCC 3V3</td></tr>
       <tr><td>Ketuk 2×</td><td>Model berikutnya</td><td>Ketuk lebih cepat (jeda ≤ 0,35 dtk)</td></tr>
       <tr><td>Tahan 2 dtk</td><td>Menu terbuka</td><td>Kalau langsung "tahan" terus: polaritas sentuh terbalik</td></tr>
-      <tr><td>Serial 115200</td><td><code>Mochi DFPlayer 0.7.0, 34 model …</code>, <code>MPU6050 siap</code> (kalau dipasang)</td><td><code>MPU6050 tidak ada</code>: cek SDA 8, SCL 9, 3V3</td></tr>
+      <tr><td>Serial 115200</td><td><code>Mochi DFPlayer 0.7.0, 14 model …</code>, <code>sentuh GPIO1: …</code>, <code>MPU6050 siap</code> (kalau dipasang)</td><td><code>MPU6050 tidak ada</code>: cek SDA 8, SCL 9, 3V3</td></tr>
     </table></div>
     <p class="hint">Serial monitor lewat USB: <code>pio device monitor</code> (115200). Daftar gejala lain: <a href="instalasi.html#masalah">Kalau ada masalah</a>.</p>
   </div>
@@ -127,8 +127,8 @@ const BOOTILL=`<svg viewBox="0 0 640 420" xmlns="http://www.w3.org/2000/svg" fon
 <rect x="60" y="50" width="250" height="250" rx="18" fill="#1d4fa8"/><rect x="80" y="70" width="210" height="210" rx="8" fill="#0b1020"/>
 <g transform="translate(185 175)"><ellipse cx="-34" cy="-8" rx="13" ry="18" fill="#7ef0c8"/><ellipse cx="34" cy="-8" rx="13" ry="18" fill="#7ef0c8"/><path d="M-14 24q14 12 28 0" stroke="#ff8fb8" stroke-width="5" fill="none" stroke-linecap="round"/></g>
 <path d="M330 150q20-20 0-40M345 165q36-36 0-70" stroke="#ff8fb8" stroke-width="5" fill="none" stroke-linecap="round"/>
-<g font-size="15" fill="#3b2a3a"><text x="380" y="90" font-weight="800">✅ mochi/full1 main</text><text x="380" y="125" font-weight="800">🔊 suara /MP3/0019</text><text x="380" y="160" font-weight="800">👆 ketuk 1× = berhenti</text><text x="380" y="195" font-weight="800">👆👆 ketuk 2× = model</text><text x="380" y="230" font-weight="800">✋ tahan 2 dtk = menu</text></g>
-<rect x="60" y="320" width="520" height="60" rx="10" fill="#1f2937"/><text x="76" y="345" font-size="12" fill="#a7f3d0" font-family="ui-monospace,monospace">Mochi DFPlayer 0.7.0, 34 model, rotasi 0, Chronos OFF</text><text x="76" y="366" font-size="12" fill="#a7f3d0" font-family="ui-monospace,monospace">MPU6050 siap</text></svg>`;
+<g font-size="15" fill="#3b2a3a"><text x="380" y="90" font-weight="800">✅ senyum_kedip main</text><text x="380" y="125" font-weight="800">🔊 suara /MP3/0019</text><text x="380" y="160" font-weight="800">👆 ketuk 1× = berhenti</text><text x="380" y="195" font-weight="800">👆👆 ketuk 2× = model</text><text x="380" y="230" font-weight="800">✋ tahan 2 dtk = menu</text></g>
+<rect x="60" y="320" width="520" height="60" rx="10" fill="#1f2937"/><text x="76" y="345" font-size="12" fill="#a7f3d0" font-family="ui-monospace,monospace">Mochi DFPlayer 0.7.0, 14 model, rotasi 2, Chronos OFF</text><text x="76" y="366" font-size="12" fill="#a7f3d0" font-family="ui-monospace,monospace">MPU6050 siap</text></svg>`;
 const S=[
 {id:'prep',kick:'Langkah 0 · Persiapan',title:'Alat & aturan dasar',show:[],
  body:`<ul><li>Solder, timah, kabel tipis (silikon / AWG 26–28), multimeter, resistor <b>1 kΩ</b> (1–2 buah), elko <b>100–470 µF ≥ 10 V</b>.</li><li>Kerjakan dengan <b>USB tercabut</b>. Colok hanya saat uji.</li><li>Urutan: layar → sentuh → DFPlayer (data, lalu daya) → speaker → MPU6050 (opsional) → cek multimeter.</li></ul><div class="info">ℹ️ Cek pin di firmware: <code>MochiRzmong.h</code> (sentuh, DFPlayer, MPU6050) dan <code>User_Setup_ST7789.h</code> (layar).</div>`},
@@ -137,7 +137,7 @@ const S=[
 {id:'tft',kick:'Langkah 2 · Layar',title:'ST7789 1,3" (7 kabel)',show:['esp','tft'],
  body:`<ul><li><b>SCL → GPIO4</b> · <b>SDA → GPIO6</b> · <b>DC → GPIO3</b> · <b>RES → GPIO10</b> · <b>BLK → GPIO7</b></li><li><b>VCC → 3V3</b> · <b>GND → GND</b></li><li>Modul 8 pin dengan kaki <b>CS</b>: sambungkan CS ke <b>GND</b>. Firmware memakai CS = −1.</li></ul><div class="tip">💡 Kabel SPI sependek mungkin (SPI 40 MHz). BLK dikendalikan firmware: mati saat animasi berhenti.</div>`},
 {id:'ttp',kick:'Langkah 3 · Sentuh',title:'TTP223 → GPIO1',show:['esp','tft','ttp'],
- body:`<ul><li><b>OUT (I/O) → GPIO1</b> · <b>VCC → 3V3</b> · <b>GND → GND</b></li><li>Firmware bawaan membaca <b>LOW = disentuh</b> (pull-up internal). TTP223 pabrik justru HIGH saat disentuh, jadi <b>solder jumper A</b> di modul.</li><li>Tidak mau solder jumper? Build dengan <code>-DMOCHI_TOUCH_ACTIVE_HIGH</code> (pull-down).</li></ul><div class="info">ℹ️ Tombol tekan biasa juga bisa: satu kaki ke GPIO1, kaki lain ke GND.</div>`},
+ body:`<ul><li><b>OUT (I/O) → GPIO1</b> · <b>VCC → 3V3</b> · <b>GND → GND</b></li><li><b>Tanpa solder jumper</b>: firmware mendeteksi sendiri saat nyala apakah sensor aktif HIGH (TTP223 pabrik), aktif LOW (pad A disolder), atau tombol ke GND.</li><li>Jangan sentuh sensor ±1 detik setelah nyala. Paksa manual bila perlu: <code>-DMOCHI_TOUCH_ACTIVE_HIGH</code> atau <code>-DMOCHI_TOUCH_MODE=2</code>.</li></ul><div class="info">ℹ️ Tombol tekan biasa juga bisa: satu kaki ke GPIO1, kaki lain ke GND.</div>`},
 {id:'df',kick:'Langkah 4 · DFPlayer data',title:'DFPlayer RX / TX / BUSY',show:['esp','tft','ttp','df'],
  body:`<ul><li><b>GPIO20 → resistor 1 kΩ → RX</b> DFPlayer (ESP TX).</li><li><b>TX DFPlayer → GPIO21</b> (ESP RX). Resistor 1 kΩ di sini <b>opsional</b>. Kabel ini <b>wajib</b>: membawa pesan "trek selesai" supaya suara diulang dan lagu lanjut.</li><li><b>BUSY → GPIO5</b> opsional, aktifkan dengan <code>-DMOCHI_PIN_DF_BUSY=5</code>.</li></ul><div class="note">⚠️ Resistor 1 kΩ di RX meredam dengung dan melindungi modul. Jangan dilewati.</div>`},
 {id:'dfpwr',kick:'Langkah 5 · DFPlayer daya',title:'VCC 5V, GND, kapasitor',show:['esp','tft','ttp','df','cap'],
@@ -153,7 +153,7 @@ const S=[
 {id:'flash',kick:'Langkah 10 · Flash',title:'Pasang firmware dari browser',ill:FLASHILL,
  body:`<ul><li>Chrome/Edge di komputer → <a href="index.html#flash">Instalasi firmware</a>.</li><li>Tahan BOOT, colok USB-C, lepas BOOT, klik Install, pilih port.</li><li>Centang <b>Erase</b> untuk pemasangan pertama.</li></ul>`},
 {id:'boot',kick:'Langkah 11 · Uji',title:'Uji nyala pertama',ill:BOOTILL,
- body:`<ul><li>Layar langsung memutar <code>mochi/full1</code> dengan suaranya.</li><li>Ketuk 1× = berhenti/putar, ketuk 2× = model berikutnya, tahan 2 dtk = menu.</li><li>Ada yang tidak jalan? Lihat <a href="#uji">tabel uji</a>.</li></ul>`},
+ body:`<ul><li>Layar langsung memutar <code>wajah/senyum_kedip</code> dengan suaranya. Jangan sentuh sensor ±1 detik saat nyala.</li><li>Ketuk 1× = berhenti/putar, ketuk 2× = model berikutnya, tahan 2 dtk = menu.</li><li>Ada yang tidak jalan? Lihat <a href="#uji">tabel uji</a>.</li></ul>`},
 {id:'done',kick:'Selesai 🎉',title:'Mochi siap!',show:MW.ALL,all:true,
  body:`<ul><li>Atur volume, Chronos, dan rotasi dari menu (tahan 2 dtk): <a href="panduan.html">Cara pakai</a>.</li><li>Tambah lagu, suara, dan animasi: <a href="kelola.html">Animasi &amp; suara</a>.</li></ul>`}
 ];
@@ -185,7 +185,7 @@ const PARTS=[
  ['🎵','DFPlayer Mini','1','Pemutar MP3 dengan slot microSD dan amplifier 3 W. VCC 5V.','wajib'],
  ['🔊','Speaker 8 Ω 1–3 W','1','Langsung ke SPK_1 / SPK_2, tanpa amplifier tambahan.','wajib'],
  ['💾','Kartu microSD','1','FAT32, ≤ 32 GB. Isi MP3 bernomor (lihat kartu SD).','wajib'],
- ['👆','TTP223 (atau tombol)','1','Sentuh ke GPIO1. Solder jumper A, atau build <code>-DMOCHI_TOUCH_ACTIVE_HIGH</code>.','wajib'],
+ ['👆','TTP223 (atau tombol)','1','Sentuh ke GPIO1. Tanpa solder: jenisnya dideteksi saat nyala.','wajib'],
  ['🟫','Resistor 1 kΩ','1–2','Wajib di GPIO20 → RX DFPlayer. Satu lagi opsional di TX → GPIO21.','wajib'],
  ['⚡','Elko 100–470 µF ≥ 10 V','1','Dekat VCC–GND DFPlayer, menahan lonjakan arus speaker.','disarankan'],
  ['🌀','MPU6050 (GY-521)','1','Untuk fitur goyang. SDA GPIO8, SCL GPIO9, 3V3.','opsional'],

@@ -4,3 +4,10 @@ firmware/include/defaults_gif.h
 firmware/include/jingle.h
 firmware/.pio/
 __pycache__/
+
+# lokal
+.venv/
+venv/
+shots/
+*.log
+logs/

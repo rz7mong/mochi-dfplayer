@@ -29,7 +29,7 @@
   <div class="step"><div class="num">2</div><div>Tahan <b>BOOT</b>, colok USB-C, lalu lepas BOOT.</div></div>
   <div class="step"><div class="num">3</div><div>Klik tombol di bawah, pilih port (<code>USB JTAG/serial debug unit</code> atau <code>ttyACM</code>/<code>COM</code>), lalu <b>Install</b>.</div></div>
   <div class="step"><div class="num">4</div><div>Centang <b>Erase</b> untuk pemasangan pertama atau naik dari versi &lt; 0.7.0. Erase menghapus pengaturan (volume, rotasi, Chronos); kartu SD tidak tersentuh.</div></div>
-  <div class="step"><div class="num">5</div><div>Tunggu sampai 100%, cabut lalu colok lagi. Layar langsung memutar <code>mochi/full1</code>.</div></div>
+  <div class="step"><div class="num">5</div><div>Tunggu sampai 100%, cabut lalu colok lagi. Layar langsung memutar <code>wajah/senyum_kedip</code>. Jangan sentuh sensor ±1 detik saat nyala: firmware sedang mendeteksi jenis sensor sentuh.</div></div>
   </div>
   <div class="install">
   <esp-web-install-button manifest="./firmware/manifest.json">
@@ -50,7 +50,7 @@
 /02/001.mp3                suara notifikasi Chronos
 /03/001.mp3 …              nada dering panggilan Chronos</pre>
   Detail dan tabel trek: <a href="kelola.html#suara">Animasi &amp; suara</a>.</div></div>
-  <div class="step"><div class="num">2</div><div><b>Nyala pertama</b>: lampu latar nyala, <code>mochi/full1</code> main dengan suara <code>/MP3/0019.mp3</code>. Ketuk 1× = berhenti/putar, ketuk 2× = model berikutnya, tahan 2 dtk = menu.</div></div>
+  <div class="step"><div class="num">2</div><div><b>Nyala pertama</b>: lampu latar nyala, <code>wajah/senyum_kedip</code> main dengan suara <code>/MP3/0019.mp3</code>. Ketuk 1× = berhenti/putar, ketuk 2× = model berikutnya, tahan 2 dtk = menu.</div></div>
   <div class="step"><div class="num">3</div><div><b>Atur dari menu</b>: volume, Chronos BLE, Jam HP, putar layar. Lihat <a href="panduan.html">Cara pakai</a>.</div></div>
   <p class="hint">Belum dirakit? <a href="pemasangan.html">Demo rakit</a> dan <a href="pemasangan-kabel.html">Diagram kabel</a>.</p>
 </section>
@@ -65,7 +65,7 @@
     <tr><td>Layar hitam setelah flash</td><td>Cabut-colok dulu (setelah flash ESP kadang tetap di mode unduh). Cek kabel layar: SCL 4, SDA 6, DC 3, RES 10, BLK 7, VCC 3V3; modul 8 pin CS ke GND. Mode berhenti juga hitam: ketuk 1×.</td></tr>
     <tr><td>Layar putih / bergaris</td><td>Kabel SPI terlalu panjang atau RES/DC tertukar. Pendekkan kabel SCL/SDA/DC.</td></tr>
     <tr><td>Gambar jalan, tidak ada suara</td><td>DFPlayer VCC 5V, GPIO20 → 1 kΩ → RX, TX → GPIO21, speaker di SPK_1/SPK_2, kartu FAT32 dengan folder <code>/MP3</code>.</td></tr>
-    <tr><td>Ketukan tidak terbaca / selalu "tahan"</td><td>Polaritas sentuh: solder jumper A di TTP223, atau build sendiri dengan <code>-DMOCHI_TOUCH_ACTIVE_HIGH</code>.</td></tr>
+    <tr><td>Ketukan tidak terbaca / selalu "tahan"</td><td>Jenis sensor dideteksi saat nyala; cabut-colok USB tanpa menyentuh sensor. Cek kabel I/O → GPIO1, VCC 3V3. Masih salah: build sendiri dengan <code>-DMOCHI_TOUCH_ACTIVE_HIGH</code> atau <code>-DMOCHI_TOUCH_MODE=2</code>.</td></tr>
   </table></div>
   <p class="hint">Log lewat USB CDC: <code>pio device monitor</code> (115200). Gejala lain: <a href="instalasi.html#masalah">Rakit &amp; kartu SD</a>.</p>
 </section>
@@ -76,14 +76,14 @@
 cd firmware
 pio run -e esp32-c3-dfplayer -t upload
 pio device monitor        # 115200</pre>
-  <p class="hint">Opsi di <code>build_flags</code> (<code>platformio.ini</code>): <code>-DMOCHI_TOUCH_ACTIVE_HIGH</code> (TTP223 pabrik), <code>-DMOCHI_PIN_DF_BUSY=5</code> (pin BUSY), <code>-DMOCHI_DEFAULT_ROTATION=2</code> (layar terbalik). Lihat <a href="pemasangan-kabel.html#build">Diagram kabel</a>.</p>
+  <p class="hint">Opsi di <code>build_flags</code> (<code>platformio.ini</code>): <code>-DMOCHI_TOUCH_ACTIVE_HIGH</code> (paksa sentuh aktif HIGH; bawaan otomatis), <code>-DMOCHI_PIN_DF_BUSY=5</code> (pin BUSY), <code>-DMOCHI_DEFAULT_ROTATION=0</code> (layar tegak, pin di atas; bawaan 2). Lihat <a href="pemasangan-kabel.html#build">Diagram kabel</a>.</p>
 </section>
 
 <section class="card">
   <h2>🍡 Apa ini?</h2>
   <p>Teman meja kecil: wajah dan klip animasi di layar 1,3 inci, suaranya dari modul <b>DFPlayer Mini</b> yang memutar MP3 dari kartu microSD. Animasi disimpan sebagai <b>frame JPEG penuh warna</b> di flash ESP32, jadi gambarnya lebih tajam daripada GIF 256 warna.</p>
   <ul>
-    <li><b>34 model</b>: 10 wajah, 12 gundam, 4 mobil, 5 mochi, 3 dasai.</li>
+    <li><b>14 model</b>: 6 wajah, 2 mobil, 6 gundam.</li>
     <li>Suara tiap model diputar <b>sampai habis</b>, lalu diulang.</li>
     <li><b>Pemutar MP3</b> di menu layar untuk lagu di folder <code>/01</code>.</li>
     <li><b>Chronos BLE</b>: jam dan baterai HP, notifikasi, panggilan, navigasi.</li>

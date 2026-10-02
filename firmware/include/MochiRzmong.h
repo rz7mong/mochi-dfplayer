@@ -7,6 +7,11 @@
 #endif
 /* v0.7.0: Chronos BLE (jam, baterai HP, notifikasi, panggilan, navigasi), menu LCD, pemutar MP3 folder /01,
  *         trek animasi /MP3/000N.mp3 menurut nama dan diputar sampai habis, versi tunggal, rotasi dari header.
+ *         Sentuh: polaritas dideteksi otomatis saat nyala (dari v0.6.10), MOCHI_TOUCH_ACTIVE_HIGH tetap sebagai paksaan.
+ *         Klip dari v0.6.9/0.6.8: nama Indonesia (wajah, mobil, gundam), theme_order, boot wajah/senyum_kedip.
+ * v0.6.10: sensor sentuh deteksi otomatis (TTP223 standar, pad A, atau tombol ke GND).
+ * v0.6.9: nama animasi Indonesia, theme_order, boot wajah/senyum_kedip.
+ * v0.6.8: 6 gundam, 5 mochi, 3 dasai; dasai semua frame q80.
  * v0.6.6: gundam 12 GIF rzmong, 240x240 (PR #1).
  * v0.6.5: gundam 8 adegan 240x240, dasai tinggal video03, video07, video2.
  * v0.6.2-0.6.4: tema mochi, klip JPEG penuh, tempo/trek per klip, app 0x3F0000 tanpa spiffs.
@@ -14,10 +19,11 @@
  * v0.6.0: 18 model JPEG, ketuk dua kali ganti model.
  * v0.5.7-0.5.9: pinout pikapet / bangdc90 (DC 3, RST 10, BL 7, MPU6050 8/9), DFPlayer UART 20/21.
  */
-#ifndef MOCHI_DEFAULT_ROTATION    /* 0 = tegak (pikapet). Layar terbalik / pin di bawah: -DMOCHI_DEFAULT_ROTATION=2 */
-#define MOCHI_DEFAULT_ROTATION 0
+#ifndef MOCHI_DEFAULT_ROTATION    /* 2 = LCD pin di bawah (tatakan GMT130). Pin di atas / tegak pikapet: -DMOCHI_DEFAULT_ROTATION=0 */
+#define MOCHI_DEFAULT_ROTATION 2
 #endif
-#define MOCHI_PIN_TOUCH 1
+#define MOCHI_ROT_LAYOUT 1  /* versi arah pasang LCD di NVS ("rotv"); naikkan jika default rotasi berubah lagi */
+#define MOCHI_PIN_TOUCH 1  /* bukan pin strap (strap C3: GPIO2, 8, 9); polaritas dideteksi saat nyala, lihat main.cpp */
 #define MOCHI_PIN_TFT_SCLK 4
 #define MOCHI_PIN_TFT_MOSI 6
 #define MOCHI_PIN_TFT_CS -1

@@ -8,6 +8,7 @@
   - Jika theme/stem sama dengan builtin, klip penuh MENGGANTIKAN builtin itu di posisi dan nomor trek yang sama.
   - Klip baru masuk tepat setelah kelompok temanya (tema tetap berurutan untuk ganti model / goyang / tahan),
     tema baru di akhir. Trek klip baru: lanjut dari nomor terbesar, urut sesuai daftar jpeg_clips.
+meta "theme_order" (opsional): urutan tema, tema lain di belakang.
 Urutan model = urutan JPEG_CLIPS; nomor trek disimpan per klip, jadi trek lama tidak bergeser.
 
 Batas: <= 65535 frame per klip, <= 65535 B per frame, trek 1..3000. Anggaran flash: env MOCHI_JPEG_BUDGET."""
@@ -57,6 +58,9 @@ for i, (t, s) in enumerate(builtins):
     if i + 1 == len(builtins) or builtins[i + 1][0] != t:  # akhir kelompok tema: sisipkan klip baru tema ini
         order += [(jt, js, "jpeg", r, tr) for jt, js, r, tr in jents if jt == t and (jt, js) not in builtins]
 order += [(jt, js, "jpeg", r, tr) for jt, js, r, tr in jents if (jt, js) not in builtins and jt not in {b[0] for b in builtins}]
+theme_order = meta.get("theme_order", [])  # opsional: urutan tema model, mis. ["wajah", "mobil", "gundam"]
+if theme_order:  # sort stabil: urutan klip di dalam tema tetap
+    order.sort(key=lambda o: theme_order.index(o[0]) if o[0] in theme_order else len(theme_order))
 nxt = max(len(builtins), max((tr for *_, tr in jents), default=0)) + 1
 tracks = {}
 for jt, js, r, tr in jents:

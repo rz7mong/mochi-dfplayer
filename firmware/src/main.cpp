@@ -28,12 +28,17 @@ static const uint16_t LONG_MS = 2000;     // tahan lama = menu / kembali
 static const float SHAKE_G = 1.2f;
 static const uint32_t SHAKE_WINDOW_MS = 1000;
 static const uint32_t SHAKE_COOLDOWN_MS = 1000;
+static const uint32_t TOUCH_BOOT_IGNORE_MS = 800;   // TTP223 kalibrasi sesaat setelah nyala
+static const uint32_t TOUCH_STUCK_MS = 10000;       // modul "tersentuh" terus 10 dtk -> polaritas dibalik
+// Polaritas sensor: bawaan dideteksi otomatis saat nyala (lihat touchInit).
+// Paksa lewat build_flags: -DMOCHI_TOUCH_ACTIVE_HIGH (TTP223 standar), atau -DMOCHI_TOUCH_MODE=1 (aktif HIGH)
+// / 2 (aktif LOW + pull-up, tombol ke GND / TTP223 pad A). 0 = otomatis.
+#ifndef MOCHI_TOUCH_MODE
 #ifdef MOCHI_TOUCH_ACTIVE_HIGH
-static const int TOUCH_DOWN = HIGH;
-static const int TOUCH_PINMODE = INPUT_PULLDOWN;
+#define MOCHI_TOUCH_MODE 1
 #else
-static const int TOUCH_DOWN = LOW;        // tombol ke GND, atau TTP223 dengan jumper A
-static const int TOUCH_PINMODE = INPUT_PULLUP;
+#define MOCHI_TOUCH_MODE 0
+#endif
 #endif
 
 // ---------- pengaturan (NVS) ----------
@@ -82,6 +87,11 @@ static void loadPrefs() {
   volume = prefs.getUChar("vol", 28);
   if (volume > 30) volume = 28;
   rot = prefs.getUChar("rot", MOCHI_DEFAULT_ROTATION) & 3;
+  if (prefs.getUChar("rotv", 0) != MOCHI_ROT_LAYOUT) {  // default rotasi berubah: pakai default baru sekali
+    rot = MOCHI_DEFAULT_ROTATION;
+    prefs.putUChar("rot", rot);
+    prefs.putUChar("rotv", MOCHI_ROT_LAYOUT);
+  }
   chronosOn = prefs.getBool("chrono", false);
   clockOn = prefs.getBool("clock", false);
   chronosNav = prefs.getBool("nav", true);
@@ -96,6 +106,10 @@ static void backlight(bool on) { digitalWrite(MOCHI_PIN_TFT_BL, on ? HIGH : LOW)
 // Sentuh: satu input -> ketuk 1x / 2x, tahan (0,4 dtk), tahan lama (2 dtk)
 // =====================================================================
 enum class Ev : uint8_t { None, Tap1, Tap2, HoldStart, HoldEnd, Long };
+static bool touchActiveHigh = true;
+static bool touchDriven = true;           // modul mendorong pin (TTP223). Tombol / mengambang: polaritas tidak dibalik
+static uint32_t touchReadyAt = 0;
+static bool waitRelease = false;          // tersentuh saat nyala: tunggu dilepas dulu
 static int lastRaw = 0;
 static uint32_t debounceAt = 0;
 static bool pressed = false, holdFired = false, longFired = false;
@@ -103,11 +117,68 @@ static uint32_t pressAt = 0, lastTapAt = 0;
 static uint8_t taps = 0;
 static bool multiTap = true;              // false = ketuk langsung dieksekusi (tanpa menunggu ketuk 2x)
 
+static void touchPinMode() { pinMode(MOCHI_PIN_TOUCH, touchActiveHigh ? INPUT_PULLDOWN : INPUT_PULLUP); }
+static int touchRawRead() { return (digitalRead(MOCHI_PIN_TOUCH) == HIGH) == touchActiveHigh ? 1 : 0; }
+
+static bool sampleHigh(uint8_t pm) {
+  pinMode(MOCHI_PIN_TOUCH, pm);
+  delay(5);
+  int hi = 0;
+  for (int i = 0; i < 50; i++) { hi += digitalRead(MOCHI_PIN_TOUCH) == HIGH; delay(2); }
+  return hi > 25;
+}
+
+// Deteksi otomatis saat nyala: pin dibaca dengan pull-up lalu pull-down.
+//   pull-up HIGH, pull-down LOW -> mengambang = tombol ke GND (atau belum tersambung): aktif LOW, pull-up.
+//   keduanya LOW                -> modul mendorong LOW saat diam = TTP223 standar: aktif HIGH, pull-down.
+//   keduanya HIGH               -> modul mendorong HIGH saat diam = TTP223 pad A disolder: aktif LOW.
+static void touchInit() {
+#if MOCHI_TOUCH_MODE == 1
+  touchActiveHigh = true; touchDriven = false;
+  const char *kind = "dipaksa aktif HIGH";
+#elif MOCHI_TOUCH_MODE == 2
+  touchActiveHigh = false; touchDriven = false;
+  const char *kind = "dipaksa aktif LOW";
+#else
+  bool up = sampleHigh(INPUT_PULLUP), down = sampleHigh(INPUT_PULLDOWN);
+  const char *kind;
+  if (up && !down) { touchActiveHigh = false; touchDriven = false; kind = "tombol ke GND / mengambang, aktif LOW"; }
+  else if (!up && !down) { touchActiveHigh = true; kind = "TTP223 standar, aktif HIGH"; }
+  else if (up && down) { touchActiveHigh = false; kind = "TTP223 pad A, aktif LOW"; }
+  else { touchActiveHigh = true; kind = "tidak jelas, aktif HIGH"; }
+#endif
+  touchPinMode();
+  delay(2);
+  lastRaw = touchRawRead();
+  debounceAt = millis();
+  touchReadyAt = millis() + TOUCH_BOOT_IGNORE_MS;
+  waitRelease = lastRaw;
+  Serial.printf("sentuh GPIO%d: %s\n", MOCHI_PIN_TOUCH, kind);
+}
+
 static Ev readTouch() {
-  int raw = digitalRead(MOCHI_PIN_TOUCH) == TOUCH_DOWN ? 1 : 0;
+  int raw = touchRawRead();
   uint32_t now = millis();
   // Debounce terhadap bacaan mentah sebelumnya, bukan status stabil.
   if (raw != lastRaw) { lastRaw = raw; debounceAt = now; }
+  if (raw && touchDriven && now - debounceAt >= TOUCH_STUCK_MS) {
+    // TTP223 "tersentuh" terus 10 dtk: hampir pasti salah deteksi (jari di sensor saat nyala). Balik polaritas.
+    bool wasHold = pressed && holdFired && !longFired;
+    touchActiveHigh = !touchActiveHigh;
+    touchPinMode();
+    delay(2);
+    pressed = holdFired = longFired = waitRelease = false;
+    taps = 0;
+    lastRaw = touchRawRead();
+    debounceAt = now;
+    Serial.printf("sentuh: aktif terus 10 dtk, polaritas dibalik ke aktif %s\n", touchActiveHigh ? "HIGH" : "LOW");
+    return wasHold ? Ev::HoldEnd : Ev::None;
+  }
+  if ((int32_t)(now - touchReadyAt) < 0) return Ev::None;
+  if (waitRelease) {
+    if (!raw && now - debounceAt >= DEBOUNCE_MS) waitRelease = false;
+    return Ev::None;
+  }
   if (now - debounceAt >= DEBOUNCE_MS && (raw == 1) != pressed) {
     pressed = raw == 1;
     if (pressed) {
@@ -779,7 +850,7 @@ void setup() {
   pinMode(MOCHI_PIN_TFT_BL, OUTPUT);
   digitalWrite(MOCHI_PIN_TFT_BL, HIGH);
   Serial.begin(115200);
-  pinMode(MOCHI_PIN_TOUCH, TOUCH_PINMODE);
+  touchInit();
   prefs.begin("mochidfp", false);
   loadPrefs();
   SPI.begin(MOCHI_PIN_TFT_SCLK, -1, MOCHI_PIN_TFT_MOSI, -1);

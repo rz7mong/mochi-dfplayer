@@ -36,7 +36,7 @@
 <section class="card" id="animasi">
   <h2>🎞️ Tambah animasi GIF</h2>
   <p>Animasi ditanam di firmware sebagai frame JPEG penuh warna. Alurnya: <b>GIF → impor → daftarkan → build &amp; flash → salin suara</b>.</p>
-  <div class="step"><div class="num">1</div><div><b>Siapkan GIF 240×240</b> yang berulang mulus. Simpan sebagai sumber di <code>firmware/assets/builtin/gif/&lt;tema&gt;/&lt;nama&gt;.gif</code>, mis. <code>assets/builtin/gif/wajah/senyum.gif</code>. Tema yang sudah ada: <code>wajah</code>, <code>gundam</code>, <code>mobil</code>, <code>mochi</code>, <code>dasai</code>; nama tema baru juga boleh.</div></div>
+  <div class="step"><div class="num">1</div><div><b>Siapkan GIF 240×240</b> yang berulang mulus. Simpan sebagai sumber di <code>firmware/assets/builtin/gif/&lt;tema&gt;/&lt;nama&gt;.gif</code>, mis. <code>assets/builtin/gif/wajah/senyum.gif</code>. Tema yang sudah ada: <code>wajah</code>, <code>mobil</code>, <code>gundam</code>; nama tema baru juga boleh.</div></div>
   <div class="step"><div class="num">2</div><div><b>Impor jadi frame JPEG</b> (perlu Python + Pillow):
 <pre>cd firmware
 python tools/import_jpeg_clip.py wajah senyum assets/builtin/gif/wajah/senyum.gif --quality 80</pre>
@@ -44,14 +44,14 @@ python tools/import_jpeg_clip.py wajah senyum assets/builtin/gif/wajah/senyum.gi
   <div class="step"><div class="num">3</div><div><b>Tambahkan di akhir daftar <code>"jpeg_clips"</code></b> di <code>firmware/assets/meta.json</code>:
 <pre>"jpeg_clips": [
   …,
-  ["dasai", "video2", "heart", 40],
+  ["gundam", "pilot", "", 31],
   ["wajah", "senyum", ""]          &lt;- baris baru di akhir
 ]</pre>
   Kolom: tema, nama, peran, trek. Peran <code>""</code> = biasa, <code>"dizzy"</code> = diputar saat goyang, <code>"heart"</code> = diputar saat tahan. Trek boleh dikosongkan: otomatis nomor berikutnya (sekarang <b>41</b>).</div></div>
   <div class="step"><div class="num">4</div><div><b>Build &amp; flash ulang</b>: <code>pio run -e esp32-c3-dfplayer -t upload</code>. Klip ditanam otomatis saat build. Perhatikan baris <code>ANGGARAN</code> kalau klip banyak (<a href="animasi.html">detail anggaran flash</a>).</div></div>
   <div class="step"><div class="num">5</div><div><b>Cek nomor trek</b>: <code>python tools/daftar_trek.py</code>, lalu salin suaranya ke kartu sebagai <code>/MP3/0041.mp3</code> (sesuai nomor yang tercetak).</div></div>
-  <p class="note">⚠️ Jangan menambah baris di daftar <code>"builtins"</code>. Nomor trek builtin = posisinya, jadi baris ke-19 akan memakai trek 19 yang sudah dipakai <code>mochi/full1</code>, dan builtin GIF hanya diambil 6 frame.</p>
-  <p class="info">ℹ️ Klip satu tema selalu dikelompokkan: klip baru tema lama masuk setelah kelompok temanya, tema baru di akhir urutan model. <code>"boot_theme"</code> di <code>meta.json</code> menentukan model saat nyala (sekarang <code>mochi</code>). Pakai hanya media yang boleh kamu sebarkan.</p>
+  <p class="note">⚠️ Jangan menambah baris di daftar <code>"builtins"</code>. Nomor trek builtin = posisinya, jadi baris ke-19 akan memakai trek 19 yang sudah dipakai <code>wajah/senyum_kedip</code>, dan builtin GIF hanya diambil 6 frame.</p>
+  <p class="info">ℹ️ Klip satu tema selalu dikelompokkan: klip baru tema lama masuk setelah kelompok temanya. <code>"boot_theme"</code> di <code>meta.json</code> menentukan model saat nyala (sekarang <code>wajah</code>, klip <code>senyum_kedip</code>). <code>"theme_order"</code> mengatur urutan tema (sekarang wajah, mobil, gundam; tema yang tidak disebut di akhir). Pakai hanya media yang boleh kamu sebarkan.</p>
 </section>
 
 <section class="card" id="suara">
@@ -60,12 +60,21 @@ python tools/import_jpeg_clip.py wajah senyum assets/builtin/gif/wajah/senyum.gi
   <div class="step"><div class="num">2</div><div>Beri nama file <b>4 digit</b> sesuai trek model: <code>0001.mp3</code>, <code>0019.mp3</code>, …</div></div>
   <div class="step"><div class="num">3</div><div>Ganti suara kapan saja dengan menimpa file. Tidak perlu flash ulang.</div></div>
   <div class="tbl"><table><tr><th>Model (ketuk 2×)</th><th>File <code>/MP3/</code></th><th>Klip</th></tr>
-    <tr><td>1–10</td><td><code>0001</code>–<code>0010</code></td><td>wajah vid_00 … vid_41</td></tr>
-    <tr><td>11–14</td><td><code>0011</code>–<code>0014</code></td><td>gundam blade, titan, hadouken_hit, mecha_doc (tahan)</td></tr>
-    <tr><td>15–22</td><td><code>0024</code>–<code>0031</code></td><td>gundam equip, hadouken_miss, helm_hujan, helm_siaga, isyarat, kokpit, kokpit_2, pilot</td></tr>
-    <tr><td>23–26</td><td><code>0015</code>–<code>0018</code></td><td>mobil car, turbo, headlights, speed_3</td></tr>
-    <tr><td>27–31</td><td><code>0019</code>–<code>0023</code></td><td>mochi full1, chongmat1 (goyang), video17, video18, xoadau1 (tahan)</td></tr>
-    <tr><td>32–34</td><td><code>0034</code>, <code>0038</code>, <code>0040</code></td><td>dasai video03, video07, video2 (tahan)</td></tr>
+    <tr><td>1</td><td><code>0019</code></td><td>wajah/senyum_kedip (klip saat nyala)</td></tr>
+    <tr><td>2</td><td><code>0020</code></td><td>wajah/pusing (goyang)</td></tr>
+    <tr><td>3</td><td><code>0023</code></td><td>wajah/cinta (tahan)</td></tr>
+    <tr><td>4</td><td><code>0021</code></td><td>wajah/sorot</td></tr>
+    <tr><td>5</td><td><code>0022</code></td><td>wajah/sirine</td></tr>
+    <tr><td>6</td><td><code>0040</code></td><td>wajah/cinta_pipi</td></tr>
+    <tr><td>7</td><td><code>0034</code></td><td>mobil/lampu_sorot</td></tr>
+    <tr><td>8</td><td><code>0038</code></td><td>mobil/speedometer (tahan)</td></tr>
+    <tr><td>9</td><td><code>0026</code></td><td>gundam/helm_hujan</td></tr>
+    <tr><td>10</td><td><code>0027</code></td><td>gundam/helm_siaga (tahan)</td></tr>
+    <tr><td>11</td><td><code>0028</code></td><td>gundam/isyarat</td></tr>
+    <tr><td>12</td><td><code>0029</code></td><td>gundam/kokpit</td></tr>
+    <tr><td>13</td><td><code>0030</code></td><td>gundam/kokpit_2</td></tr>
+    <tr><td>14</td><td><code>0031</code></td><td>gundam/pilot</td></tr>
+    <tr><td>–</td><td>0001–0018, 0024, 0025, 0032, 0033, 0035–0037, 0039</td><td>tidak dipakai, boleh tidak ada</td></tr>
   </table></div>
   <ul>
     <li>Suara model diputar <b>sampai habis</b>, lalu diulang selama animasi itu tampil.</li>
