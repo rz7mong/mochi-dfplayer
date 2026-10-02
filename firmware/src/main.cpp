@@ -1,6 +1,7 @@
 // Mochi DFPlayer — frame JPEG di flash (cara Dasai/Pikapet), SFX DFPlayer. Tidak ada SD ESP.
 // Nama AP dan sandi tetap MOCHI_AP_NAME / MOCHI_AP_PASS. Aset GIF tidak diubah.
 #include <Arduino.h>
+#include <Wire.h>
 #include <TFT_eSPI.h>
 #include <AnimatedGIF.h>
 #include <TJpg_Decoder.h>
@@ -142,6 +143,30 @@ bool jpegPush(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t *bitmap){
   if(y>=H) return 0;
   tft.pushImage(x,y,w,h,bitmap);
   return 1;
+}
+
+static bool mpuOk=false; static uint32_t mpuNext=0, mpuCool=0; static float mpuLast=1;
+void mpuInit(){
+  Wire.begin(MOCHI_PIN_MPU_SDA, MOCHI_PIN_MPU_SCL);
+  Wire.beginTransmission(0x68);
+  if(Wire.endTransmission()!=0){ Serial.println("MPU6050 tidak ada"); return; }
+  Wire.beginTransmission(0x68); Wire.write(0x6B); Wire.write(0); Wire.endTransmission();
+  mpuOk=true; Serial.println("MPU6050 siap");
+}
+bool mpuShake(){
+  if(!mpuOk || (int32_t)(millis()-mpuNext)<20) return false;
+  mpuNext=millis();
+  Wire.beginTransmission(0x68); Wire.write(0x3B);
+  if(Wire.endTransmission(false)!=0) return false;
+  Wire.requestFrom(0x68,6);
+  if(Wire.available()<6) return false;
+  int16_t ax=(Wire.read()<<8)|Wire.read();
+  int16_t ay=(Wire.read()<<8)|Wire.read();
+  int16_t az=(Wire.read()<<8)|Wire.read();
+  float mag=sqrtf((ax/16384.0f)*(ax/16384.0f)+(ay/16384.0f)*(ay/16384.0f)+(az/16384.0f)*(az/16384.0f));
+  float d=fabsf(mag-mpuLast); mpuLast=mag;
+  if(d>1.2f && millis()-mpuCool>1000){ mpuCool=millis(); return true; }
+  return false;
 }
 void jpegSetup(){
   TJpgDec.setJpgScale(1);
@@ -591,6 +616,7 @@ void setup(){
   tft.setRotation(rot);
   useSd=false; sdOk=false;
   jpegSetup();
+  mpuInit();
   audioInit();
   apPass=MOCHI_AP_PASS;
   WiFi.mode(WIFI_AP);
@@ -694,5 +720,6 @@ void loop(){
     }
     prevDown=down; finishTaps(); delay(10); return;
   }
+  if(mpuShake()){ nextPart(); paused=false; taps=0; }
   finishTaps(); playCurrent();
 }

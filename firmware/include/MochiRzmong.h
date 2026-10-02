@@ -25,7 +25,9 @@
 /* DFPlayer: ESP TX GPIO20 -> RX modul lewat 1k. ESP RX GPIO21 <- TX modul. */
 #define MOCHI_PIN_DF_TX 20
 #define MOCHI_PIN_DF_RX 21
-/* Tidak disambung: SD MISO 3, SD CS 5, I2S DIN 8, GPIO2, GPIO9. */
+/* MPU6050 di pin bebas strap: SDA GPIO5, SCL GPIO3. GPIO2, GPIO8, GPIO9 tetap kosong. */
+#define MOCHI_PIN_MPU_SDA 5
+#define MOCHI_PIN_MPU_SCL 3
 #define MOCHI_PIN_SD_SCK MOCHI_PIN_TFT_SCLK
 #define MOCHI_PIN_SD_MISO 3
 #define MOCHI_PIN_SD_MOSI MOCHI_PIN_TFT_MOSI
