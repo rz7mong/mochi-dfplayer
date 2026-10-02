@@ -5,7 +5,8 @@
 #ifndef MOCHI_AP_PASS  /* override: build_flags = -DMOCHI_AP_PASS=\"sandibaru123\" */
 #define MOCHI_AP_PASS "rzmong123"
 #endif
-#define MOCHI_VERSION "0.6.9"
+#define MOCHI_VERSION "0.6.10"
+/* v0.6.10: sensor sentuh deteksi otomatis (TTP223 standar aktif HIGH, pad A, atau tombol ke GND), debounce 40 ms, tahan 0,7 s, ketuk dua kali 0,4 s. */
 /* v0.6.9: nama Indonesia: wajah (senyum_kedip awal, pusing, cinta, sorot, sirine, cinta_pipi), mobil (lampu_sorot, speedometer), gundam. Trek tetap. */
 /* v0.6.8: wajah dan mobil dihapus; 14 model (6 gundam, 5 mochi, 3 dasai); dasai semua frame 40 ms q80. */
 /* v0.6.7: gundam tinggal helm_hujan, helm_siaga (tahan), isyarat, kokpit, kokpit_2, pilot. */
@@ -29,7 +30,7 @@
 #define MOCHI_DEFAULT_ROTATION 2
 #endif
 #define MOCHI_ROT_LAYOUT 1  /* versi arah pasang LCD di NVS ("rotv"); naikkan jika default rotasi berubah lagi */
-#define MOCHI_PIN_TOUCH 1
+#define MOCHI_PIN_TOUCH 1  /* bukan pin strap (strap C3: GPIO2, 8, 9); polaritas dideteksi saat nyala, lihat main.cpp */
 #define MOCHI_PIN_TFT_SCLK 4
 #define MOCHI_PIN_TFT_MOSI 6
 #define MOCHI_PIN_TFT_CS -1

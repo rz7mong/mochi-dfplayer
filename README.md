@@ -8,16 +8,16 @@ Panduan lengkap (komponen, kabel, upload, kartu SD, cara pakai, masalah, menamba
 
 ## Ringkas
 
-**Komponen:** ESP32-C3 Super Mini, LCD ST7789 1,3 inci 240×240 SPI, DFPlayer Mini + microSD FAT32, speaker 8 Ω, MPU6050 (GY-521), sensor sentuh TTP223 aktif LOW (pad A dijembatani) atau tombol ke GND, resistor 1 kΩ.
+**Komponen:** ESP32-C3 Super Mini, LCD ST7789 1,3 inci 240×240 SPI, DFPlayer Mini + microSD FAT32, speaker 8 Ω, MPU6050 (GY-521), sensor sentuh TTP223 (langsung pakai, tanpa solder) atau tombol tekan ke GND, resistor 1 kΩ.
 
 | Modul | Pin modul → ESP32-C3 |
 |---|---|
 | LCD | VCC 3V3, SCL GPIO4, SDA GPIO6, RES GPIO10, DC GPIO3, BLK GPIO7, CS (jika ada) ke GND |
 | DFPlayer | VCC 5V, RX ← GPIO20 lewat 1 kΩ, TX → GPIO21, SPK_1/SPK_2 ke speaker |
 | MPU6050 | VCC 3V3, SDA GPIO8, SCL GPIO9 |
-| Sentuh | I/O GPIO1 (LOW = disentuh) |
+| Sentuh TTP223 | VCC 3V3, GND, I/O GPIO1. Atau tombol: GPIO1 ↔ GND |
 
-Semua GND disatukan. GPIO8/GPIO9 pin strap, jangan ditarik ke GND saat boot.
+Jenis sensor dideteksi otomatis saat nyala; jangan sentuh sensor selama sekitar 1 detik setelah dinyalakan. Semua GND disatukan. GPIO8/GPIO9 pin strap, jangan ditarik ke GND saat boot.
 
 **Upload** (perlu Python 3 + Pillow untuk skrip build):
 
@@ -35,9 +35,9 @@ Tahan BOOT saat colok USB-C jika upload gagal. Belum ada pemasang lewat browser.
 
 ## Cara main
 
-- Ketuk singkat: putar atau berhenti. Berhenti menghitamkan layar dan mematikan lampu.
-- Ketuk dua kali: model berikutnya.
-- Tahan (≥ 0,4 detik): klip tahan tema itu berulang sampai dilepas. Wajah: cinta (mata hati). Mobil: speedometer. Gundam: helm_siaga.
+- Ketuk singkat (lepas sebelum 0,7 detik): putar atau berhenti, dijalankan 0,4 detik setelah dilepas. Berhenti menghitamkan layar dan mematikan lampu.
+- Ketuk dua kali (sentuhan kedua dalam 0,4 detik): model berikutnya.
+- Tahan (≥ 0,7 detik, saat memutar): klip tahan tema itu berulang sampai dilepas. Wajah: cinta (mata hati). Mobil: speedometer. Gundam: helm_siaga.
 - Goyang tiga kali dalam 1 detik: klip goyang diputar sekali, lalu kembali. Wajah: pusing. Mobil dan gundam: klip berikutnya di tema itu (di speedometer, speedometer diulang).
 
 Empat belas model di flash, urutan ketuk dua kali: 6 wajah, 2 mobil, 6 gundam. Saat nyala langsung memutar `wajah/senyum_kedip` (model 1). Nomor trek tetap per klip (bukan urutan model). Volume 28 dari 30.

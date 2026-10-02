@@ -16,7 +16,7 @@ a{color:#9cf}
 <main>
 <p><a href="index.html">Beranda</a></p>
 <h1>Panduan Mochi DFPlayer</h1>
-<p>Untuk firmware v0.6.9: 14 klip di flash (6 wajah, 2 mobil, 6 gundam), suara MP3 dari DFPlayer Mini. Belum ada pemasang lewat browser. Jangan pakai installer <a href="https://rz7mong.github.io/mochi-rzmong/">mochi-rzmong</a>: itu firmware amplifier I2S (MAX98357), bukan DFPlayer.</p>
+<p>Untuk firmware v0.6.10: 14 klip di flash (6 wajah, 2 mobil, 6 gundam), suara MP3 dari DFPlayer Mini. Belum ada pemasang lewat browser. Jangan pakai installer <a href="https://rz7mong.github.io/mochi-rzmong/">mochi-rzmong</a>: itu firmware amplifier I2S (MAX98357), bukan DFPlayer.</p>
 
 <h2>Isi</h2>
 <ol>
@@ -37,13 +37,13 @@ a{color:#9cf}
 <tr><td>DFPlayer Mini (MP3-TF-16P)</td><td>1</td><td>Dengan kartu microSD (≤ 32 GB, FAT32)</td></tr>
 <tr><td>Speaker 8 Ω (4 Ω juga bisa), 0,5–3 W</td><td>1</td><td>Ke SPK_1 / SPK_2 DFPlayer</td></tr>
 <tr><td>MPU6050 (modul GY-521)</td><td>1</td><td>Untuk deteksi goyang. Tanpa modul ini, fitur goyang mati, yang lain jalan</td></tr>
-<tr><td>Sensor sentuh TTP223 atau tombol tekan</td><td>1</td><td>Harus aktif LOW (lihat catatan di bawah)</td></tr>
+<tr><td>Sensor sentuh TTP223 atau tombol tekan</td><td>1</td><td>TTP223 langsung pakai, tanpa solder pad</td></tr>
 <tr><td>Resistor 1 kΩ</td><td>1</td><td>Seri di jalur GPIO20 → RX DFPlayer</td></tr>
 <tr><td>Resistor 4,7 kΩ</td><td>2</td><td>Opsional: pull-up SDA/SCL ke 3V3, hanya jika modul MPU6050 tidak punya pull-up</td></tr>
 <tr><td>Kapasitor elektrolit 100–470 µF</td><td>1</td><td>Opsional, di VCC–GND DFPlayer, mengurangi bunyi letup dan reset saat volume keras</td></tr>
 <tr><td>Kabel USB-C (data), kabel jumper</td><td></td><td></td></tr>
 </table>
-<p><b>Sensor sentuh:</b> firmware membaca GPIO1 dengan pull-up internal, jadi tersentuh/tertekan = LOW. TTP223 bawaan pabrik keluarannya HIGH saat disentuh, dan alat akan mengira disentuh terus. Solder jembatan pad <b>A</b> di TTP223 supaya aktif LOW. Tombol tekan biasa cukup disambung antara GPIO1 dan GND.</p>
+<p><b>Sensor sentuh:</b> saat nyala, firmware membaca GPIO1 sekitar 0,2 detik dengan pull-up lalu pull-down untuk mengenali jenisnya: TTP223 bawaan pabrik (HIGH saat disentuh), TTP223 yang pad A-nya disolder (LOW saat disentuh), atau tombol tekan ke GND. Jadi TTP223 tidak perlu disolder apa pun. Syaratnya: jangan sentuh sensor selama sekitar 1 detik setelah alat dinyalakan (TTP223 juga mengkalibrasi diri saat itu).</p>
 
 <h2 id="kabel">2. Kabel</h2>
 <p>Semua GND disatukan. Pin sesuai <code>firmware/include/MochiRzmong.h</code> dan <code>User_Setup_ST7789.h</code>.</p>
@@ -78,13 +78,13 @@ a{color:#9cf}
 <tr><td>SCL</td><td>GPIO9</td></tr>
 <tr><td>AD0</td><td>GND atau dibiarkan (alamat 0x68)</td></tr>
 </table>
-<p>GPIO8 dan GPIO9 pin strap ESP32-C3: jangan ditarik ke GND saat boot (pull-up ke 3V3 aman).</p>
+<p>GPIO8 dan GPIO9 pin strap ESP32-C3: jangan ditarik ke GND saat boot (pull-up ke 3V3 aman). GPIO1 bukan pin strap (strap C3: GPIO2, 8, 9) dan tidak dipakai modul lain, jadi aman untuk sensor.</p>
 <h3>Sentuh</h3>
 <table>
 <tr><th>Pin</th><th>ESP32-C3</th></tr>
 <tr><td>TTP223 VCC / GND</td><td>3V3 / GND</td></tr>
-<tr><td>TTP223 I/O (pad A dijembatani)</td><td>GPIO1</td></tr>
-<tr><td>atau tombol</td><td>GPIO1 ↔ GND</td></tr>
+<tr><td>TTP223 I/O (SIG/OUT)</td><td>GPIO1</td></tr>
+<tr><td>atau tombol tekan (tanpa resistor)</td><td>satu kaki GPIO1, kaki lain GND</td></tr>
 </table>
 
 <h2 id="flash">3. Upload firmware</h2>
@@ -139,9 +139,10 @@ for i in $(seq 1 40); do cp suara/$(printf %04d $i).mp3 /media/KARTU/; sync; don
 <h2 id="pakai">5. Cara pakai</h2>
 <ul>
 <li><b>Nyala:</b> langsung memutar wajah/senyum_kedip (model 1) dengan suara <code>0019</code>.</li>
-<li><b>Ketuk singkat:</b> berhenti (layar hitam, lampu latar mati, suara berhenti) atau putar lagi. Ketukan dijalankan sekitar 0,35 detik setelah dilepas, untuk menunggu kemungkinan ketuk dua kali.</li>
-<li><b>Ketuk dua kali</b> (dalam 0,35 detik): model berikutnya. Setelah model 14 kembali ke model 1.</li>
-<li><b>Tahan</b> (≥ 0,4 detik, saat memutar): klip "tahan" tema itu berulang sampai dilepas, lalu kembali ke klip semula di frame yang sama.</li>
+<li><b>Ketuk singkat</b> (sentuh lalu lepas sebelum 0,7 detik): berhenti (layar hitam, lampu latar mati, suara berhenti) atau putar lagi. Dijalankan 0,4 detik setelah dilepas, untuk menunggu kemungkinan ketuk dua kali.</li>
+<li><b>Ketuk dua kali</b> (sentuhan kedua dimulai dalam 0,4 detik setelah lepas pertama): model berikutnya. Setelah model 14 kembali ke model 1.</li>
+<li><b>Tahan</b> (≥ 0,7 detik, saat memutar): klip "tahan" tema itu berulang sampai dilepas, lalu kembali ke klip semula di frame yang sama. Hanya terpicu sekali per sentuhan. Tahan saat berhenti tidak melakukan apa-apa.</li>
+<li>Sentuhan disaring (debounce) 40 ms. Sentuhan dalam 0,8 detik pertama setelah nyala diabaikan; jika sensor sudah tersentuh saat nyala, firmware menunggu dilepas dulu.</li>
 <li><b>Goyang</b> tiga hentakan dalam 1 detik (saat memutar, perlu MPU6050): klip goyang diputar sekali, lalu kembali. Jeda 1 detik sebelum goyang berikutnya terdeteksi.</li>
 </ul>
 <table>
@@ -166,7 +167,8 @@ for i in $(seq 1 40); do cp suara/$(printf %04d $i).mp3 /media/KARTU/; sync; don
 <h2 id="masalah">6. Kalau ada masalah</h2>
 <table>
 <tr><th>Gejala</th><th>Periksa</th></tr>
-<tr><td>Layar hitam, lampu latar mati</td><td>BLK ke GPIO7. Alat mungkin sedang berhenti: ketuk sekali. Kalau sentuh dibaca terus (TTP223 belum aktif LOW), alat tidak merespons dengan benar.</td></tr>
+<tr><td>Layar hitam, lampu latar mati</td><td>BLK ke GPIO7. Alat mungkin sedang berhenti: ketuk sekali.</td></tr>
+<tr><td>Sentuh tidak bereaksi atau bereaksi sendiri</td><td>Lihat log saat nyala: <code>sentuh GPIO1: ...</code> menyebut jenis yang terdeteksi. Pastikan I/O TTP223 ke GPIO1, VCC 3V3 (bukan 5V), GND bersama. Jangan sentuh sensor saat menyalakan; kalau terlanjur dan sensor terbaca "tersentuh" terus, firmware membalik polaritas sendiri setelah 10 detik (atau cabut-colok USB). Tertulis <code>tombol ke GND / mengambang</code> padahal memakai TTP223: kabel I/O putus. Bisa juga dipaksa lewat <code>build_flags</code>: <code>-DMOCHI_TOUCH_MODE=1</code> (TTP223 standar, aktif HIGH) atau <code>=2</code> (aktif LOW: tombol ke GND atau TTP223 pad A). TTP223 di balik casing: casing tipis (≤ 2 mm) dan tanpa logam di atas pad. Jangan menahan TTP223 lebih dari 10 detik; firmware menganggapnya salah deteksi dan membalik polaritas.</td></tr>
 <tr><td>Layar menyala putih/hitam tanpa gambar</td><td>SCL GPIO4, SDA GPIO6, DC GPIO3, RES GPIO10. CS modul harus ke GND. VCC 3V3. Pastikan modul ST7789 240×240, bukan 240×320 atau ST7735.</td></tr>
 <tr><td>Warna terbalik (negatif) atau merah/biru tertukar</td><td>Di <code>firmware/include/User_Setup_ST7789.h</code>: hapus <code>TFT_INVERSION_ON</code> (ganti <code>TFT_INVERSION_OFF</code>) untuk warna negatif; ganti <code>TFT_RGB_ORDER TFT_BGR</code> ke <code>TFT_RGB</code> untuk merah/biru tertukar. Upload ulang.</td></tr>
 <tr><td>Gambar bergeser atau ada garis di tepi</td><td>Modul dengan offset lain. Coba hapus <code>CGRAM_OFFSET</code> di berkas yang sama.</td></tr>
