@@ -13,7 +13,7 @@ Teman meja **ESP32-C3 Super Mini** + layar **ST7789 1,3" 240×240** dengan **sua
 </p>
 <p align="center"><sub>Pratinjau kecil klip di firmware (wajah, mobil, gundam). Di perangkat semuanya frame JPEG 240 lebar.</sub></p>
 
-**Firmware 0.7.1** · **MIT © rzmong** · Situs + pemasang browser: **https://rz7mong.github.io/mochi-dfplayer/** (sumber di [`docs/`](docs/))
+**Firmware 0.7.2** · **MIT © rzmong** · Situs + pemasang browser: **https://rz7mong.github.io/mochi-dfplayer/** (sumber di [`docs/`](docs/))
 
 ### 📚 Panduan di situs
 

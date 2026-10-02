@@ -389,7 +389,14 @@ static void musicPlay(int n) {
   uiDirty = true;
   Serial.printf("musik /01/%03d.mp3\n", mTrack);
 }
+static void ensureMusicCount() {
+  if (mCount >= 0) return;
+  int n = mochiDfMusicCount(true);
+  if (n > 0) { mCount = n; mEmpty = false; }
+  else if (n == 0) mEmpty = true;
+}
 static int musicNextIndex() {
+  ensureMusicCount();
   if (mMode == 2 && mCount > 1) {
     int n;
     do n = 1 + (int)random(mCount); while (n == mTrack);
@@ -401,6 +408,7 @@ static int musicNextIndex() {
 }
 static void musicNext() { musicPlay(musicNextIndex()); }
 static void musicPrev() {
+  ensureMusicCount();
   int n = mTrack - 1;
   if (n < 1) n = mCount > 0 ? mCount : 1;
   musicPlay(n);
@@ -475,7 +483,7 @@ static void serviceSound() {
       if (mTrack > 1) { mCount = mTrack - 1; musicPlay(1); }  // lewat file terakhir: kembali ke 001
       else { mState = MState::Stopped; dfOwner = Owner::None; mEmpty = true; uiDirty = true; }
     } else if (dfOwner == Owner::Notif && missing) {
-      resumeAfterInterrupt();                                  // /02/001.mp3 tidak ada
+      resumeAfterInterrupt();                                  // trek root notifikasi (0041) tidak ada
     }
   }
   if (mochiDfTakeFinished()) {
@@ -490,12 +498,20 @@ static void serviceSound() {
   }
   // Pesan selesai tidak datang (mis. TX modul tidak tersambung): anggap notifikasi selesai setelah 8 dtk.
   if (dfOwner == Owner::Notif && millis() - notifSoundAt > 8000) resumeAfterInterrupt();
-  // Tanpa pin BUSY dan pesan UART hilang: tanya status modul sesekali di layar pemutar.
+  // Tanpa pin BUSY dan pesan UART hilang: tanya status di layar pemutar.
+  // Satu jawaban "berhenti" tidak cukup — DFPlayer sering menjawab 0 saat masih memutar.
   static uint32_t lastQuery = 0;
+  static uint8_t stoppedPolls = 0;
+  if (mState != MState::Playing) stoppedPolls = 0;
   if (ui == Ui::Player && mState == MState::Playing && !mochiDfBusyPin() && millis() - lastQuery > 2500 &&
-      millis() - mLastCmd > 2000) {
+      millis() - mLastCmd > 3000) {
     lastQuery = millis();
-    if (mochiDfQueryState() == DfState::Stopped) musicFinished();
+    DfState st = mochiDfQueryState();
+    if (st == DfState::Stopped) {
+      if (++stoppedPolls >= 2) { stoppedPolls = 0; musicFinished(); }
+    } else {
+      stoppedPolls = 0;  // Playing, Paused, atau tidak menjawab
+    }
   }
 }
 

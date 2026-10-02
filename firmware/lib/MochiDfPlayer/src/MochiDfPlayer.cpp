@@ -30,8 +30,9 @@ static void dfGap() {
 
 static void noteFinished() {
   uint32_t now = millis();
-  // Abaikan pesan ganda dan pesan sisa trek sebelumnya yang datang tepat setelah perintah putar baru.
-  if (now - lastFinishAt < 400 || now - dfLastPlay < 300) return;
+  // Pesan 0x3D sering dobel, dan sisa trek sebelumnya bisa datang tepat setelah perintah putar baru.
+  // Jendela setelah play sengaja pendek: nada Chronos (sambung/putus) bisa selesai dalam ~200 ms.
+  if (now - lastFinishAt < 400 || now - dfLastPlay < 120) return;
   lastFinishAt = now;
   finished = true;
 }
@@ -160,14 +161,15 @@ bool mochiDfPlayMusic(uint16_t file) {
 
 int mochiDfMusicCount(bool refresh) {
   if (!dfOk) return -1;
-  if (musicCount != -2 && !refresh) return musicCount;
+  if (musicCount >= 0 && !refresh) return musicCount;
   int n = -1;
-  for (int i = 0; i < 2 && n < 0; i++) {
+  // Query folder sering tidak dijawab pada percobaan pertama. Kegagalan tidak di-cache.
+  for (int i = 0; i < 4 && n < 0; i++) {
     dfGap();
     n = dfPlayer.readFileCountsInFolder(MOCHI_DF_FOLDER_MUSIC);
     if (n < 0) handleMsg(dfPlayer.readType(), dfPlayer.read());
   }
-  musicCount = n;
+  if (n >= 0) musicCount = n;
   return n;
 }
 
