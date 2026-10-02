@@ -17,9 +17,9 @@
   <div class="kicker">panduan · menu · musik · chronos</div>
   <h1>📖 Cara <span>pakai</span></h1>
   <p class="sub">Semua dengan satu tombol sentuh: animasi, menu, pemutar MP3, dan Chronos.</p>
-  <div class="chips"><span class="chip">🧠 ESP32-C3 Super Mini</span><span class="chip">📺 ST7789 1,3" 240×240</span><span class="chip">🎵 DFPlayer Mini</span><span class="chip">📱 Chronos BLE</span><span class="chip">⚡ firmware 0.7.1</span></div>
+  <div class="chips"><span class="chip">🧠 ESP32-C3 Super Mini</span><span class="chip">📺 ST7789 1,3" 240×240</span><span class="chip">🎵 DFPlayer Mini</span><span class="chip">📱 Chronos BLE</span><span class="chip">⚡ firmware 0.7.3</span></div>
 </header>
-<nav class="tabs"><div class="wrap narrow"><a href="index.html">⚡ Instalasi firmware</a><a href="panduan.html" class="on" aria-current="page">📖 Cara pakai</a><a href="instalasi.html">🔧 Rakit &amp; kartu SD</a><a href="pemasangan.html">🧩 Demo rakit</a><a href="pemasangan-kabel.html">🔌 Diagram kabel</a><a href="kelola.html">🎵 Animasi &amp; suara</a><a href="animasi.html">🎞️ Tambah animasi</a><a href="https://rz7mong.github.io/mochi-rzmong/">💗 Mochi rzmong (GIF)</a><a href="https://github.com/rz7mong/mochi-dfplayer">🐙 GitHub</a></div></nav>
+<nav class="tabs"><div class="wrap narrow"><a href="index.html">⚡ Instalasi firmware</a><a href="panduan.html" class="on" aria-current="page">📖 Cara pakai</a><a href="musik.html">🎧 Pilih trek</a><a href="instalasi.html">🔧 Rakit &amp; kartu SD</a><a href="pemasangan.html">🧩 Demo rakit</a><a href="pemasangan-kabel.html">🔌 Diagram kabel</a><a href="kelola.html">🎵 Animasi &amp; suara</a><a href="animasi.html">🎞️ Tambah animasi</a><a href="https://rz7mong.github.io/mochi-rzmong/">💗 Mochi rzmong (GIF)</a><a href="https://github.com/rz7mong/mochi-dfplayer">🐙 GitHub</a></div></nav>
 <main class="wrap narrow">
 <section class="card">
   <h2>🎬 Layar animasi</h2>
@@ -52,7 +52,7 @@
 
 <section class="card" id="pemutar">
   <h2>🎵 Pemutar MP3</h2>
-  <p>Memutar <code>/01/001.mp3</code>, <code>/01/002.mp3</code>, … dari kartu DFPlayer. Layar menampilkan nomor trek, jumlah lagu, status, mode, volume, dan 7 tombol.</p>
+  <p>Memutar <code>/01/001.mp3</code>, <code>/01/002.mp3</code>, … dari kartu DFPlayer. Layar menampilkan nomor trek, jumlah lagu, status, mode, volume, dan 8 tombol. Pilih nomor tertentu dan musik sambil animasi: <a href="musik.html">panduan pemilih trek</a> (firmware 0.7.3).</p>
   <div class="tbl"><table><tr><th>Gerakan</th><th>Hasil</th></tr>
     <tr><td>Ketuk 1×</td><td>Jalankan tombol yang disorot (langsung, tanpa jeda)</td></tr>
     <tr><td>Tahan 0,4–2 dtk lalu lepas</td><td>Sorot tombol berikutnya</td></tr>
@@ -61,6 +61,7 @@
   <div class="tap">
     <div><b>⏯ Putar / jeda</b><span>Sorotan awal saat masuk.</span></div>
     <div><b>⏭ ⏮ Trek</b><span>Berikutnya / sebelumnya, berputar di akhir folder.</span></div>
+    <div><b># Pilih nomor</b><span>Tiga digit, hanya folder /01. Lihat <a href="musik.html">panduannya</a>.</span></div>
     <div><b>🔊+ 🔉−</b><span>Ketuk berulang untuk volume cepat.</span></div>
     <div><b>Mode</b><span>Ulang semua → ulang 1 → acak.</span></div>
     <div><b>■ Berhenti</b><span>Musik selesai, suara animasi kembali.</span></div>
@@ -86,6 +87,6 @@
   <p class="hint">Chronos mati secara bawaan. Layar Chronos memotong musik; sesudahnya lagu diulang dari awal trek. Semua suara ada di root kartu (lihat <a href="instalasi.html#sd">Kartu SD</a>).</p>
 </section>
 </main>
-<footer>© rzmong · MIT (kode) · Mochi DFPlayer 0.7.1 · proyek independen, terinspirasi Dasai Mochi, bukan produk resmi</footer>
+<footer>© rzmong · MIT (kode) · Mochi DFPlayer 0.7.3 · proyek independen, terinspirasi Dasai Mochi, bukan produk resmi</footer>
 </body>
 </html>

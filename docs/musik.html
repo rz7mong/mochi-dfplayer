@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Pilih trek & musik sambil animasi — Mochi DFPlayer</title>
+<meta name="description" content="Cara memilih nomor trek MP3 di folder /01 dan memutar musik sambil animasi, tanpa tertukar dengan suara ekspresi."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Quicksand:wght@500;700&display=swap"/>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E%F0%9F%8D%A1%3C/text%3E%3C/svg%3E"/>
+<link rel="stylesheet" href="./mochi.css?v=3"/>
+</head>
+<body>
+<header class="hero wrap narrow">
+  <svg class="mochi" viewBox="0 0 120 96" aria-hidden="true"><ellipse cx="60" cy="88" rx="36" ry="5" fill="#f6c6d9" opacity=".6"/><path d="M14 66c0-30 20-52 46-52s46 22 46 52c0 14-12 20-46 20S14 80 14 66z" fill="#fff" stroke="#ffb3cf" stroke-width="3"/><rect x="33" y="34" width="54" height="36" rx="10" fill="#2b2140"/><ellipse cx="49" cy="51" rx="5" ry="6.5" fill="#7ef0c8"/><ellipse cx="71" cy="51" rx="5" ry="6.5" fill="#7ef0c8"/><path d="M53 61q7 6 14 0" stroke="#ff8fb8" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="38" cy="64" rx="5" ry="3" fill="#ffb3cf" opacity=".6"/><ellipse cx="82" cy="64" rx="5" ry="3" fill="#ffb3cf" opacity=".6"/><path d="M100 18v16a5 4 0 1 1-2-3V20l10-3v13a5 4 0 1 1-2-3V15z" fill="#ff8fb8"/></svg>
+  <div class="kicker">firmware 0.7.3 · pemutar · folder /01</div>
+  <h1>🎧 Pilih trek, <span>musik + animasi</span></h1>
+  <p class="sub">Pilih nomor lagu di folder <code>/01</code>, lalu biarkan musik jalan bersama wajah di layar. Suara ekspresi tidak ikut terbawa.</p>
+  <div class="chips"><span class="chip">🎵 folder /01</span><span class="chip"># 3 digit</span><span class="chip">🎬 animasi tetap jalan</span><span class="chip">⚡ firmware 0.7.3</span></div>
+</header>
+<nav class="tabs"><div class="wrap narrow"><a href="index.html">⚡ Instalasi firmware</a><a href="panduan.html">📖 Cara pakai</a><a href="musik.html" class="on" aria-current="page">🎧 Pilih trek</a><a href="instalasi.html">🔧 Rakit & kartu SD</a><a href="pemasangan.html">🧩 Demo rakit</a><a href="pemasangan-kabel.html">🔌 Diagram kabel</a><a href="kelola.html">🎵 Animasi & suara</a><a href="animasi.html">🎞️ Tambah animasi</a><a href="https://rz7mong.github.io/mochi-rzmong/">💗 Mochi rzmong (GIF)</a><a href="https://github.com/rz7mong/mochi-dfplayer">🐙 GitHub</a></div></nav>
+<main class="wrap narrow">
+
+<section class="card">
+  <h2>Perlu firmware 0.7.3</h2>
+  <p>Pemilih nomor ada sejak <b>0.7.3</b>. Cek di menu → Tentang, atau flash ulang dari <a href="index.html">Instalasi firmware</a>. Kartu SD tidak perlu diformat ulang kalau root <code>0001</code>–<code>0048</code> sudah disalin lebih dulu dan lagu ada di <code>/01</code>.</p>
+</section>
+
+<section class="card" id="siapkan">
+  <h2>1. Siapkan lagu</h2>
+  <div class="step"><div class="num">1</div><div>Format kartu FAT32, kosong. Salin <code>0001.mp3</code> … <code>0048.mp3</code> ke <b>root</b>, berurutan, satu per satu. Ini suara animasi dan Chronos.</div></div>
+  <div class="step"><div class="num">2</div><div>Baru buat folder <code>/01</code> dan salin lagu <code>001.mp3</code>, <code>002.mp3</code>, … tanpa lubang nomor.</div></div>
+  <div class="step"><div class="num">3</div><div>Nomor di layar = nama file. <code>007.mp3</code> adalah trek 7. DFPlayer tidak membaca judul lagu.</div></div>
+  <p class="note">⚠️ Jangan salin folder <code>/01</code> sebelum root. Urutan salin global bergeser, dan suara ekspresi bisa tertukar. Detail: <a href="instalasi.html#sd">Kartu SD</a>.</p>
+</section>
+
+<section class="card" id="pilih">
+  <h2>2. Pilih nomor trek</h2>
+  <div class="step"><div class="num">1</div><div>Tahan tombol 2 detik sampai menu terbuka.</div></div>
+  <div class="step"><div class="num">2</div><div>Ketuk sekali untuk pindah baris, ketuk dua kali pada <b>Pemutar MP3</b>.</div></div>
+  <div class="step"><div class="num">3</div><div>Tahan 0,4–2 detik lalu lepas sampai sorotan di tombol <b>#</b> (antara sebelumnya dan volume). Ketuk sekali.</div></div>
+  <div class="step"><div class="num">4</div><div>Tiga digit kuning muncul. Ketuk menaikkan digit yang digarisbawahi (0–9). Tahan pindah ke digit berikutnya.</div></div>
+  <div class="step"><div class="num">5</div><div>Tahan pada digit ketiga: nomor itu diputar dari <code>/01</code>. Tahan 2 detik membatalkan.</div></div>
+  <div class="tbl"><table>
+    <tr><th>Yang diketik</th><th>Yang diputar</th></tr>
+    <tr><td><code>007</code></td><td><code>/01/007.mp3</code></td></tr>
+    <tr><td><code>000</code></td><td>dipaksa jadi trek 1</td></tr>
+    <tr><td>lebih besar dari jumlah lagu</td><td>dipotong ke lagu terakhir, kalau jumlahnya sudah terbaca</td></tr>
+  </table></div>
+  <p class="hint">Tombol berikutnya / sebelumnya tetap ada. Mode acak baru memilih sendiri setelah jumlah lagu di <code>/01</code> terbaca.</p>
+</section>
+
+<section class="card" id="bareng">
+  <h2>3. Musik sambil animasi</h2>
+  <p>DFPlayer hanya satu jalur suara. Gambar dan musik bisa bersamaan; dua MP3 tidak bisa.</p>
+  <div class="step"><div class="num">1</div><div>Mulai lagu di pemutar (tombol putar, atau selesai memilih nomor).</div></div>
+  <div class="step"><div class="num">2</div><div>Tahan 2 detik untuk kembali ke menu. Musik tetap jalan.</div></div>
+  <div class="step"><div class="num">3</div><div>Ketuk dua kali <b>Kembali ke animasi</b>. Wajah atau tema bergerak, lagu dari <code>/01</code> tetap bunyi.</div></div>
+  <p class="info">ℹ️ Suara ekspresi (tawa, sirine, kokpit, dan seterusnya) diam selama musik main atau dijeda. Suara itu kembali setelah tombol <b>berhenti</b> di pemutar. Ketuk berhenti di layar animasi hanya menghitamkan layar, tidak mematikan lagu.</p>
+</section>
+
+<section class="card" id="tidak-campur">
+  <h2>Kenapa tidak tercampur</h2>
+  <div class="tbl"><table>
+    <tr><th>Isi</th><th>Perintah</th><th>Dipakai untuk</th></tr>
+    <tr><td>root <code>0001</code>–<code>0048</code></td><td>urutan salin (0x03)</td><td>suara animasi dan Chronos</td></tr>
+    <tr><td><code>/01/001</code> …</td><td>folder (0x0F)</td><td>pemutar musik, termasuk pemilih nomor</td></tr>
+  </table></div>
+  <p>Pemilih nomor tidak pernah mengirim trek root. Notifikasi atau dering Chronos tetap bisa memotong lagu, lalu trek yang sama diulang dari awal.</p>
+</section>
+
+<p><a class="btn primary" href="panduan.html">📖 Cara pakai lengkap</a> <a class="btn" href="kelola.html">🎵 Animasi & suara</a></p>
+</main>
+<footer>© rzmong · MIT (kode) · Mochi DFPlayer 0.7.3 · proyek independen, terinspirasi Dasai Mochi, bukan produk resmi</footer>
+</body>
+</html>
