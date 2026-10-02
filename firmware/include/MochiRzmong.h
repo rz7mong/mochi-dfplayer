@@ -1,30 +1,21 @@
 #pragma once
+/* Konstanta Mochi DFPlayer. Satu-satunya sumber versi: MOCHI_VERSION. */
 #define MOCHI_BRAND   "rzmong"
-#define MOCHI_WATERMARK MOCHI_BRAND
-#define MOCHI_AP_NAME "rzmong mochi"
-#ifndef MOCHI_AP_PASS  /* override: build_flags = -DMOCHI_AP_PASS=\"sandibaru123\" */
-#define MOCHI_AP_PASS "rzmong123"
+#define MOCHI_VERSION "0.7.0"
+#ifndef MOCHI_BLE_NAME            /* nama perangkat di aplikasi Chronos */
+#define MOCHI_BLE_NAME "rzmong dfplayer"
 #endif
-#define MOCHI_VERSION "0.6.5"
-/* v0.6.5: gundam 8 adegan 240x240 (huykhoong gundam.mp4), dasai tinggal video03, video07, video2. */
-/* v0.6.4: gundam rzmong dihapus; wajah/mobil semua frame q80; dasai 15 klip 240x120 q75. */
-/* v0.6.3: gundam 12 klip penuh, dasai 160x80 (11 klip), tempo/trek per klip, app 0x3F0000 tanpa spiffs.
- * v0.6.2: tema "mochi" 5 klip JPEG penuh (full1, chongmat1, video17, video18, xoadau1), model awal full1.
+/* v0.7.0: Chronos BLE (jam, baterai HP, notifikasi, panggilan, navigasi), menu LCD, pemutar MP3 folder /01,
+ *         trek animasi /MP3/000N.mp3 menurut nama dan diputar sampai habis, versi tunggal, rotasi dari header.
+ * v0.6.5: gundam 8 adegan 240x240, dasai tinggal video03, video07, video2.
+ * v0.6.2-0.6.4: tema mochi, klip JPEG penuh, tempo/trek per klip, app 0x3F0000 tanpa spiffs.
  * v0.6.1: dokumen dan pesan edisi bahasa Indonesia.
- * v0.6.0: 18 model JPEG milik repo, ketuk dua kali ganti model.\n * v0.5.9: perilaku pemutar disamakan dengan pikapet.
- * v0.5.8: backlight GPIO7 seperti pikapet, HIGH nyala, LOW mati saat jeda.
- * v0.5.7: pinout disamakan dengan Dasai Mochi pikapet / bangdc90: TFT DC GPIO3, RST GPIO10, CS tidak dipakai,
- *         backlight GPIO7, MPU6050 SDA GPIO8 / SCL GPIO9. DFPlayer tetap UART GPIO20/21.
- * v0.5.6: 30 built-in GIF+WAV slots in flash (new happy-blink wajah/default from video, colourful wajah/musik/mobil + gundam),
- *         built-in WAV played from flash, 11 tap reacts, clock honours GIF frame delay, default between idle clips.
- * v0.5.5: embedded wajah/default.gif for Jam HP; shared SPI init before TFT; upload preempts SD playback.
- * v0.5.4: default rotation 2 (180 deg) for the GMT130 LCD mounted pins-down in case/tatakan_GMT130_fit.stl.
- * AP name/pass unchanged. Override pass via build_flags only.
+ * v0.6.0: 18 model JPEG, ketuk dua kali ganti model.
+ * v0.5.7-0.5.9: pinout pikapet / bangdc90 (DC 3, RST 10, BL 7, MPU6050 8/9), DFPlayer UART 20/21.
  */
-#ifndef MOCHI_DEFAULT_ROTATION  /* 2 = LCD pin di bawah (tatakan GMT130). Tatakan lama / pin di atas: build_flags = -DMOCHI_DEFAULT_ROTATION=0 */
-#define MOCHI_DEFAULT_ROTATION 2
+#ifndef MOCHI_DEFAULT_ROTATION    /* 0 = tegak (pikapet). Layar terbalik / pin di bawah: -DMOCHI_DEFAULT_ROTATION=2 */
+#define MOCHI_DEFAULT_ROTATION 0
 #endif
-#define MOCHI_ROT_LAYOUT 1  /* versi arah pasang LCD di NVS ("rotv"); naikkan jika default rotasi berubah lagi */
 #define MOCHI_PIN_TOUCH 1
 #define MOCHI_PIN_TFT_SCLK 4
 #define MOCHI_PIN_TFT_MOSI 6
@@ -35,33 +26,10 @@
 /* DFPlayer: ESP TX GPIO20 -> RX modul lewat 1k. ESP RX GPIO21 <- TX modul. */
 #define MOCHI_PIN_DF_TX 20
 #define MOCHI_PIN_DF_RX 21
+/* BUSY DFPlayer (LOW saat memutar). Opsional: -DMOCHI_PIN_DF_BUSY=5. -1 = tidak disambung. */
+#ifndef MOCHI_PIN_DF_BUSY
+#define MOCHI_PIN_DF_BUSY -1
+#endif
 /* MPU6050 sama pikapet: SDA GPIO8, SCL GPIO9. GPIO9 strap, jangan ditarik LOW saat boot. */
 #define MOCHI_PIN_MPU_SDA 8
 #define MOCHI_PIN_MPU_SCL 9
-#define MOCHI_PIN_SD_SCK MOCHI_PIN_TFT_SCLK
-#define MOCHI_PIN_SD_MISO -1
-#define MOCHI_PIN_SD_MOSI MOCHI_PIN_TFT_MOSI
-#define MOCHI_PIN_SD_CS -1
-#define MOCHI_PIN_I2S_BCLK MOCHI_PIN_DF_RX
-#define MOCHI_PIN_I2S_LRC MOCHI_PIN_DF_TX
-#define MOCHI_PIN_I2S_DIN 8
-struct MochiPart { const char *theme; const char *stem; };
-struct MochiReact { const char *name; const char *theme; const char *stem; };
-static const MochiReact MOCHI_REACT[] = {
-  {"tickle","wajah","raspberry"},
-  {"kedip","wajah","squint"},
-  {"cinta","wajah","love_hearts_kiss"},
-  {"marah","wajah","angry_2"},
-  {"ketawa","wajah","smirk"},
-  {"ngantuk","wajah","sleepy"},
-  {"nguap","wajah","yawn_tired"},
-  {"pelangi","musik","rainbow"},
-  {"pong","musik","pong"},
-  {"ngebut","mobil","revs"},
-  {"hadouken","gundam","hadouken_hit"}
-};
-static const int MOCHI_REACT_COUNT = sizeof(MOCHI_REACT)/sizeof(MOCHI_REACT[0]);
-static const char *MOCHI_THEMES[] = {
-  "wajah","gundam","mobil","polisi","musik","neon","anime","makanan","intro"
-};
-static const int MOCHI_THEME_COUNT = 9;

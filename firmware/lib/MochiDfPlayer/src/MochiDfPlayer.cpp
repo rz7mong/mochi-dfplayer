@@ -3,43 +3,22 @@
 #include <HardwareSerial.h>
 #include "MochiRzmong.h"
 
-/* Salinan jalur suara firmware MAX98357.
- * Di sana GPIO20/21 = I2S. Di sini UART DFPlayer. Jangan pasang MAX98357.
- * RX modul <- GPIO20 lewat 1k. TX modul -> GPIO21. VCC = 5V.
- *
- * SD modul (FAT32):
- *   01/001..011  reaksi, urutan MOCHI_REACT
- *   02/001..     ekspresi/wajah, nomor = indeks bawaan + 1
- *   06/001..009  tema, urutan MOCHI_THEMES
- *   03/001       notifikasi Chronos
- *   04/001       dering Chronos (diulang)
- *   05/001..     lagu pemutar MP3
- *
- * Pemutar JPEG (src/main.cpp) memakai mochiDfPlayTrack(n):
- *   default            -> perintah 0x03 play(n): file ke-n menurut URUTAN SALIN di FAT root,
- *                         bukan nama file. Salin 0001.mp3, 0002.mp3, ... satu per satu, berurutan.
- *   -DMOCHI_DF_MP3_FOLDER -> perintah 0x12 playMp3Folder(n): /MP3/0001.mp3 dst., dicocokkan dari NAMA file.
- */
-static const int DF_RX = MOCHI_PIN_DF_RX;
-static const int DF_TX = MOCHI_PIN_DF_TX;
-static const int DF_FOLDER_REACT = 1;
-static const int DF_FOLDER_FACE = 2;
-static const int DF_FOLDER_NOTIF = 3;
-static const int DF_FOLDER_RING = 4;
-static const int DF_FOLDER_MUSIC = 5;
-static const int DF_FOLDER_THEME = 6;
-
+/* Kabel: RX modul <- GPIO20 lewat 1k. TX modul -> GPIO21. VCC = 5V. BUSY -> MOCHI_PIN_DF_BUSY (opsional).
+ * Selesai-trek dideteksi dari pesan UART 0x3D (modul mengirimnya sendiri, sering dua kali) dan, jika ada,
+ * dari pin BUSY yang naik ke HIGH. Status juga bisa ditanya (0x42) lewat mochiDfQueryState(). */
 static HardwareSerial dfSerial(1);
 static DFRobotDFPlayerMini dfPlayer;
 static bool dfOk = false;
-static bool musicOn = false;
-static bool ringOn = false;
-static int musicFile = 1;
 static uint32_t dfLastCmd = 0;
-// Volume 0..30 yang diminta (dfVol(20) = 28, sama seperti volume tetap 28 sebelumnya).
+static uint32_t dfLastPlay = 0;
 static int dfVolWanted = 28;
 static int dfVolSent = -1;
-// DFPlayer butuh waktu sesudah daya masuk untuk membaca kartu SD; perintah sebelum itu diabaikan modul.
+static bool finished = false;
+static uint32_t lastFinishAt = 0;
+static bool errPending = false;
+static uint16_t errCode = 0;
+static bool busyWasPlaying = false;
+static int musicCount = -2;  // -2 = belum ditanya
 static const uint32_t DF_BOOT_MS = 1200;
 
 static void dfGap() {
@@ -48,191 +27,175 @@ static void dfGap() {
   dfLastCmd = millis();
 }
 
-static int dfVol(int vol21) {
-  if (vol21 < 0) vol21 = 0;
-  if (vol21 > 21) vol21 = 21;
-  return (vol21 * 30) / 21;
+static void noteFinished() {
+  uint32_t now = millis();
+  // Abaikan pesan ganda dan pesan sisa trek sebelumnya yang datang tepat setelah perintah putar baru.
+  if (now - lastFinishAt < 400 || now - dfLastPlay < 300) return;
+  lastFinishAt = now;
+  finished = true;
 }
 
-static void dfPlay(int folder, int file) {
-  if (!dfOk || file < 1) return;
-  ringOn = false;
-  if (folder != DF_FOLDER_MUSIC) musicOn = false;
+static void handleMsg(uint8_t type, uint16_t value) {
+  if (type == DFPlayerPlayFinished) noteFinished();
+  else if (type == DFPlayerError && value != TimeOut) { errPending = true; errCode = value; }
+}
+
+static void sendVolumeIfNeeded() {
+  if (dfVolSent == dfVolWanted) return;
   dfGap();
-  dfPlayer.playFolder(folder, file);
+  dfPlayer.volume(dfVolWanted);
+  dfVolSent = dfVolWanted;
+}
+
+static void markPlay() {
+  dfLastPlay = millis();
+  finished = false;
+  busyWasPlaying = false;
 }
 
 bool mochiDfInit() {
-  dfSerial.begin(9600, SERIAL_8N1, DF_RX, DF_TX);
+#if MOCHI_PIN_DF_BUSY >= 0
+  pinMode(MOCHI_PIN_DF_BUSY, INPUT_PULLUP);
+#endif
+  dfSerial.begin(9600, SERIAL_8N1, MOCHI_PIN_DF_RX, MOCHI_PIN_DF_TX);
   delay(200);
-  // Tunggu modul selesai boot (dihitung dari nyala ESP), supaya perintah awal tidak hilang.
-  if (millis() < DF_BOOT_MS) delay(DF_BOOT_MS - millis());
-  // isACK=false: begin() selalu true walau modul tidak tersambung (tidak ada jawaban yang dicek).
+  if (millis() < DF_BOOT_MS) delay(DF_BOOT_MS - millis());  // modul butuh waktu membaca kartu
+  // isACK=false: begin() selalu true walau modul tidak tersambung. Kehadiran modul dicek lewat query di bawah.
   dfOk = dfPlayer.begin(dfSerial, false, false);
-  if (!dfOk) {
-    Serial.println("DFPlayer tidak jawab");
-    return false;
-  }
-  dfPlayer.setTimeOut(500);
+  dfPlayer.setTimeOut(200);
   dfGap();
   dfPlayer.EQ(DFPLAYER_EQ_NORMAL);
   dfGap();
   dfPlayer.outputDevice(DFPLAYER_DEVICE_SD);
+  sendVolumeIfNeeded();
   dfGap();
-  dfPlayer.volume(dfVolWanted);
-  dfVolSent = dfVolWanted;
-  Serial.println("DFPlayer siap (UART dikirim, tanpa ACK)");
-  return true;
+  int st = dfPlayer.readState();
+  Serial.printf("DFPlayer %s (status %d)\n", st >= 0 ? "menjawab" : "tidak menjawab, perintah tetap dikirim", st);
+  return dfOk;
 }
 
+bool mochiDfReady() { return dfOk; }
+
+void mochiDfService() {
+  if (!dfOk) return;
+  while (dfSerial.available() && dfPlayer.available()) handleMsg(dfPlayer.readType(), dfPlayer.read());
+#if MOCHI_PIN_DF_BUSY >= 0
+  bool playing = digitalRead(MOCHI_PIN_DF_BUSY) == LOW;
+  if (playing && millis() - dfLastPlay > 150) busyWasPlaying = true;
+  if (!playing && busyWasPlaying && millis() - dfLastPlay > 600) {
+    busyWasPlaying = false;
+    noteFinished();
+  }
+#endif
+}
+
+void mochiDfVolume(int v) {
+  if (v < 0) v = 0;
+  if (v > 30) v = 30;
+  dfVolWanted = v;
+  if (dfOk) sendVolumeIfNeeded();
+}
+int mochiDfGetVolume() { return dfVolWanted; }
+
 void mochiDfStop() {
-  musicOn = false;
-  ringOn = false;
   if (!dfOk) return;
   dfGap();
   dfPlayer.stop();
+  finished = false;
+  busyWasPlaying = false;
 }
-
-void mochiDfService() {}
-
-void mochiDfSetVolume(int vol21, bool on) {
-  if (on) dfVolWanted = dfVol(vol21);
+void mochiDfPause() {
   if (!dfOk) return;
-  int v = on ? dfVolWanted : 0;
   dfGap();
-  dfPlayer.volume(v);
-  dfVolSent = v;
-  if (!on) {
+  dfPlayer.pause();
+  busyWasPlaying = false;  // BUSY naik saat jeda; jangan dianggap selesai
+}
+void mochiDfResume() {
+  if (!dfOk) return;
+  dfGap();
+  dfPlayer.start();
+  markPlay();
+}
+
+bool mochiDfPlayTrack(uint16_t track) {
+  if (!dfOk || track == 0) return false;
+  sendVolumeIfNeeded();
+  dfGap();
+#ifdef MOCHI_DF_COPY_ORDER
+  dfPlayer.play(track);
+#else
+  dfPlayer.playMp3Folder(track);
+#endif
+  markPlay();
+  return true;
+}
+
+bool mochiDfPlayMusic(uint16_t file) {
+  if (!dfOk || file < 1 || file > 255) return false;
+  sendVolumeIfNeeded();
+  dfGap();
+  dfPlayer.playFolder(MOCHI_DF_FOLDER_MUSIC, file);
+  markPlay();
+  return true;
+}
+
+int mochiDfMusicCount(bool refresh) {
+  if (!dfOk) return -1;
+  if (musicCount != -2 && !refresh) return musicCount;
+  int n = -1;
+  for (int i = 0; i < 2 && n < 0; i++) {
     dfGap();
-    dfPlayer.pause();
+    n = dfPlayer.readFileCountsInFolder(MOCHI_DF_FOLDER_MUSIC);
+    if (n < 0) handleMsg(dfPlayer.readType(), dfPlayer.read());
   }
-}
-
-bool mochiDfPlayReact(int reactIndex) {
-  if (!dfOk) return false;
-  if (reactIndex < 0 || reactIndex >= MOCHI_REACT_COUNT) reactIndex = 0;
-  dfPlay(DF_FOLDER_REACT, reactIndex + 1);
-  return true;
-}
-
-bool mochiDfPlayFace(int faceIndex) {
-  if (!dfOk) return false;
-  if (faceIndex < 0) faceIndex = 0;
-  dfPlay(DF_FOLDER_FACE, faceIndex + 1);
-  return true;
-}
-
-bool mochiDfPlayTheme(const char *theme) {
-  if (!dfOk || !theme) return false;
-  for (int i = 0; i < MOCHI_THEME_COUNT; i++) {
-    if (strcmp(theme, MOCHI_THEMES[i]) == 0) {
-      dfPlay(DF_FOLDER_THEME, i + 1);
-      return true;
-    }
-  }
-  return false;
-}
-
-bool mochiDfPlayGif(const char *gifPath) {
-  if (!dfOk || !gifPath) return false;
-  const char *slash = strrchr(gifPath, '/');
-  const char *base = slash ? slash + 1 : gifPath;
-  char stem[48];
-  strncpy(stem, base, sizeof(stem) - 1);
-  stem[sizeof(stem) - 1] = 0;
-  char *dot = strrchr(stem, '.');
-  if (dot) *dot = 0;
-  for (int i = 0; i < MOCHI_REACT_COUNT; i++) {
-    if (strcmp(stem, MOCHI_REACT[i].stem) == 0 || strcmp(stem, MOCHI_REACT[i].name) == 0)
-      return mochiDfPlayReact(i);
-  }
-  const char *gif = strstr(gifPath, "/gif/");
-  if (gif) {
-    gif += 5;
-    char tema[24];
-    const char *cut = strchr(gif, '/');
-    if (cut && cut - gif < (int)sizeof(tema)) {
-      memcpy(tema, gif, cut - gif);
-      tema[cut - gif] = 0;
-      if (mochiDfPlayTheme(tema)) return true;
-    }
-  }
-  return mochiDfPlayFace(0);
+  musicCount = n;
+  return n;
 }
 
 bool mochiDfPlayNotif() {
   if (!dfOk) return false;
-  dfPlay(DF_FOLDER_NOTIF, 1);
+  sendVolumeIfNeeded();
+  dfGap();
+  dfPlayer.playFolder(MOCHI_DF_FOLDER_NOTIF, 1);
+  markPlay();
   return true;
 }
 
 void mochiDfPlayRinger(bool on) {
   if (!dfOk) return;
-  if (!on) {
-    if (ringOn) mochiDfStop();
-    return;
-  }
-  musicOn = false;
-  ringOn = true;
+  if (!on) { mochiDfStop(); return; }
+  sendVolumeIfNeeded();
   dfGap();
-  dfPlayer.loopFolder(DF_FOLDER_RING);
+  dfPlayer.loopFolder(MOCHI_DF_FOLDER_RING);
+  markPlay();
 }
 
-bool mochiDfMusicStart() {
-  if (!dfOk) return false;
-  ringOn = false;
-  musicOn = true;
-  if (musicFile < 1) musicFile = 1;
-  dfPlay(DF_FOLDER_MUSIC, musicFile);
-  musicOn = true;
+bool mochiDfTakeFinished() {
+  if (!finished) return false;
+  finished = false;
   return true;
 }
 
-bool mochiDfMusicNext() {
-  if (!dfOk) return false;
-  musicFile++;
-  return mochiDfMusicStart();
-}
-
-bool mochiDfMusicPrev() {
-  if (!dfOk) return false;
-  if (musicFile > 1) musicFile--;
-  return mochiDfMusicStart();
-}
-
-void mochiDfMusicToggle() {
-  if (!dfOk) return;
-  if (musicOn) {
-    musicOn = false;
-    dfGap();
-    dfPlayer.pause();
-  } else {
-    mochiDfMusicStart();
-  }
-}
-
-void mochiDfMusicStop() { mochiDfStop(); }
-bool mochiDfMusicPlaying() { return musicOn; }
-
-bool mochiDfPlayTrack(uint8_t track) {
-  if (!dfOk || track == 0) {
-    mochiDfStop();
-    return false;
-  }
-  musicOn = false;
-  ringOn = false;
-  // Dulu volume(28) dikirim tiap trek tepat sebelum play() tanpa jeda; modul bisa menelan perintah kedua.
-  // Sekarang volume hanya dikirim jika berubah, dan selalu ada jeda antarperintah.
-  if (dfVolSent != dfVolWanted) {
-    dfGap();
-    dfPlayer.volume(dfVolWanted);
-    dfVolSent = dfVolWanted;
-  }
-  dfGap();
-#ifdef MOCHI_DF_MP3_FOLDER
-  dfPlayer.playMp3Folder(track);
-#else
-  dfPlayer.play(track);
-#endif
+bool mochiDfTakeError(uint16_t *code) {
+  if (!errPending) return false;
+  errPending = false;
+  if (code) *code = errCode;
   return true;
 }
+
+DfState mochiDfQueryState() {
+  if (!dfOk) return DfState::Unknown;
+  dfGap();
+  int s = dfPlayer.readState();
+  if (s < 0) {  // bisa jadi yang datang pesan lain (mis. trek selesai): jangan sampai hilang
+    handleMsg(dfPlayer.readType(), dfPlayer.read());
+    return DfState::Unknown;
+  }
+  switch (s & 0x0F) {
+    case 1: return DfState::Playing;
+    case 2: return DfState::Paused;
+    default: return DfState::Stopped;
+  }
+}
+
+bool mochiDfBusyPin() { return MOCHI_PIN_DF_BUSY >= 0; }

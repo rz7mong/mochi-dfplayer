@@ -1,9 +1,7 @@
-uint32_t findUntil=0;
-
-// chronos_ui.inc — Chronos full + nav (dirty redraw)
-// Touch: Notif=1x · Ringer=hold 0.6s · Nav=2x hide · Menu/play unchanged
-void playJingleMs(int ms);
-
+// chronos_ui.inc — tampilan dan callback Chronos (ChronosESP32), diambil dari mochi-rzmong.
+// Di-include oleh src/main.cpp sesudah: tft, watch, warna C_*, variabel notif/ringer, dan hook suara.
+// Sentuh: notifikasi = ketuk 1x tutup · panggilan = tahan tutup · navigasi = ketuk 2x sembunyi.
+uint32_t findUntil = 0;
 bool navHide = false;
 uint32_t navIconCRC = 0xFFFFFFFF;
 String navTitle, navDir, navDist, navEta, navSpeed;
@@ -21,7 +19,6 @@ void drawChronosNotif(){
   String m=notifMsg;
   if(m.length()>36){ tft.drawString(m.substring(0,36),12,80,1); tft.drawString(m.substring(36,72),12,96,1); }
   else tft.drawString(m,12,80,1);
-  tft.setTextColor(C_DIM,C_BG);
   tft.drawCentreString("ketuk 1x = tutup",120,220,1);
   if(chronoConn){
     char tbuf[24]="--:--";
@@ -37,7 +34,7 @@ void drawChronosRinger(){
   tft.drawCentreString("Panggilan",120,80,2);
   tft.drawCentreString(ringerName.length()?ringerName.c_str():"...",120,110,2);
   tft.setTextColor(C_DIM,C_BG);
-  tft.drawCentreString("tahan 0.6s = tutup",120,200,1);
+  tft.drawCentreString("tahan = tutup",120,200,1);
 }
 void drawChronosNav(){
   if(!navDirty) return;
@@ -85,32 +82,37 @@ void refreshNavFromWatch(){
 }
 void onChronosConn(bool state){
   chronoConn=state;
-  Serial.printf("[chronos] %s\n", state?"connected":"disconnected");
-  if(state) watch.setBattery(100, false);
-  if(!state){ navActive=false; ringerOn=false; mochiDfPlayRinger(false); }
+  Serial.printf("[chronos] %s\n", state?"tersambung":"terputus");
+  if(state) watch.setBattery(100, false);   // perangkat tanpa sensor baterai
+  if(!state){ navActive=false; if(ringerOn){ ringerOn=false; soundRinger(false); } }
+  uiDirty=true;
 }
 void onChronosNotif(Notification n){
   notifApp=n.app; if(notifApp.length()>22) notifApp=notifApp.substring(0,22);
   notifTitle=n.title; if(notifTitle.length()>28) notifTitle=notifTitle.substring(0,28);
   notifMsg=n.message; if(notifMsg.length()>72) notifMsg=notifMsg.substring(0,72);
   notifUntil=millis()+6000;
-  mochiDfPlayNotif();
+  soundNotif();
 }
 void onChronosRinger(String caller, bool state){
   ringerOn=state;
   ringerName=caller; if(ringerName.length()>24) ringerName=ringerName.substring(0,24);
-  mochiDfPlayRinger(state);
+  soundRinger(state);
+  uiDirty=true;
 }
 void onChronosConfig(Config config, uint32_t a, uint32_t b){
   if(config==CF_FIND){
-    mochiDfPlayNotif();
+    soundNotif();
     findUntil = millis()+700;
   } else if(config==CF_TIME){
-    Serial.printf("[chronos] time %s\n", watch.getTimeDate().c_str());
+    Serial.printf("[chronos] waktu %s\n", watch.getTimeDate().c_str());
+    uiDirty=true;
+  } else if(config==CF_PBAT){
+    uiDirty=true;
   } else if(config==CF_NAV_DATA){
     refreshNavFromWatch();
     navHide=false;
-    Serial.printf("[chronos] nav active=%d %s\n", (int)navActive, navTitle.c_str());
+    Serial.printf("[chronos] navigasi aktif=%d %s\n", (int)navActive, navTitle.c_str());
   } else if(config==CF_NAV_ICON){
     Navigation &nv = watch.getNavigation();
     if(nv.iconCRC != navIconCRC){
@@ -130,18 +132,18 @@ void chronosApply(){
     if(!watch.isRunning()){
       chronosSetupCallbacks();
       watch.begin();
-      Serial.printf("[chronos] BLE on mac=%s\n", watch.getAddress().c_str());
+      Serial.printf("[chronos] BLE nyala, nama \"%s\" mac %s\n", MOCHI_BLE_NAME, watch.getAddress().c_str());
     }
   } else {
-    chronoConn=false; ringerOn=false; notifUntil=0; navActive=false; navHide=false;
+    chronoConn=false; notifUntil=0; navActive=false; navHide=false;
+    if(ringerOn){ ringerOn=false; soundRinger(false); }
     if(watch.isRunning()) watch.stop();
-    Serial.println("[chronos] BLE off");
+    Serial.println("[chronos] BLE mati");
   }
 }
-
 void serviceChronosFind(){
   if(!findUntil) return;
-  if((int32_t)(millis()-findUntil)>=0){ findUntil=0; return; }
+  if((int32_t)(millis()-findUntil)>=0){ findUntil=0; uiDirty=true; return; }
   if(((millis()/120)&1)==0) tft.fillScreen(C_YEL);
   else tft.fillScreen(C_BG);
 }

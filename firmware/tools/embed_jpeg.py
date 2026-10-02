@@ -8,8 +8,10 @@
   - Jika theme/stem sama dengan builtin, klip penuh MENGGANTIKAN builtin itu di posisi dan nomor trek yang sama.
   - Klip baru masuk tepat setelah kelompok temanya (tema tetap berurutan untuk ganti model / goyang / tahan),
     tema baru di akhir. Trek klip baru: lanjut dari nomor terbesar, urut sesuai daftar jpeg_clips.
-Urutan model = urutan JPEG_CLIPS; nomor trek disimpan per klip, jadi trek lama tidak bergeser."""
-import io, json, pathlib
+Urutan model = urutan JPEG_CLIPS; nomor trek disimpan per klip, jadi trek lama tidak bergeser.
+
+Batas: <= 65535 frame per klip, <= 65535 B per frame, trek 1..3000. Anggaran flash: env MOCHI_JPEG_BUDGET."""
+import io, json, os, pathlib
 from PIL import Image
 root = pathlib.Path(__file__).resolve().parents[1]
 meta = json.loads((root / "assets" / "meta.json").read_text())
@@ -62,28 +64,87 @@ for jt, js, r, tr in jents:
     if not tr: tr, nxt = nxt, nxt + 1
     tracks[(jt, js)] = tr
 
-parts = ["#pragma once", "#include <Arduino.h>"]
-rows, total = [], 0
+# --- Muat semua klip dulu, lalu (jika perlu) muatkan ke anggaran flash, baru tulis header. ---
+clips = []
 for i, (theme, stem, kind, role, track) in enumerate(order):
     track = tracks.get((theme, stem), track)
     c = gif_clip(theme, stem) if kind == "gif" else jpeg_clip(theme, stem)
-    names = []
-    for fi, raw in enumerate(c["frames"]):
-        total += len(raw); name = f"JPG_{i}_{fi}"
+    c.update(theme=theme, stem=stem, kind=kind, role=role, track=track)
+    clips.append(c)
+
+def used_bytes():
+    return sum(sum(len(c["frames"][j]) for j in set(c["seq"])) for c in clips)
+
+# Anggaran byte JPEG (custom_jpeg_budget di platformio.ini, lewat env MOCHI_JPEG_BUDGET). 0 = tanpa batas.
+# Jika total melebihi anggaran, frame yang NYARIS SAMA dengan frame yang tampil sebelumnya (<= ambang piksel
+# berbeda > 24 level) diganti frame sebelumnya, sama seperti --hold di import_jpeg_clip.py. Ambang dinaikkan
+# bertahap dan seragam untuk semua klip sampai muat. Tempo tidak berubah; aset sumber tidak diubah.
+budget = int(os.environ.get("MOCHI_JPEG_BUDGET", "0") or 0)
+before = used_bytes()
+if budget and before > budget:
+    from PIL import ImageChops
+    gray = {}
+    def g(ci, j):
+        k = (ci, j)
+        if k not in gray: gray[k] = Image.open(io.BytesIO(clips[ci]["frames"][j])).convert("L")
+        return gray[k]
+    def ndiff(ci, a, b):
+        h = ImageChops.difference(g(ci, a), g(ci, b)).histogram()
+        return sum(h[25:])
+    orig = [list(c["seq"]) for c in clips]
+    cache = {}
+    def fit(th):
+        for ci, c in enumerate(clips):
+            seq, last = [], None
+            for j in orig[ci]:
+                if last is not None and j != last:
+                    k = (ci, min(j, last), max(j, last))
+                    if k not in cache: cache[k] = ndiff(ci, j, last)
+                    if cache[k] <= th: seq.append(last); continue
+                seq.append(j); last = j
+            seq[0] = orig[ci][0]  # frame pertama selalu asli (titik ulang klip)
+            c["seq"] = seq
+        return used_bytes()
+    px = 240 * 240
+    chosen = None
+    for pct in [round(0.1 * k, 1) for k in range(1, 31)] + [3.5, 4, 5, 6, 8, 10]:
+        if fit(int(px * pct / 100)) <= budget: chosen = pct; break
+    if chosen is None:
+        raise SystemExit(f"jpeg {before} B tidak muat di anggaran {budget} B walau ambang 10%. "
+                         "Kurangi klip, atau naikkan custom_jpeg_budget (lalu cek ukuran app).")
+    print(f"ANGGARAN: {before} B > {budget} B -> frame nyaris sama (<= {chosen}% piksel) dipakai ulang, jadi {used_bytes()} B")
+
+parts = ["#pragma once", "#include <Arduino.h>"]
+rows, total = [], 0
+for i, c in enumerate(clips):
+    theme, stem, kind, role, track = c["theme"], c["stem"], c["kind"], c["role"], c["track"]
+    seq = c["seq"]
+    if not seq: raise SystemExit(f"{theme}/{stem}: tidak ada frame")
+    if len(seq) > 65535: raise SystemExit(f"{theme}/{stem}: {len(seq)} frame, maks 65535")
+    if not 1 <= track <= 3000: raise SystemExit(f"{theme}/{stem}: trek {track} di luar 1..3000 (batas DFPlayer folder MP3)")
+    if c["delay"] > 65535: raise SystemExit(f"{theme}/{stem}: delay terlalu besar")
+    used = sorted(set(seq)); names = {}
+    for j in used:
+        raw = c["frames"][j]
+        if len(raw) > 65535: raise SystemExit(f"{theme}/{stem}: frame {j} {len(raw)} B, maks 65535 B per frame")
+        total += len(raw); name = f"JPG_{i}_{j}"
         parts.append(f"static const uint8_t {name}[] PROGMEM = {{{','.join(f'0x{b:02x}' for b in raw)}}};")
-        names.append(name)
-    parts.append(f"static const uint8_t* const JPGF_{i}[] = {{{','.join(names[j] for j in c['seq'])}}};")
-    parts.append(f"static const uint16_t JPGS_{i}[] = {{{','.join(str(len(c['frames'][j])) for j in c['seq'])}}};")
-    rows.append(f'  {{"{theme}","{stem}",JPGF_{i},JPGS_{i},{len(c["seq"])},{c["delay"]},{role},{track},{c["x"]},{c["y"]}}},')
-    print(f"model {i + 1:2d} trek {track:04d}.mp3 {theme}/{stem}: {kind} {len(c['seq'])} frame x {c['delay']} ms, "
-          f"{len(names)} unik, {sum(map(len, c['frames']))} B")
+        names[j] = name
+    parts.append(f"static const uint8_t* const JPGF_{i}[] = {{{','.join(names[j] for j in seq)}}};")
+    parts.append(f"static const uint16_t JPGS_{i}[] = {{{','.join(str(len(c['frames'][j])) for j in seq)}}};")
+    rows.append(f'  {{"{theme}","{stem}",JPGF_{i},JPGS_{i},{len(seq)},{c["delay"]},{role},{track},{c["x"]},{c["y"]}}},')
+    print(f"model {i + 1:2d} trek {track:04d}.mp3 {theme}/{stem}: {kind} {len(seq)} frame x {c['delay']} ms, "
+          f"{len(used)} unik, {sum(len(c['frames'][j]) for j in used)} B")
 parts.append("struct JpegClip { const char* theme; const char* stem; const uint8_t* const* frames; const uint16_t* sizes;"
-             " uint16_t n; uint16_t delay; uint8_t role; uint8_t track; int16_t x; int16_t y; };")
+             " uint16_t n; uint16_t delay; uint8_t role; uint16_t track; int16_t x; int16_t y; };")
 parts.append("enum : uint8_t { JPEG_ROLE_NONE = 0, JPEG_ROLE_DIZZY = 1, JPEG_ROLE_HEART = 2 };")
 parts.append("static const JpegClip JPEG_CLIPS[] = {")
 parts.extend(rows)
 parts.append("};")
 parts.append(f"static const int JPEG_CLIP_COUNT = {len(rows)};")
 parts.append(f'static const char* const JPEG_BOOT_THEME = "{meta.get("boot_theme", "")}";')
-(inc / "jpeg_clips.h").write_text("\n".join(parts) + "\n")
-print("jpeg bytes", total)
+out = "\n".join(parts) + "\n"
+hp = inc / "jpeg_clips.h"
+if not hp.exists() or hp.read_text() != out:  # tulis hanya jika berubah, supaya build ulang tidak selalu kompilasi penuh
+    hp.write_text(out)
+print("jpeg bytes", total, f"(anggaran {budget})" if budget else "")

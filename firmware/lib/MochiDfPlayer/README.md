@@ -1,27 +1,25 @@
 # MochiDfPlayer
 
-Jalur suara DFPlayer Mini (UART 9600) untuk build `esp32-c3-dfplayer`.
+Jalur suara DFPlayer Mini (UART 9600) untuk Mochi DFPlayer 0.7.0.
 
-Kabel: VCC 5V, GND, RX modul ← GPIO20 lewat ±1 kΩ, TX modul → GPIO21, speaker di SPK_1/SPK_2.
+Kabel: VCC 5V, GND, RX modul ← GPIO20 lewat ±1 kΩ, TX modul → GPIO21, speaker di SPK_1/SPK_2. BUSY → GPIO5 opsional (`-DMOCHI_PIN_DF_BUSY=5`).
 
-## Yang dipakai firmware sekarang
+## Kartu SD
 
-`src/main.cpp` hanya memanggil `mochiDfInit()`, `mochiDfSetVolume()`, `mochiDfStop()`, dan `mochiDfPlayTrack(n)`.
+| Path | Fungsi | Perintah |
+|---|---|---|
+| `/MP3/0001.mp3` … | suara animasi (`mochiDfPlayTrack`) | 0x12, menurut nama |
+| root `0001.mp3` … | sama, jika `-DMOCHI_DF_COPY_ORDER` | 0x03, menurut urutan salin |
+| `/01/001.mp3` … `255` | pemutar MP3 (`mochiDfPlayMusic`) | 0x0F |
+| `/02/001.mp3` | notifikasi Chronos (`mochiDfPlayNotif`) | 0x0F |
+| `/03/*.mp3` | dering Chronos, diulang (`mochiDfPlayRinger`) | 0x17 |
 
-- `mochiDfPlayTrack(n)` memutar trek ke-n di **root** kartu (`0001.mp3` … ), menurut **urutan salin** FAT (perintah `0x03`).
-- Build dengan `-DMOCHI_DF_MP3_FOLDER` agar memutar `/MP3/000n.mp3` menurut **nama file** (perintah `0x12`).
-- Volume dikirim sekali saat init (28 dari 30) dan hanya dikirim ulang jika berubah. Ada jeda ≥ 80 ms antarperintah.
-- `begin()` dipanggil tanpa ACK, jadi firmware tidak tahu apakah modul benar-benar tersambung.
+## Trek selesai dan status
 
-## Fungsi lain (belum dipakai `main.cpp`)
+- Modul mengirim pesan 0x3D sendiri saat trek habis (sering dua kali; yang ganda dibuang). `mochiDfTakeFinished()` mengembalikan `true` sekali per trek.
+- Jika pin BUSY dipasang, naiknya BUSY ke HIGH juga dihitung sebagai selesai (jeda tidak dihitung).
+- `mochiDfQueryState()` menanyakan status (0x42), memblok s/d ±200 ms. Dipakai firmware hanya di layar pemutar, tiap 2,5 dtk, sebagai cadangan.
+- `mochiDfTakeError()` meneruskan kode error modul (5/6 = file tidak ada), dipakai untuk kembali ke lagu 001 setelah lagu terakhir.
+- `mochiDfMusicCount()` menanyakan jumlah file di `/01` (0x4E).
 
-Sisa dari firmware MAX98357 dan disimpan untuk fitur berikutnya (menu, Chronos, pemutar musik). Struktur folder yang mereka harapkan:
-
-| Folder | Isi |
-|---|---|
-| `01/001.mp3` … `011.mp3` | reaksi (`mochiDfPlayReact`) |
-| `02/001.mp3` … | ekspresi wajah (`mochiDfPlayFace`) |
-| `03/001.mp3` | notifikasi (`mochiDfPlayNotif`) |
-| `04/001.mp3` | dering, diulang (`mochiDfPlayRinger`) |
-| `05/001.mp3` … | lagu (`mochiDfMusicStart/Next/Prev/Toggle`) |
-| `06/001.mp3` … `009.mp3` | tema (`mochiDfPlayTheme`) |
+Volume 0–30 dikirim hanya jika berubah; antarperintah selalu ada jeda ≥ 80 ms. Saat init firmware menunggu 1,2 dtk sejak nyala agar modul selesai membaca kartu.

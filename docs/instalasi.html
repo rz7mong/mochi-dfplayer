@@ -4,12 +4,12 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>Rakit Mochi DFPlayer — kabel & kartu SD</title>
-<meta name="description" content="Mochi DFPlayer: teman meja ESP32-C3 + ST7789 dengan animasi JPEG tajam di flash dan suara MP3 lewat DFPlayer Mini."/>
+<meta name="description" content="Mochi DFPlayer: teman meja ESP32-C3 + ST7789, animasi JPEG tajam di flash, suara MP3 lewat DFPlayer Mini, pemutar MP3 dan Chronos BLE."/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&amp;family=Quicksand:wght@500;700&amp;display=swap"/>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E%F0%9F%8D%A1%3C/text%3E%3C/svg%3E"/>
-<link rel="stylesheet" href="./mochi.css?v=1"/>
+<link rel="stylesheet" href="./mochi.css?v=2"/>
 </head>
 <body>
 <header class="hero wrap narrow">
@@ -17,18 +17,18 @@
   <div class="kicker">rakit · kabel · kartu sd</div>
   <h1>🔧 Rakit <span>Mochi DFPlayer</span></h1>
   <p class="sub">Bahan, kabel per pin, isi kartu microSD DFPlayer, dan solusi masalah umum.</p>
-  <div class="chips"><span class="chip">🧠 ESP32-C3 Super Mini</span><span class="chip">📺 ST7789 1,3" 240×240</span><span class="chip">🎵 DFPlayer Mini</span><span class="chip">⚡ firmware 0.6.1</span></div>
+  <div class="chips"><span class="chip">🧠 ESP32-C3 Super Mini</span><span class="chip">📺 ST7789 1,3" 240×240</span><span class="chip">🎵 DFPlayer Mini</span><span class="chip">📱 Chronos BLE</span><span class="chip">⚡ firmware 0.7.0</span></div>
 </header>
-<nav class="tabs"><div class="wrap narrow"><a href="index.html">🍡 Instalasi</a><a href="instalasi.html" class="on" aria-current="page">🔧 Rakit &amp; kartu SD</a><a href="animasi.html">🎞️ Tambah animasi</a><a href="https://rz7mong.github.io/mochi-rzmong/">💗 Mochi rzmong (GIF)</a><a href="https://github.com/rz7mong/mochi-dfplayer">🐙 GitHub</a></div></nav>
+<nav class="tabs"><div class="wrap narrow"><a href="index.html">🍡 Instalasi</a><a href="panduan.html">📖 Cara pakai</a><a href="instalasi.html" class="on" aria-current="page">🔧 Rakit &amp; kartu SD</a><a href="animasi.html">🎞️ Tambah animasi</a><a href="https://rz7mong.github.io/mochi-rzmong/">💗 Mochi rzmong (GIF)</a><a href="https://github.com/rz7mong/mochi-dfplayer">🐙 GitHub</a></div></nav>
 <main class="wrap narrow">
 <section class="card">
   <h2>🧺 Bahan</h2>
   <div class="grid">
-    <div class="part"><span class="q">1×</span><h3>ESP32-C3 Super Mini</h3><p>Flash 4 MB, USB-C.</p></div>
+    <div class="part"><span class="q">1×</span><h3>ESP32-C3 Super Mini</h3><p>Flash 4 MB, USB-C, BLE.</p></div>
     <div class="part"><span class="q">1×</span><h3>Layar ST7789 1,3"</h3><p>IPS 240×240, SPI 7 pin (tanpa CS) atau 8 pin.</p></div>
     <div class="part"><span class="q">1×</span><h3>DFPlayer Mini</h3><p>Pemutar MP3 dengan slot microSD dan amplifier 3 W.</p></div>
     <div class="part"><span class="q">1×</span><h3>Speaker 8 Ω</h3><p>Kecil, 0,5–3 W, ke SPK_1/SPK_2.</p></div>
-    <div class="part"><span class="q">1×</span><h3>Kartu microSD</h3><p>FAT32, ≤ 32 GB, untuk file MP3.</p></div>
+    <div class="part"><span class="q">1×</span><h3>Kartu microSD</h3><p>FAT32, ≤ 32 GB.</p></div>
     <div class="part"><span class="q">1×</span><h3>Resistor 1 kΩ</h3><p>Di jalur GPIO20 → RX DFPlayer.</p></div>
     <div class="part"><span class="q">1×</span><h3>Tombol / TTP223</h3><p>Ke GPIO1, active-low.</p><span class="tag">lihat catatan sentuh</span></div>
     <div class="part"><span class="q">1×</span><h3>MPU6050</h3><p>Untuk fitur goyang. Tanpa modul ini, fitur goyang mati sendiri.</p><span class="tag opt">opsional</span></div>
@@ -48,30 +48,39 @@
 <tr><td>TFT VCC</td><td>3V3</td><td></td></tr>
 <tr><td>Sentuh / tombol</td><td><b>GPIO1</b></td><td>Active-low: tombol ke GND, atau TTP223 dengan jumper A disolder</td></tr>
 <tr><td>DFPlayer RX</td><td><b>GPIO20</b> lewat resistor ±1 kΩ</td><td>ESP TX → RX modul</td></tr>
-<tr><td>DFPlayer TX</td><td><b>GPIO21</b></td><td>TX modul → ESP RX</td></tr>
+<tr><td>DFPlayer TX</td><td><b>GPIO21</b></td><td>TX modul → ESP RX. Wajib agar "trek selesai" terdeteksi</td></tr>
+<tr><td>DFPlayer BUSY</td><td>GPIO5 (opsional)</td><td>Build dengan <code>-DMOCHI_PIN_DF_BUSY=5</code></td></tr>
 <tr><td>DFPlayer VCC</td><td>5 V</td><td>Dari VBUS/5V, bukan 3V3</td></tr>
 <tr><td>DFPlayer SPK_1 / SPK_2</td><td>Speaker 8 Ω</td><td>Langsung ke speaker, tanpa amplifier</td></tr>
 <tr><td>MPU6050 SDA / SCL</td><td><b>GPIO8</b> / <b>GPIO9</b></td><td>Opsional. Pull-up 4,7 kΩ ke 3V3 jika modul belum punya</td></tr>
 <tr><td>MPU6050 VCC</td><td>3V3</td><td></td></tr>
 <tr><td>GND</td><td>gabung semua</td><td>ESP, layar, DFPlayer, MPU6050, sentuh</td></tr>
   </table></div>
-  <p class="note">GPIO9 adalah pin strap: jangan ditarik ke GND saat boot. GPIO20/21 adalah UART0 bawaan chip; log ESP dibaca lewat USB CDC, bukan UART0.</p>
-  <p class="info"><b>Catatan sentuh:</b> firmware membaca GPIO1 sebagai <b>LOW = ditekan</b> (pull-up internal). Modul TTP223 bawaan pabrik justru HIGH saat disentuh; solder jumper <b>A</b> di modul agar jadi active-low, atau build dengan <code>-DMOCHI_TOUCH_ACTIVE_HIGH</code>.</p>
+  <p class="note">GPIO9 adalah pin strap: jangan ditarik ke GND saat boot. GPIO20/21 adalah UART0 bawaan chip; log ESP dibaca lewat USB CDC.</p>
+  <p class="info"><b>Catatan sentuh:</b> firmware membaca GPIO1 sebagai <b>LOW = ditekan</b> (pull-up internal). Modul TTP223 bawaan pabrik justru HIGH saat disentuh; solder jumper <b>A</b> agar active-low, atau build dengan <code>-DMOCHI_TOUCH_ACTIVE_HIGH</code>.</p>
 </section>
 
 <section class="card" id="sd">
   <h2>💾 Kartu SD untuk DFPlayer</h2>
-  <div class="step"><div class="num">1</div><div>Format kartu <b>FAT32</b>.</div></div>
-  <div class="step"><div class="num">2</div><div>Siapkan 18 file MP3 bernama <code>0001.mp3</code> sampai <code>0018.mp3</code>. Nomor = urutan model.</div></div>
-  <div class="step"><div class="num">3</div><div>Salin ke <b>root</b> kartu <b>satu per satu, berurutan</b> mulai 0001. DFPlayer memutar file ke-N menurut urutan salin, bukan menurut nama.</div></div>
-  <div class="step"><div class="num">4</div><div>Di macOS, hapus file <code>._0001.mp3</code> dan sejenisnya (ikut terhitung sebagai trek).</div></div>
-  <div class="tbl"><table><tr><th>Trek</th><th>Model</th></tr>
-    <tr><td><code>0001.mp3</code> – <code>0010.mp3</code></td><td>wajah: vid_00, vid_01, vid_10, vid_11, vid_20, vid_21, vid_30, vid_31, vid_40, vid_41</td></tr>
-    <tr><td><code>0011.mp3</code> – <code>0014.mp3</code></td><td>gundam: blade, titan, hadouken_hit, mecha_doc</td></tr>
-    <tr><td><code>0015.mp3</code> – <code>0018.mp3</code></td><td>mobil: car, turbo, headlights, speed_3</td></tr>
+  <p>Format <b>FAT32</b>, lalu buat struktur ini. File dicocokkan dari <b>nama</b>, urutan salin tidak penting.</p>
+<pre>/MP3/0001.mp3 … 0040.mp3   suara animasi (nomor = trek model)
+/01/001.mp3 … 255.mp3      lagu untuk Pemutar MP3
+/02/001.mp3                suara notifikasi Chronos
+/03/001.mp3 …              nada dering panggilan Chronos</pre>
+  <div class="tbl"><table><tr><th>Model (ketuk 2×)</th><th>File <code>/MP3/</code></th><th>Klip</th></tr>
+    <tr><td>1–10</td><td><code>0001</code>–<code>0010</code></td><td>wajah vid_00, vid_01, vid_10, vid_11, vid_20, vid_21, vid_30, vid_31, vid_40, vid_41</td></tr>
+    <tr><td>11–14</td><td><code>0011</code>–<code>0014</code></td><td>gundam intro, kokpit, tembak, siaga (tahan)</td></tr>
+    <tr><td>15–18</td><td><code>0024</code>–<code>0027</code></td><td>gundam hujan, isyarat, marah, ledak (goyang)</td></tr>
+    <tr><td>19–22</td><td><code>0015</code>–<code>0018</code></td><td>mobil car, turbo, headlights, speed_3</td></tr>
+    <tr><td>23–27</td><td><code>0019</code>–<code>0023</code></td><td>mochi full1, chongmat1 (goyang), video17, video18, xoadau1 (tahan)</td></tr>
+    <tr><td>28–30</td><td><code>0034</code>, <code>0038</code>, <code>0040</code></td><td>dasai video03, video07, video2 (tahan)</td></tr>
   </table></div>
-  <p class="note">Trek diputar ulang dari awal setiap kali klip mengulang (6 frame × 100 ms ≈ 0,6 detik) dan saat goyang/tahan. Jadi pakai <b>suara pendek</b>, bukan lagu panjang.</p>
-  <p class="hint">Volume tetap 28 dari 30. Cek kartu dengan <code>python firmware/tools/daftar_trek.py --sd /path/kartu</code>. Ingin dicocokkan dari nama file? Build dengan <code>-DMOCHI_DF_MP3_FOLDER</code> dan simpan file di folder <code>/MP3/</code>.</p>
+  <ul>
+    <li>Lagu di <code>/01</code> harus bernomor berurutan tanpa lubang (001, 002, 003 …).</li>
+    <li>Di macOS, hapus file <code>._*</code> dan <code>.DS_Store</code>.</li>
+    <li>Cek kartu: <code>python firmware/tools/daftar_trek.py --sd /path/kartu</code>.</li>
+  </ul>
+  <p class="hint"><b>Mode cadangan</b> <code>-DMOCHI_DF_COPY_ORDER</code>: suara animasi di root kartu (<code>0001.mp3</code> …) dan diputar menurut urutan salin. Salin file root berurutan sebelum folder lain.</p>
 </section>
 
 <section class="card">
@@ -79,22 +88,25 @@
   <p>Paling mudah: <a href="index.html#flash">pasang dari browser</a>. Atau build sendiri dengan PlatformIO:</p>
 <pre>cd firmware
 pio run -e esp32-c3-dfplayer -t upload</pre>
-  <p class="hint">Tahan BOOT saat colok USB-C jika unggahan gagal. Aset animasi di-embed otomatis saat build (perlu Python + Pillow).</p>
+  <p class="hint">Tahan BOOT saat colok USB-C jika unggahan gagal. Klip animasi ditanam otomatis saat build (perlu Python + Pillow).</p>
 </section>
 
 <section class="card" id="masalah">
   <h2>🛠️ Kalau ada masalah</h2>
   <div class="tbl"><table><tr><th>Gejala</th><th>Cek</th></tr>
     <tr><td>Port tidak muncul</td><td>Chrome/Edge di komputer, kabel USB data (bukan kabel cas), tahan BOOT saat colok.</td></tr>
-    <tr><td>Layar hitam</td><td>SCLK 4, MOSI 6, DC 3, RST 10, BLK 7. CS modul 8 pin ke GND. Layar juga hitam saat mode berhenti: ketuk 1×.</td></tr>
-    <tr><td>Tidak ada suara</td><td>DFPlayer VCC 5 V, RX lewat 1 kΩ ke GPIO20, TX ke GPIO21, speaker di SPK_1/SPK_2, kartu FAT32. Firmware tidak bisa mendeteksi DFPlayer yang tidak tersambung.</td></tr>
-    <tr><td>Suara salah model</td><td>Urutan salin file. Format ulang, salin berurutan, hapus file <code>._*</code>.</td></tr>
+    <tr><td>Layar hitam</td><td>SCLK 4, MOSI 6, DC 3, RST 10, BLK 7. CS modul 8 pin ke GND. Mode berhenti juga hitam: ketuk 1×.</td></tr>
+    <tr><td>Gambar terbalik / miring</td><td>Menu → Putar layar.</td></tr>
+    <tr><td>Tidak ada suara</td><td>DFPlayer VCC 5 V, RX lewat 1 kΩ ke GPIO20, TX ke GPIO21, speaker di SPK_1/SPK_2, kartu FAT32, folder <code>/MP3</code>.</td></tr>
+    <tr><td>Suara tidak diulang / lagu tidak lanjut</td><td>Kabel TX modul → GPIO21 membawa pesan "trek selesai". Atau pasang BUSY ke GPIO5 + <code>-DMOCHI_PIN_DF_BUSY=5</code>.</td></tr>
+    <tr><td>Pemutar: "folder /01 kosong"</td><td>Lagu harus <code>/01/001.mp3</code>, <code>/01/002.mp3</code>, …</td></tr>
     <tr><td>Ketukan tidak terbaca / selalu "tahan"</td><td>Polaritas sentuh: lihat catatan TTP223 di atas.</td></tr>
+    <tr><td>Chronos tidak menemukan perangkat</td><td>Menu → Chronos BLE harus ON. Nama <code>rzmong dfplayer</code>.</td></tr>
     <tr><td>Goyang tidak bereaksi</td><td>Serial monitor harus menulis <code>MPU6050 siap</code>. SDA 8, SCL 9, alamat 0x68.</td></tr>
   </table></div>
   <p class="hint">Serial monitor 115200 lewat USB: <code>pio device monitor</code>.</p>
 </section>
 </main>
-<footer>© rzmong · MIT · Mochi DFPlayer 0.6.1 · proyek independen, terinspirasi Dasai Mochi, bukan produk resmi</footer>
+<footer>© rzmong · MIT (kode) · Mochi DFPlayer 0.7.0 · proyek independen, terinspirasi Dasai Mochi, bukan produk resmi</footer>
 </body>
 </html>

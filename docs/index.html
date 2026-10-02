@@ -4,74 +4,76 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>Mochi DFPlayer — Instalasi ESP32</title>
-<meta name="description" content="Mochi DFPlayer: teman meja ESP32-C3 + ST7789 dengan animasi JPEG tajam di flash dan suara MP3 lewat DFPlayer Mini."/>
+<meta name="description" content="Mochi DFPlayer: teman meja ESP32-C3 + ST7789, animasi JPEG tajam di flash, suara MP3 lewat DFPlayer Mini, pemutar MP3 dan Chronos BLE."/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&amp;family=Quicksand:wght@500;700&amp;display=swap"/>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E%F0%9F%8D%A1%3C/text%3E%3C/svg%3E"/>
-<link rel="stylesheet" href="./mochi.css?v=1"/>
+<link rel="stylesheet" href="./mochi.css?v=2"/>
 <script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module"></script>
 </head>
 <body>
 <header class="hero wrap narrow">
   <svg class="mochi" viewBox="0 0 120 96" aria-hidden="true"><ellipse cx="60" cy="88" rx="36" ry="5" fill="#f6c6d9" opacity=".6"/><path d="M14 66c0-30 20-52 46-52s46 22 46 52c0 14-12 20-46 20S14 80 14 66z" fill="#fff" stroke="#ffb3cf" stroke-width="3"/><rect x="33" y="34" width="54" height="36" rx="10" fill="#2b2140"/><ellipse cx="49" cy="51" rx="5" ry="6.5" fill="#7ef0c8"/><ellipse cx="71" cy="51" rx="5" ry="6.5" fill="#7ef0c8"/><path d="M53 61q7 6 14 0" stroke="#ff8fb8" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="38" cy="64" rx="5" ry="3" fill="#ffb3cf" opacity=".6"/><ellipse cx="82" cy="64" rx="5" ry="3" fill="#ffb3cf" opacity=".6"/><path d="M100 18v16a5 4 0 1 1-2-3V20l10-3v13a5 4 0 1 1-2-3V15z" fill="#ff8fb8"/></svg>
-  <div class="kicker">instalasi · dfplayer · v0.6.1</div>
+  <div class="kicker">instalasi · dfplayer · v0.7.0</div>
   <h1>🍡 Mochi <span>DFPlayer</span></h1>
-  <p class="sub">Animasi JPEG tajam di flash, suara MP3 lewat DFPlayer Mini. Flash langsung dari browser.</p>
-  <div class="chips"><span class="chip">🧠 ESP32-C3 Super Mini</span><span class="chip">📺 ST7789 1,3" 240×240</span><span class="chip">🎵 DFPlayer Mini</span><span class="chip">⚡ firmware 0.6.1</span></div>
+  <p class="sub">Animasi JPEG tajam di flash, suara MP3 lewat DFPlayer Mini, pemutar MP3 dan Chronos. Flash langsung dari browser.</p>
+  <div class="chips"><span class="chip">🧠 ESP32-C3 Super Mini</span><span class="chip">📺 ST7789 1,3" 240×240</span><span class="chip">🎵 DFPlayer Mini</span><span class="chip">📱 Chronos BLE</span><span class="chip">⚡ firmware 0.7.0</span></div>
 </header>
-<nav class="tabs"><div class="wrap narrow"><a href="index.html" class="on" aria-current="page">🍡 Instalasi</a><a href="instalasi.html">🔧 Rakit &amp; kartu SD</a><a href="animasi.html">🎞️ Tambah animasi</a><a href="https://rz7mong.github.io/mochi-rzmong/">💗 Mochi rzmong (GIF)</a><a href="https://github.com/rz7mong/mochi-dfplayer">🐙 GitHub</a></div></nav>
+<nav class="tabs"><div class="wrap narrow"><a href="index.html" class="on" aria-current="page">🍡 Instalasi</a><a href="panduan.html">📖 Cara pakai</a><a href="instalasi.html">🔧 Rakit &amp; kartu SD</a><a href="animasi.html">🎞️ Tambah animasi</a><a href="https://rz7mong.github.io/mochi-rzmong/">💗 Mochi rzmong (GIF)</a><a href="https://github.com/rz7mong/mochi-dfplayer">🐙 GitHub</a></div></nav>
 <main class="wrap narrow">
 <section class="card" id="flash">
   <h2>⚡ Pasang firmware dari browser</h2>
   <div class="flash-grid">
   <div class="step"><div class="num">1</div><div>Buka di <b>Chrome</b> atau <b>Edge</b> di komputer (bukan Safari, bukan browser di dalam aplikasi).</div></div>
   <div class="step"><div class="num">2</div><div>Tahan <b>BOOT</b>, colok USB-C, lalu lepas BOOT.</div></div>
-  <div class="step"><div class="num">3</div><div>Klik tombol di bawah, pilih port, lalu <b>Install</b>. Centang <b>Erase</b> untuk pemasangan pertama.</div></div>
-  <div class="step"><div class="num">4</div><div>Cabut lalu colok lagi. Layar langsung memutar model pertama.</div></div>
+  <div class="step"><div class="num">3</div><div>Klik tombol di bawah, pilih port, lalu <b>Install</b>. Centang <b>Erase</b> untuk pemasangan pertama atau naik dari versi &lt; 0.7.0.</div></div>
+  <div class="step"><div class="num">4</div><div>Cabut lalu colok lagi. Layar langsung memutar <code>mochi/full1</code>.</div></div>
   </div>
   <div class="install">
   <esp-web-install-button manifest="./firmware/manifest.json">
-    <button slot="activate" class="btn primary big">Install Mochi DFPlayer 0.6.1</button>
+    <button slot="activate" class="btn primary big">Install Mochi DFPlayer 0.7.0</button>
     <span slot="unsupported"><p class="note">Browser ini tidak mendukung Web Serial. Pakai Chrome atau Edge di komputer.</p></span>
     <span slot="not-allowed"><p class="note">Halaman harus dibuka lewat https (GitHub Pages) atau localhost.</p></span>
   </esp-web-install-button>
   </div>
   <p class="note">⚠️ Jangan pakai installer <a href="https://rz7mong.github.io/mochi-rzmong/">mochi-rzmong</a> untuk rakitan ini: itu firmware amplifier I2S (MAX98357), bukan DFPlayer. Sebaliknya, firmware ini juga tidak cocok untuk rakitan MAX98357.</p>
-  <p class="hint">Isi <code>firmware/firmware.bin</code>: bootloader + tabel partisi + boot_app0 + aplikasi, digabung di offset 0x0 untuk flash 4 MB. Mau build sendiri? Lihat <a href="https://github.com/rz7mong/mochi-dfplayer#flash">README</a>.</p>
+  <p class="hint">Isi <code>firmware/firmware.bin</code>: bootloader + tabel partisi + boot_app0 + aplikasi, digabung di offset 0x0 untuk flash 4 MB. Build sendiri: lihat <a href="https://github.com/rz7mong/mochi-dfplayer#flash">README</a>.</p>
 </section>
 
 <section class="card">
   <h2>🍡 Apa ini?</h2>
   <p>Teman meja kecil: wajah dan klip animasi di layar 1,3 inci, suaranya dari modul <b>DFPlayer Mini</b> yang memutar MP3 dari kartu microSD. Animasi disimpan sebagai <b>frame JPEG penuh warna</b> di flash ESP32, jadi gambarnya lebih tajam daripada GIF 256 warna.</p>
   <ul>
-    <li>18 model bawaan: 10 wajah, 4 gundam, 4 mobil.</li>
-    <li>Tiap model punya trek MP3 sendiri di kartu DFPlayer (<code>0001.mp3</code> … <code>0018.mp3</code>).</li>
-    <li>Goyang (opsional, MPU6050) memutar klip lain di tema yang sama.</li>
-    <li>Tanpa Wi-Fi, tanpa menu: langsung jalan begitu dinyalakan.</li>
+    <li><b>30 model</b>: 10 wajah, 8 gundam, 4 mobil, 5 mochi, 3 dasai.</li>
+    <li>Suara tiap model diputar <b>sampai habis</b>, lalu diulang.</li>
+    <li><b>Pemutar MP3</b> di menu layar untuk lagu di folder <code>/01</code>.</li>
+    <li><b>Chronos BLE</b>: jam dan baterai HP, notifikasi, panggilan, navigasi.</li>
+    <li>Goyang (opsional, MPU6050) memutar klip "pusing" tema itu.</li>
   </ul>
 </section>
 
 <section class="card">
-  <h2>👆 Cara main</h2>
+  <h2>👆 Gerakan dasar</h2>
   <div class="tap">
-    <div><b>Ketuk 1×</b><span>Putar / berhenti. Berhenti = layar hitam dan lampu latar mati.</span></div>
-    <div><b>Ketuk 2×</b><span>Model berikutnya (wajah → gundam → mobil → kembali).</span></div>
-    <div><b>Tahan ≥ 0,4 dtk</b><span>Klip terakhir tema itu berulang sampai dilepas.</span></div>
-    <div><b>Goyang 3× dalam 1 dtk</b><span>Klip lain di tema yang sama, sekali, lalu kembali. Perlu MPU6050.</span></div>
+    <div><b>Ketuk 1×</b><span>Putar / berhenti (layar hitam, lampu latar mati).</span></div>
+    <div><b>Ketuk 2×</b><span>Model berikutnya.</span></div>
+    <div><b>Tahan ≥ 0,4 dtk</b><span>Klip "tahan" tema itu berulang sampai dilepas.</span></div>
+    <div><b>Tahan 2 dtk</b><span>Buka menu: pemutar MP3, volume, Chronos, Jam HP, rotasi.</span></div>
   </div>
+  <p class="hint">Gerakan di menu dan pemutar MP3: <a href="panduan.html">Cara pakai</a>.</p>
 </section>
 
 <section class="card">
   <h2>⚖️ Pilih yang mana?</h2>
   <div class="tbl"><table class="vs">
     <tr><th></th><th>Mochi DFPlayer (ini)</th><th>Mochi rzmong</th></tr>
-    <tr><td>Suara</td><td>MP3 lewat DFPlayer Mini (microSD di modul DFPlayer)</td><td>WAV lewat amplifier MAX98357 (I2S)</td></tr>
+    <tr><td>Suara</td><td>MP3 lewat DFPlayer Mini</td><td>WAV lewat amplifier MAX98357 (I2S)</td></tr>
     <tr><td>Animasi</td><td><span class="yes">Lebih tajam</span>: frame JPEG penuh warna, ditanam di firmware</td><td>GIF dari kartu SD atau flash, kurang tajam</td></tr>
     <tr><td>Tambah / ganti animasi</td><td>Build lalu flash ulang (<a href="animasi.html">caranya</a>)</td><td><span class="yes">Salin GIF ke kartu SD</span>, tanpa flash ulang</td></tr>
-    <tr><td>Ganti model</td><td>Ketuk 2×</td><td>Menu di LCD atau halaman web</td></tr>
+    <tr><td>Pemutar musik</td><td><span class="yes">Ada</span> (menu layar, folder <code>/01</code>)</td><td>Tidak ada</td></tr>
+    <tr><td>Chronos (BLE)</td><td>Ada, diatur dari menu layar</td><td>Ada, diatur dari halaman web</td></tr>
     <tr><td>Wi-Fi + halaman pengaturan</td><td><span class="no">Tidak ada</span></td><td>Ada (192.168.4.1)</td></tr>
-    <tr><td>Chronos (BLE)</td><td><span class="no">Belum aktif di firmware 0.6.1</span></td><td>Ada</td></tr>
     <tr><td>Goyang (MPU6050)</td><td>Ada, opsional</td><td>Tidak ada</td></tr>
   </table></div>
 </section>
@@ -80,11 +82,11 @@
   <h2>➡️ Lanjut</h2>
   <div class="row">
     <a class="btn primary" href="instalasi.html">🔧 Rakit &amp; siapkan kartu SD</a>
-    <a class="btn" href="animasi.html">🎞️ Tambah animasi sendiri</a>
-    <a class="btn" href="https://github.com/rz7mong/mochi-dfplayer">🐙 Kode di GitHub</a>
+    <a class="btn" href="panduan.html">📖 Menu, pemutar MP3, Chronos</a>
+    <a class="btn" href="animasi.html">🎞️ Tambah animasi</a>
   </div>
 </section>
 </main>
-<footer>© rzmong · MIT · Mochi DFPlayer 0.6.1 · proyek independen, terinspirasi Dasai Mochi, bukan produk resmi</footer>
+<footer>© rzmong · MIT (kode) · Mochi DFPlayer 0.7.0 · proyek independen, terinspirasi Dasai Mochi, bukan produk resmi</footer>
 </body>
 </html>
