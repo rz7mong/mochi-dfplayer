@@ -17,12 +17,12 @@ Teman meja **ESP32-C3 Super Mini** + layar **ST7789 1,3" 240×240** dengan **sua
 
 ## ✨ Fitur
 
-- **30 model animasi** di flash: 10 wajah, 8 gundam, 4 mobil, 5 mochi, 3 dasai. JPEG lebar 240, tempo per klip. Saat nyala langsung `mochi/full1`.
+- **34 model animasi** di flash: 10 wajah, 12 gundam, 4 mobil, 5 mochi, 3 dasai. JPEG lebar 240, tempo per klip. Saat nyala langsung `mochi/full1`.
 - **Suara MP3 per model** dari kartu microSD DFPlayer (`/MP3/0001.mp3` …), **diputar sampai habis** lalu diulang. Tidak lagi dipotong tiap putaran gambar.
 - **Pemutar MP3** di menu: putar/jeda, berikut/sebelum, volume, mode *ulang semua / ulang 1 / acak*, layar nomor trek dan volume. Lagu dari folder `/01`, terpisah dari suara animasi. Musik tetap jalan saat kembali ke animasi.
 - **Chronos (BLE)**: jam dan tanggal dari HP, baterai HP, notifikasi, panggilan masuk, navigasi, cari perangkat.
 - **Satu tombol sentuh**: ketuk, ketuk 2×, tahan, tahan 2 detik (menu).
-- **Goyang** (opsional, MPU6050): klip "pusing" di tema yang sama.
+- **Goyang** (opsional, MPU6050): klip "pusing" tema itu (tema tanpa klip pusing: klip lain di tema yang sama).
 - **Pengaturan tersimpan** (volume, rotasi, Chronos, Jam HP, mode musik, lagu terakhir).
 - **Pasang dari browser** (ESP Web Tools) atau build sendiri dengan PlatformIO.
 
@@ -101,11 +101,11 @@ Format **FAT32**, lalu buat struktur ini:
 | Model (ketuk 2×) | File `/MP3/` | Klip |
 |---|---|---|
 | 1–10 | `0001`–`0010` | wajah vid_00, vid_01, vid_10, vid_11, vid_20, vid_21, vid_30, vid_31, vid_40, vid_41 |
-| 11–14 | `0011`–`0014` | gundam intro, kokpit, tembak, siaga (tahan) |
-| 15–18 | `0024`–`0027` | gundam hujan, isyarat, marah, ledak (goyang) |
-| 19–22 | `0015`–`0018` | mobil car, turbo, headlights, speed_3 |
-| 23–27 | `0019`–`0023` | mochi full1, chongmat1 (goyang), video17, video18, xoadau1 (tahan) |
-| 28–30 | `0034`, `0038`, `0040` | dasai video03, video07, video2 (tahan) |
+| 11–14 | `0011`–`0014` | gundam blade, titan, hadouken_hit, mecha_doc (tahan) |
+| 15–22 | `0024`–`0031` | gundam equip, hadouken_miss, helm_hujan, helm_siaga, isyarat, kokpit, kokpit_2, pilot |
+| 23–26 | `0015`–`0018` | mobil car, turbo, headlights, speed_3 |
+| 27–31 | `0019`–`0023` | mochi full1, chongmat1 (goyang), video17, video18, xoadau1 (tahan) |
+| 32–34 | `0034`, `0038`, `0040` | dasai video03, video07, video2 (tahan) |
 
 **Mode cadangan urutan salin** (`-DMOCHI_DF_COPY_ORDER`): suara animasi ditaruh di **root** (`0001.mp3` …) dan diputar menurut **urutan salin** FAT, bukan nama. Format kartu, salin file root berurutan **sebelum** folder lain. Tabel trek: `python firmware/tools/daftar_trek.py --copy-order`.
 
@@ -189,7 +189,7 @@ Saat build, `extra_script.py` menjalankan `tools/embed_jpeg.py` yang menanam kli
 | `-DMOCHI_DEFAULT_ROTATION=2` | Rotasi awal layar (0–3). Menu "Putar layar" menimpanya |
 | `-DMOCHI_BLE_NAME=\"nama\"` | Nama perangkat di aplikasi Chronos |
 
-**Ukuran flash.** App 0x3F0000 (4.128.768 B, partisi terbesar di flash 4 MB). Build 0.7.0: **94,9%** flash, RAM 12,4%. Klip JPEG mentah 3,71 MB tidak muat bersama BLE, jadi `embed_jpeg.py` punya **anggaran** (`custom_jpeg_budget = 3300000` di `platformio.ini`). Jika total klip melebihinya, frame yang **nyaris sama** dengan frame sebelumnya (saat ini ≤ 1,1% piksel berbeda) dipakai ulang. Jumlah frame dan tempo tetap; file aset tidak diubah. Hasilnya tercetak saat build (`ANGGARAN: …`).
+**Ukuran flash.** App 0x3F0000 (4.128.768 B, partisi terbesar di flash 4 MB). Build 0.7.0: **95,1%** flash, RAM 12,4%. Klip JPEG mentah 3,75 MB tidak muat bersama BLE, jadi `embed_jpeg.py` punya **anggaran** (`custom_jpeg_budget = 3300000` di `platformio.ini`). Jika total klip melebihinya, frame yang **nyaris sama** dengan frame sebelumnya (saat ini ≤ 1,2% piksel berbeda) dipakai ulang. Jumlah frame dan tempo tetap; file aset tidak diubah. Hasilnya tercetak saat build (`ANGGARAN: …`).
 
 **Perbarui `docs/firmware/firmware.bin` setelah build:**
 

@@ -7,6 +7,7 @@
 #endif
 /* v0.7.0: Chronos BLE (jam, baterai HP, notifikasi, panggilan, navigasi), menu LCD, pemutar MP3 folder /01,
  *         trek animasi /MP3/000N.mp3 menurut nama dan diputar sampai habis, versi tunggal, rotasi dari header.
+ * v0.6.6: gundam 12 GIF rzmong, 240x240 (PR #1).
  * v0.6.5: gundam 8 adegan 240x240, dasai tinggal video03, video07, video2.
  * v0.6.2-0.6.4: tema mochi, klip JPEG penuh, tempo/trek per klip, app 0x3F0000 tanpa spiffs.
  * v0.6.1: dokumen dan pesan edisi bahasa Indonesia.

@@ -83,6 +83,8 @@ uniq, sizes, seq = [], [], []
 last = size = None
 for fi, raw in enumerate(frames):
     im, slots = images[fi] if images else (Image.open(io.BytesIO(raw)).convert("RGB"), 1)
+    if a.smooth:  # hilangkan dither dulu, baru resize/sharpen
+        im = im.filter(ImageFilter.GaussianBlur(a.smooth))
     if a.resize:
         w, h = map(int, a.resize.lower().split("x"))
         im = im.resize((w, h), Image.LANCZOS)
@@ -97,7 +99,6 @@ for fi, raw in enumerate(frames):
     last = im
     out = raw
     if a.quality:
-        if a.smooth: im = im.filter(ImageFilter.GaussianBlur(a.smooth))
         b = io.BytesIO(); im.save(b, "JPEG", quality=a.quality, optimize=True, subsampling=a.subsampling); out = b.getvalue()
     if jt:
         opt = subprocess.run([jt, "-optimize", "-copy", "none"], input=out, capture_output=True, check=True).stdout

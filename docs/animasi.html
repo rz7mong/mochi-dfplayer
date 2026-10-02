@@ -24,7 +24,7 @@
 <section class="card">
   <h2>🎞️ Kenapa harus flash ulang?</h2>
   <p>Semua animasi disimpan sebagai frame JPEG dan <b>ditanam di firmware</b> saat build. Hasilnya tajam dan cepat, tapi tiap animasi baru berarti build + flash ulang. Butuh ganti animasi dari kartu SD tanpa flash? Itu keunggulan <a href="https://rz7mong.github.io/mochi-rzmong/">Mochi rzmong</a>.</p>
-  <p class="hint">Ruang app 4.128.768 B. Build 0.7.0 memakai 94,9% (termasuk BLE).</p>
+  <p class="hint">Ruang app 4.128.768 B. Build 0.7.0 memakai 95,1% (termasuk BLE).</p>
 </section>
 
 <section class="card">
@@ -39,7 +39,7 @@
 <section class="card">
   <h2>📦 Kalau flash penuh</h2>
   <p><code>tools/embed_jpeg.py</code> punya anggaran byte (<code>custom_jpeg_budget</code> di <code>platformio.ini</code>, sekarang 3.300.000). Jika klip melebihinya, frame yang <b>nyaris sama</b> dengan frame sebelumnya dipakai ulang, mulai dari yang paling mirip. Jumlah frame dan tempo tetap; file aset tidak diubah.</p>
-<pre>ANGGARAN: 3714017 B &gt; 3300000 B -&gt; frame nyaris sama (&lt;= 1.1% piksel) dipakai ulang, jadi 3280425 B</pre>
+<pre>ANGGARAN: 3754417 B &gt; 3300000 B -&gt; frame nyaris sama (&lt;= 1.2% piksel) dipakai ulang, jadi 3290978 B</pre>
   <p class="hint">Jika tetap tidak muat walau ambang 10%, build berhenti dengan pesan. Kurangi klip, atau naikkan anggaran lalu pastikan app masih muat.</p>
 </section>
 

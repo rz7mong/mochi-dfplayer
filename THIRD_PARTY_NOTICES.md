@@ -51,4 +51,4 @@ If you fork this repo, replace theme packs with your own media before publishing
 `firmware/assets/builtin/jpeg/mochi/` (full1, chongmat1, xoadau1, video17, video18) ditambahkan pemilik repo dari berkasnya sendiri. Klip ini tidak termasuk lisensi MIT kode. Pastikan hak distribusinya sebelum dibagikan ulang.
 
 - `dasai/`: dikonversi dari header `video*.h` di [bangdc90/dasai_mochi_tft](https://github.com/bangdc90/dasai_mochi_tft). Repo itu tidak mencantumkan lisensi; tampaknya diambil dari video produk Dasai Mochi. Pastikan izin sebelum distribusi ulang.
-- `gundam/`: dipotong dari `gundam.mp4` di [huykhoong/esp32_dasai_mochi_clone_and_how_to](https://github.com/huykhoong/esp32_dasai_mochi_clone_and_how_to). Repo itu tidak punya lisensi; README-nya menyebut hak gambar milik pembuat aslinya (Dasai Mochi edisi Gundam, produk komersial Dasai). Tidak tercakup MIT; pastikan izin sebelum distribusi ulang.
+- `gundam/`: dikonversi dari `gif/gundam/` di rilis `assets-v1` repo rz7mong/mochi-rzmong milik pemilik repo.
