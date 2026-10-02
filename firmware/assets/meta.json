@@ -219,6 +219,78 @@
       18
     ],
     [
+      "gundam",
+      "blade",
+      "",
+      11
+    ],
+    [
+      "gundam",
+      "titan",
+      "",
+      12
+    ],
+    [
+      "gundam",
+      "hadouken_hit",
+      "",
+      13
+    ],
+    [
+      "gundam",
+      "mecha_doc",
+      "heart",
+      14
+    ],
+    [
+      "gundam",
+      "equip",
+      "",
+      24
+    ],
+    [
+      "gundam",
+      "hadouken_miss",
+      "",
+      25
+    ],
+    [
+      "gundam",
+      "helm_hujan",
+      "",
+      26
+    ],
+    [
+      "gundam",
+      "helm_siaga",
+      "",
+      27
+    ],
+    [
+      "gundam",
+      "isyarat",
+      "",
+      28
+    ],
+    [
+      "gundam",
+      "kokpit",
+      "",
+      29
+    ],
+    [
+      "gundam",
+      "kokpit_2",
+      "",
+      30
+    ],
+    [
+      "gundam",
+      "pilot",
+      "",
+      31
+    ],
+    [
       "mochi",
       "full1",
       "",
@@ -249,54 +321,6 @@
       23
     ],
     [
-      "gundam",
-      "intro",
-      "",
-      11
-    ],
-    [
-      "gundam",
-      "kokpit",
-      "",
-      12
-    ],
-    [
-      "gundam",
-      "tembak",
-      "",
-      13
-    ],
-    [
-      "gundam",
-      "siaga",
-      "heart",
-      14
-    ],
-    [
-      "gundam",
-      "hujan",
-      "",
-      24
-    ],
-    [
-      "gundam",
-      "isyarat",
-      "",
-      25
-    ],
-    [
-      "gundam",
-      "marah",
-      "",
-      26
-    ],
-    [
-      "gundam",
-      "ledak",
-      "dizzy",
-      27
-    ],
-    [
       "dasai",
       "video03",
       "",
@@ -315,11 +339,5 @@
       40
     ]
   ],
-  "boot_theme": "mochi",
-  "skip_builtins": [
-    "gundam/blade",
-    "gundam/titan",
-    "gundam/hadouken_hit",
-    "gundam/mecha_doc"
-  ]
+  "boot_theme": "mochi"
 }
