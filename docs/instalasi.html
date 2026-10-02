@@ -2,7 +2,7 @@
 <html lang="id">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Instalasi Mochi DFPlayer</title>
+<title>Panduan Mochi DFPlayer</title>
 <style>
 body{font:16px/1.45 system-ui;margin:0;background:#111;color:#eee}
 main{max-width:42rem;margin:auto;padding:1.2rem}
@@ -11,40 +11,189 @@ pre{padding:.8rem;overflow:auto}
 table{border-collapse:collapse;width:100%}
 td,th{border-bottom:1px solid #333;text-align:left;padding:.35rem}
 a{color:#9cf}
+.n{color:#fc6}
 </style>
 <main>
 <p><a href="index.html">Beranda</a></p>
-<h1>Instalasi</h1>
-<p>Edisi bahasa Indonesia. Belum ada pemasang lewat browser. Jangan pakai installer <a href="https://rz7mong.github.io/mochi-rzmong/">mochi-rzmong</a>: itu firmware amplifier I2S, bukan DFPlayer.</p>
-<h2>1. Rakit</h2>
-<table>
-<tr><th>Net</th><th>Sambungan</th></tr>
-<tr><td>TFT SCLK</td><td>GPIO4</td></tr>
-<tr><td>TFT MOSI</td><td>GPIO6</td></tr>
-<tr><td>TFT DC</td><td>GPIO3</td></tr>
-<tr><td>TFT RST</td><td>GPIO10</td></tr>
-<tr><td>TFT CS</td><td>tidak disambung, kaki CS modul ke GND</td></tr>
-<tr><td>Lampu latar</td><td>GPIO7</td></tr>
-<tr><td>Sentuh</td><td>GPIO1, active-low</td></tr>
-<tr><td>DFPlayer RX</td><td>GPIO20 lewat sekitar 1 kΩ</td></tr>
-<tr><td>DFPlayer TX</td><td>GPIO21</td></tr>
-<tr><td>DFPlayer VCC</td><td>5 V</td></tr>
-<tr><td>GND</td><td>gabung</td></tr>
-<tr><td>MPU6050 SDA</td><td>GPIO8</td></tr>
-<tr><td>MPU6050 SCL</td><td>GPIO9</td></tr>
-<tr><td>MPU6050 VCC</td><td>3V3</td></tr>
-</table>
-<p>Tambah resistor 4,7 kΩ dari SDA dan SCL ke 3V3. GPIO9 pin strap: jangan tarik ke GND saat boot.</p>
-<h2>2. Kartu DFPlayer</h2>
-<p>FAT32. Berkas di root: <code>0019</code>–<code>0023</code>, <code>0026</code>–<code>0031</code>, <code>0034</code>, <code>0038</code>, <code>0040</code> (.mp3). Trek 19–23 mochi, 26–31 gundam (helm_hujan, helm_siaga, isyarat, kokpit, kokpit_2, pilot), 34/38/40 dasai (video03, video07, video2).</p>
-<h2>3. Flash</h2>
-<pre>cd firmware
-pio run -e esp32-c3-dfplayer -t upload</pre>
-<p>Tahan BOOT saat colok USB-C jika unduhan gagal. Port serial memakai USB CDC, bukan UART0.</p>
-<h2>4. Setelah nyala</h2>
+<h1>Panduan Mochi DFPlayer</h1>
+<p>Untuk firmware v0.6.8: 14 klip di flash (6 gundam, 5 mochi, 3 dasai), suara MP3 dari DFPlayer Mini. Belum ada pemasang lewat browser. Jangan pakai installer <a href="https://rz7mong.github.io/mochi-rzmong/">mochi-rzmong</a>: itu firmware amplifier I2S (MAX98357), bukan DFPlayer.</p>
+
+<h2>Isi</h2>
 <ol>
-<li>Layar langsung memutar model pertama dan menyalakan lampu latar.</li>
-<li>Ketuk singkat untuk berhenti atau putar lagi.</li>
-<li>Ketuk dua kali untuk model berikutnya.</li>
+<li><a href="#komponen">Komponen</a></li>
+<li><a href="#kabel">Kabel</a></li>
+<li><a href="#flash">Upload firmware</a></li>
+<li><a href="#sd">Kartu microSD</a></li>
+<li><a href="#pakai">Cara pakai</a></li>
+<li><a href="#masalah">Kalau ada masalah</a></li>
+<li><a href="#klip">Menambah atau mengganti klip</a></li>
 </ol>
+
+<h2 id="komponen">1. Komponen</h2>
+<table>
+<tr><th>Barang</th><th>Jumlah</th><th>Catatan</th></tr>
+<tr><td>ESP32-C3 Super Mini</td><td>1</td><td>Flash 4 MB, USB-C</td></tr>
+<tr><td>LCD IPS ST7789 1,3 inci 240×240 SPI</td><td>1</td><td>Modul 7 pin (GND, VCC, SCL, SDA, RES, DC, BLK). Kalau modulnya punya pin CS, sambungkan CS ke GND</td></tr>
+<tr><td>DFPlayer Mini (MP3-TF-16P)</td><td>1</td><td>Dengan kartu microSD (≤ 32 GB, FAT32)</td></tr>
+<tr><td>Speaker 8 Ω (4 Ω juga bisa), 0,5–3 W</td><td>1</td><td>Ke SPK_1 / SPK_2 DFPlayer</td></tr>
+<tr><td>MPU6050 (modul GY-521)</td><td>1</td><td>Untuk deteksi goyang. Tanpa modul ini, fitur goyang mati, yang lain jalan</td></tr>
+<tr><td>Sensor sentuh TTP223 atau tombol tekan</td><td>1</td><td>Harus aktif LOW (lihat catatan di bawah)</td></tr>
+<tr><td>Resistor 1 kΩ</td><td>1</td><td>Seri di jalur GPIO20 → RX DFPlayer</td></tr>
+<tr><td>Resistor 4,7 kΩ</td><td>2</td><td>Opsional: pull-up SDA/SCL ke 3V3, hanya jika modul MPU6050 tidak punya pull-up</td></tr>
+<tr><td>Kapasitor elektrolit 100–470 µF</td><td>1</td><td>Opsional, di VCC–GND DFPlayer, mengurangi bunyi letup dan reset saat volume keras</td></tr>
+<tr><td>Kabel USB-C (data), kabel jumper</td><td></td><td></td></tr>
+</table>
+<p><b>Sensor sentuh:</b> firmware membaca GPIO1 dengan pull-up internal, jadi tersentuh/tertekan = LOW. TTP223 bawaan pabrik keluarannya HIGH saat disentuh, dan alat akan mengira disentuh terus. Solder jembatan pad <b>A</b> di TTP223 supaya aktif LOW. Tombol tekan biasa cukup disambung antara GPIO1 dan GND.</p>
+
+<h2 id="kabel">2. Kabel</h2>
+<p>Semua GND disatukan. Pin sesuai <code>firmware/include/MochiRzmong.h</code> dan <code>User_Setup_ST7789.h</code>.</p>
+<h3>LCD ST7789</h3>
+<table>
+<tr><th>Pin LCD</th><th>ESP32-C3</th></tr>
+<tr><td>VCC</td><td>3V3</td></tr>
+<tr><td>GND</td><td>GND</td></tr>
+<tr><td>SCL (SCLK)</td><td>GPIO4</td></tr>
+<tr><td>SDA (MOSI)</td><td>GPIO6</td></tr>
+<tr><td>RES (RST)</td><td>GPIO10</td></tr>
+<tr><td>DC</td><td>GPIO3</td></tr>
+<tr><td>BLK (lampu latar)</td><td>GPIO7 (HIGH = nyala)</td></tr>
+<tr><td>CS (jika ada)</td><td>GND</td></tr>
+</table>
+<h3>DFPlayer Mini</h3>
+<table>
+<tr><th>Pin DFPlayer</th><th>Sambungan</th></tr>
+<tr><td>VCC</td><td>5V (pin 5V Super Mini, dari USB)</td></tr>
+<tr><td>GND</td><td>GND</td></tr>
+<tr><td>RX</td><td>GPIO20 lewat resistor 1 kΩ</td></tr>
+<tr><td>TX</td><td>GPIO21</td></tr>
+<tr><td>SPK_1 / SPK_2</td><td>Speaker (+ / −)</td></tr>
+</table>
+<p>UART 9600 baud. Jangan sambungkan GND speaker ke GND rangkaian; SPK_1/SPK_2 keluaran amplifier jembatan.</p>
+<h3>MPU6050</h3>
+<table>
+<tr><th>Pin MPU6050</th><th>ESP32-C3</th></tr>
+<tr><td>VCC</td><td>3V3</td></tr>
+<tr><td>GND</td><td>GND</td></tr>
+<tr><td>SDA</td><td>GPIO8</td></tr>
+<tr><td>SCL</td><td>GPIO9</td></tr>
+<tr><td>AD0</td><td>GND atau dibiarkan (alamat 0x68)</td></tr>
+</table>
+<p>GPIO8 dan GPIO9 pin strap ESP32-C3: jangan ditarik ke GND saat boot (pull-up ke 3V3 aman).</p>
+<h3>Sentuh</h3>
+<table>
+<tr><th>Pin</th><th>ESP32-C3</th></tr>
+<tr><td>TTP223 VCC / GND</td><td>3V3 / GND</td></tr>
+<tr><td>TTP223 I/O (pad A dijembatani)</td><td>GPIO1</td></tr>
+<tr><td>atau tombol</td><td>GPIO1 ↔ GND</td></tr>
+</table>
+
+<h2 id="flash">3. Upload firmware</h2>
+<p>Pakai PlatformIO. Klip JPEG dibuat jadi header saat build oleh skrip Python yang butuh Pillow.</p>
+<ol>
+<li>Pasang Python 3 dan Git.</li>
+<li>Pasang PlatformIO dan Pillow:
+<pre>python3 -m venv ~/.piovenv
+source ~/.piovenv/bin/activate        # Windows: %USERPROFILE%\.piovenv\Scripts\activate
+pip install platformio pillow</pre>
+Kalau memakai ekstensi PlatformIO di VS Code, pasang Pillow ke Python PlatformIO: <code>~/.platformio/penv/bin/pip install pillow</code> (Windows: <code>%USERPROFILE%\.platformio\penv\Scripts\pip install pillow</code>).</li>
+<li>Ambil repo:
+<pre>git clone https://github.com/rz7mong/mochi-dfplayer.git
+cd mochi-dfplayer/firmware</pre></li>
+<li>Colok Super Mini lewat USB-C, lalu hapus flash penuh dan upload. Hapus penuh perlu sekali, karena tabel partisi berubah (satu app 0x3F0000, tanpa spiffs) dan sisa firmware lama bisa mengganggu:
+<pre>pio run -e esp32-c3-dfplayer -t erase
+pio run -e esp32-c3-dfplayer -t upload</pre>
+Upload berikutnya cukup <code>pio run -e esp32-c3-dfplayer -t upload</code>.</li>
+<li>Lihat log (opsional): <code>pio device monitor -b 115200</code>. Saat nyala muncul <code>DFPlayer siap</code>, <code>MPU6050 siap</code>, lalu <code>model 7/14 mochi/full1 trek 19</code>.</li>
+</ol>
+<p>Build memakai sekitar 91% flash app (3,77 MB dari 4,13 MB). Port serial lewat USB CDC bawaan, bukan UART0.</p>
+
+<h2 id="sd">4. Kartu microSD</h2>
+<p>Format FAT32 (MBR, satu partisi). Semua berkas di root, tanpa folder.</p>
+<p class="n"><b>Penting:</b> firmware memanggil trek dengan nomor (perintah <code>play(n)</code> DFPlayer). DFPlayer menghitung nomor itu dari <b>urutan berkas disalin ke kartu</b>, bukan dari nama berkas. Karena nomor trek dimulai dari 19, kartu harus berisi <code>0001.mp3</code> sampai <code>0040.mp3</code>, disalin berurutan ke kartu yang baru diformat. Trek yang tidak dipakai cukup diisi MP3 hening pendek.</p>
+<table>
+<tr><th>Berkas</th><th>Diputar bersama klip</th></tr>
+<tr><td><code>0019.mp3</code></td><td>mochi full1 (wajah utama, klip saat nyala)</td></tr>
+<tr><td><code>0020.mp3</code></td><td>mochi chongmat1 (mata pusing, saat goyang)</td></tr>
+<tr><td><code>0021.mp3</code></td><td>mochi video17</td></tr>
+<tr><td><code>0022.mp3</code></td><td>mochi video18</td></tr>
+<tr><td><code>0023.mp3</code></td><td>mochi xoadau1 (mata hati, saat tahan)</td></tr>
+<tr><td><code>0026.mp3</code></td><td>gundam helm_hujan</td></tr>
+<tr><td><code>0027.mp3</code></td><td>gundam helm_siaga (saat tahan)</td></tr>
+<tr><td><code>0028.mp3</code></td><td>gundam isyarat</td></tr>
+<tr><td><code>0029.mp3</code></td><td>gundam kokpit</td></tr>
+<tr><td><code>0030.mp3</code></td><td>gundam kokpit_2</td></tr>
+<tr><td><code>0031.mp3</code></td><td>gundam pilot</td></tr>
+<tr><td><code>0034.mp3</code></td><td>dasai video03 (lampu sorot)</td></tr>
+<tr><td><code>0038.mp3</code></td><td>dasai video07 (spidometer)</td></tr>
+<tr><td><code>0040.mp3</code></td><td>dasai video2 (saat tahan)</td></tr>
+<tr><td>0001–0018, 0024–0025, 0032–0033, 0035–0037, 0039</td><td>tidak dipakai, isi MP3 hening</td></tr>
+</table>
+<p>Membuat MP3 hening dan menyalin berurutan (Linux/macOS, perlu ffmpeg; folder <code>suara/</code> berisi 14 MP3 di atas):</p>
+<pre>ffmpeg -f lavfi -i anullsrc=r=44100:cl=mono -t 0.3 -q:a 9 hening.mp3
+for i in $(seq 1 40); do f=$(printf %04d $i).mp3
+  [ -f suara/$f ] || cp hening.mp3 suara/$f; done
+for i in $(seq 1 40); do cp suara/$(printf %04d $i).mp3 /media/KARTU/; sync; done</pre>
+<p>Di Windows, salin satu per satu berurutan, atau rapikan urutan dengan DriveSort. Hapus berkas tersembunyi macOS (<code>._*</code>, <code>.Spotlight-V100</code>) karena ikut terhitung.</p>
+<p>Suara diulang dari awal setiap klip berulang, jadi MP3 yang lebih panjang dari klipnya akan terpotong. Volume dipasang 28 dari 30 setiap trek mulai.</p>
+
+<h2 id="pakai">5. Cara pakai</h2>
+<ul>
+<li><b>Nyala:</b> langsung memutar mochi full1 (model 7) dengan suara <code>0019</code>.</li>
+<li><b>Ketuk singkat:</b> berhenti (layar hitam, lampu latar mati, suara berhenti) atau putar lagi. Ketukan dijalankan sekitar 0,35 detik setelah dilepas, untuk menunggu kemungkinan ketuk dua kali.</li>
+<li><b>Ketuk dua kali</b> (dalam 0,35 detik): model berikutnya. Setelah model 14 kembali ke model 1.</li>
+<li><b>Tahan</b> (≥ 0,4 detik, saat memutar): klip "tahan" tema itu berulang sampai dilepas, lalu kembali ke klip semula di frame yang sama.</li>
+<li><b>Goyang</b> tiga hentakan dalam 1 detik (saat memutar, perlu MPU6050): klip goyang diputar sekali, lalu kembali. Jeda 1 detik sebelum goyang berikutnya terdeteksi.</li>
+</ul>
+<table>
+<tr><th>Model</th><th>Klip</th><th>Trek</th><th>Durasi</th><th>Goyang</th><th>Tahan</th></tr>
+<tr><td>1</td><td>gundam helm_hujan</td><td>0026</td><td>0,8 s</td><td>helm_siaga</td><td>helm_siaga</td></tr>
+<tr><td>2</td><td>gundam helm_siaga</td><td>0027</td><td>0,7 s</td><td>isyarat</td><td>helm_siaga</td></tr>
+<tr><td>3</td><td>gundam isyarat</td><td>0028</td><td>0,6 s</td><td>kokpit</td><td>helm_siaga</td></tr>
+<tr><td>4</td><td>gundam kokpit</td><td>0029</td><td>2,5 s</td><td>kokpit_2</td><td>helm_siaga</td></tr>
+<tr><td>5</td><td>gundam kokpit_2</td><td>0030</td><td>1,3 s</td><td>pilot</td><td>helm_siaga</td></tr>
+<tr><td>6</td><td>gundam pilot</td><td>0031</td><td>1,4 s</td><td>helm_siaga</td><td>helm_siaga</td></tr>
+<tr><td>7</td><td>mochi full1 (awal)</td><td>0019</td><td>55,8 s</td><td>chongmat1</td><td>xoadau1</td></tr>
+<tr><td>8</td><td>mochi chongmat1</td><td>0020</td><td>4,4 s</td><td>chongmat1</td><td>xoadau1</td></tr>
+<tr><td>9</td><td>mochi video17</td><td>0021</td><td>13,2 s</td><td>chongmat1</td><td>xoadau1</td></tr>
+<tr><td>10</td><td>mochi video18</td><td>0022</td><td>7,2 s</td><td>chongmat1</td><td>xoadau1</td></tr>
+<tr><td>11</td><td>mochi xoadau1</td><td>0023</td><td>1,9 s</td><td>chongmat1</td><td>xoadau1</td></tr>
+<tr><td>12</td><td>dasai video03</td><td>0034</td><td>6,7 s</td><td>video07</td><td>video2</td></tr>
+<tr><td>13</td><td>dasai video07</td><td>0038</td><td>4,2 s</td><td>video2</td><td>video2</td></tr>
+<tr><td>14</td><td>dasai video2</td><td>0040</td><td>1,5 s</td><td>video07</td><td>video2</td></tr>
+</table>
+<p>Gundam dan mochi 240×240 penuh layar. Dasai 240×120 di tengah dengan pita hitam atas-bawah. Tempo: gundam 90 ms, mochi 100 ms, dasai 40 ms per frame. Durasi di atas adalah durasi target; bisa sedikit lebih lama jika decode JPEG lebih lambat dari tempo itu.</p>
+
+<h2 id="masalah">6. Kalau ada masalah</h2>
+<table>
+<tr><th>Gejala</th><th>Periksa</th></tr>
+<tr><td>Layar hitam, lampu latar mati</td><td>BLK ke GPIO7. Alat mungkin sedang berhenti: ketuk sekali. Kalau sentuh dibaca terus (TTP223 belum aktif LOW), alat tidak merespons dengan benar.</td></tr>
+<tr><td>Layar menyala putih/hitam tanpa gambar</td><td>SCL GPIO4, SDA GPIO6, DC GPIO3, RES GPIO10. CS modul harus ke GND. VCC 3V3. Pastikan modul ST7789 240×240, bukan 240×320 atau ST7735.</td></tr>
+<tr><td>Warna terbalik (negatif) atau merah/biru tertukar</td><td>Di <code>firmware/include/User_Setup_ST7789.h</code>: hapus <code>TFT_INVERSION_ON</code> (ganti <code>TFT_INVERSION_OFF</code>) untuk warna negatif; ganti <code>TFT_RGB_ORDER TFT_BGR</code> ke <code>TFT_RGB</code> untuk merah/biru tertukar. Upload ulang.</td></tr>
+<tr><td>Gambar bergeser atau ada garis di tepi</td><td>Modul dengan offset lain. Coba hapus <code>CGRAM_OFFSET</code> di berkas yang sama.</td></tr>
+<tr><td>Tidak ada suara</td><td>Log <code>DFPlayer tidak jawab</code> berarti UART: RX DFPlayer ← GPIO20 (lewat 1 kΩ), TX DFPlayer → GPIO21, VCC 5V. Kartu FAT32, berkas di root, berurutan 0001–0040 (lihat bagian 4). LED DFPlayer menyala saat memutar.</td></tr>
+<tr><td>Suara klip salah</td><td>Urutan salin di kartu tidak sesuai nomor. Format ulang dan salin 0001–0040 berurutan.</td></tr>
+<tr><td>Bunyi letup, ESP reset saat suara mulai</td><td>Daya USB kurang: pakai kabel/charger lebih baik, tambah kapasitor 100–470 µF di VCC DFPlayer.</td></tr>
+<tr><td>Animasi lambat atau patah</td><td>Normal sedikit untuk dasai (40 ms per frame). Pastikan <code>SPI_FREQUENCY</code> 40 MHz tidak diturunkan. Kabel LCD pendek. Klip baru: kecilkan ukuran atau naikkan <code>--step</code>.</td></tr>
+<tr><td>Goyang tidak bereaksi</td><td>Log <code>MPU6050 tidak ada</code>: periksa SDA GPIO8, SCL GPIO9, VCC 3V3, alamat 0x68. Goyang harus kuat, tiga hentakan dalam 1 detik.</td></tr>
+<tr><td>Upload gagal / port tidak muncul</td><td>Pakai kabel USB data. Tahan BOOT, colok USB-C, lepas BOOT, lalu upload ulang. Linux: tambahkan user ke grup <code>dialout</code>. Tutup monitor serial lain.</td></tr>
+<tr><td>Build gagal <code>No module named PIL</code></td><td>Pasang Pillow ke Python yang dipakai PlatformIO (bagian 3).</td></tr>
+<tr><td>Build gagal karena ukuran app</td><td>Klip terlalu besar untuk app 0x3F0000. Kurangi klip, kualitas, atau frame.</td></tr>
+</table>
+
+<h2 id="klip">7. Menambah atau mengganti klip</h2>
+<p>Klip disimpan di <code>firmware/assets/builtin/jpeg/&lt;tema&gt;/&lt;nama&gt;.mjpeg</code> + <code>.json</code>, dibuat <code>tools/import_jpeg_clip.py</code>, lalu didaftarkan di <code>firmware/assets/meta.json</code>. Saat build, <code>tools/embed_jpeg.py</code> menanam semuanya ke <code>include/jpeg_clips.h</code>.</p>
+<ol>
+<li>Siapkan sumber: header C berisi frame JPEG, folder <code>*.jpg</code>/<code>*.png</code> (misalnya hasil <code>ffmpeg -i video.mp4 -vf fps=12,scale=240:240 f/%04d.png</code>), atau GIF.</li>
+<li>Impor dari folder <code>firmware</code> (perlu Pillow; <code>jpegtran</code> opsional untuk optimasi lossless):
+<pre>python3 tools/import_jpeg_clip.py mochi senyum f/ --delay 80 --quality 80
+python3 tools/import_jpeg_clip.py gundam tembak tembak.gif --smooth 1.2 --quality 82
+python3 tools/import_jpeg_clip.py dasai video05 video05.h --resize 240x120 --quality 80 --delay 40</pre>
+Opsi: <code>--delay</code> ms per frame, <code>--step N</code> ambil 1 dari N frame (hemat flash, tempo tetap), <code>--quality</code> JPEG (disarankan ≥ 75), <code>--resize WxH</code> Lanczos + tajam ringan, <code>--crop WxH</code>, <code>--smooth</code> hilangkan dither GIF. Klip lebih kecil dari 240×240 digambar di tengah.</li>
+<li>Daftarkan di <code>meta.json</code> bagian <code>"jpeg_clips"</code>: <code>["tema", "nama", peran, trek]</code>. Peran <code>""</code> biasa, <code>"dizzy"</code> diputar saat goyang, <code>"heart"</code> saat tahan (satu per tema). Trek = nomor MP3; kalau dikosongkan, diberi nomor berikutnya otomatis.
+<pre>["mochi", "senyum", "", 24]</pre>
+Klip baru masuk setelah klip lain di temanya; tema baru ditaruh di akhir urutan. Tema saat nyala diatur <code>"boot_theme"</code>.</li>
+<li>Mengganti klip: impor ulang dengan tema/nama yang sama (berkas ditimpa). Menghapus: buang barisnya dari <code>jpeg_clips</code> dan hapus berkasnya.</li>
+<li>Build dan upload, lalu tambahkan MP3-nya ke kartu (ingat urutan salin).</li>
+</ol>
+<p>Lisensi klip bawaan ada di <a href="https://github.com/rz7mong/mochi-dfplayer/blob/main/THIRD_PARTY_NOTICES.md">THIRD_PARTY_NOTICES</a>.</p>
 </main>
