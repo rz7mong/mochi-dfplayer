@@ -130,7 +130,8 @@ for i, c in enumerate(clips):
     seq = c["seq"]
     if not seq: raise SystemExit(f"{theme}/{stem}: tidak ada frame")
     if len(seq) > 65535: raise SystemExit(f"{theme}/{stem}: {len(seq)} frame, maks 65535")
-        if not 1 <= track <= 3000: raise SystemExit(f"{theme}/{stem}: trek {track} di luar 1..3000 (batas DFPlayer folder MP3)")
+    if track in range(41, 49): raise SystemExit(f"{theme}/{stem}: trek {track:04d} milik Chronos (0041-0048)")
+    if not 1 <= track <= 3000: raise SystemExit(f"{theme}/{stem}: trek {track} di luar 1..3000 (batas DFPlayer folder MP3)")
     if c["delay"] > 65535: raise SystemExit(f"{theme}/{stem}: delay terlalu besar")
     used = sorted(set(seq)); names = {}
     for j in used:
