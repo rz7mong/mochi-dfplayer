@@ -1,6 +1,6 @@
 # Mochi DFPlayer
 
-Varian **ESP32-C3 Super Mini + ST7789 1.3" 240×240** yang suaranya lewat **DFPlayer Mini** (MP3). Firmware layar, tema, sentuh, dan Chronos mengikuti [mochi-rzmong](https://github.com/rz7mong/mochi-rzmong). Build WAV + MAX98357 tetap di repo itu, tidak dicampur di sini.
+Varian **ESP32-C3 Super Mini + ST7789 1.3" 240×240** yang suaranya lewat **DFPlayer Mini** (MP3). Firmware layar, tema, sentuh, dan Chronos mengikuti [mochi-rzmong](https://github.com/rz7mong/mochi-rzmong). 
 
 **MIT © rzmong**
 
