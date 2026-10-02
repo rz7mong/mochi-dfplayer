@@ -491,7 +491,9 @@ static void serviceSound() {
   }
   if (mochiDfTakeFinished()) {
     switch (dfOwner) {
-      case Owner::Music: if (mState == MState::Playing) musicFinished(); break;
+      case Owner::Music:
+        if (mState == MState::Playing && millis() - mLastCmd > 1500) musicFinished();
+        break;
       case Owner::Anim:  // trek animasi selesai: ulangi trek klip yang sedang tampil (bukan tiap putaran gambar)
         if (ui == Ui::Anim && mode == Mode::Playing) playAudio(clip); else dfOwner = Owner::None;
         break;
@@ -628,7 +630,7 @@ static void startPick() {
   pickDigs[0] = n / 100;
   pickDigs[1] = (n / 10) % 10;
   pickDigs[2] = n % 10;
-  pickDigit = 2;
+  pickDigit = 0;
   picking = true;
   uiDirty = true;
 }
@@ -697,7 +699,7 @@ static void drawPlayer() {
     glyph(i, x + 13, y + 15, f ? TFT_BLACK : C_TEXT);
   }
   tft.setTextColor(C_DIM, C_BG);
-  tft.drawCentreString(picking ? "ketuk=angka  tahan=digit  2 dtk=batal" : "ketuk=jalankan  tahan=pindah  2 dtk=menu", 120, 226, 1);
+  tft.drawCentreString(picking ? (pickDigit < 2 ? "ketuk=angka  tahan=digit berikut  2 dtk=batal" : "ketuk=angka  tahan=putar  2 dtk=batal") : "ketuk=jalankan  tahan=pindah  2 dtk=menu", 120, 226, 1);
 }
 
 static const char *const WD[7] = {"MIN", "SEN", "SEL", "RAB", "KAM", "JUM", "SAB"};
@@ -896,7 +898,7 @@ static void playerPickTap() {
 }
 static void playerPickHold() {
   if (pickDigit < 2) { pickDigit++; uiDirty = true; return; }
-  confirmPick();
+  confirmPick();  // hanya tahan saat sudah di digit terakhir, bukan tahan pertama
 }
 
 // =====================================================================

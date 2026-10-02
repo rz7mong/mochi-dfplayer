@@ -1,6 +1,6 @@
 # MochiDfPlayer
 
-Jalur suara DFPlayer Mini (UART 9600) untuk Mochi DFPlayer 0.8.0.
+Jalur suara DFPlayer Mini (UART 9600) untuk Mochi DFPlayer 0.8.1.
 
 Kabel: VCC 5V, GND, RX modul ← GPIO20 lewat ±1 kΩ, TX modul → GPIO21, speaker di SPK_1/SPK_2. BUSY → GPIO5 opsional (`-DMOCHI_PIN_DF_BUSY=5`).
 
