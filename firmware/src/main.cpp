@@ -32,7 +32,7 @@ uint32_t notifUntil=0;
 int defIdx=0, reactIdx=0, volume=12, rot=MOCHI_DEFAULT_ROTATION, menuRow=0, menuTop=0;
 String parts[32]; int nparts=0, idx=0; File gifFile; bool sdOk=false, i2sOk=false, sdBusy=false;
 enum Ui { UI_PLAY, UI_MENU }; Ui ui=UI_PLAY;
-uint32_t downAt=0,lastTap=0; int taps=0; bool prevDown=false; bool menuDirty=true;
+uint32_t downAt=0,lastTap=0; int taps=0; bool prevDown=false; bool menuDirty=true; bool paused=false;
 bool chronosPreempt=false;
 
 struct MenuItem { const char *icon; const char *label; uint16_t col; };
@@ -214,7 +214,7 @@ static bool frameWait(int delayMs, uint32_t t0, uint32_t maxMs){
     if(down&&!prevDown) downAt=millis();
     if(!down&&prevDown){
       uint32_t held=millis()-downAt;
-      if(held>=900){ soundOn=!soundOn; if(!soundOn) stopSfx(); else mochiDfSetVolume(volume, true); savePrefs(); menuDirty=true; }
+      if(held>=900){ paused=!paused; if(paused) stopSfx(); menuDirty=true; }
       else { taps++; lastTap=millis(); }
       prevDown=down; return true;
     }
@@ -396,11 +396,12 @@ void finishTaps(){
   if(ui==UI_MENU){ if(taps==1) menuRow=(menuRow+1)%NMENU; else applyMenu(); menuDirty=true; }
   else {
     if(taps>=2){ ui=UI_MENU; menuRow=0; menuTop=0; taps=0; drawMenu(); menuDirty=false; return; }
-    if(taps==1 && !clockOn) playReactGif();
+    if(taps==1 && !clockOn){ nextPart(); paused=false; }
   }
   taps=0;
 }
 bool playCurrent(){
+  if(paused){ delay(20); return true; }
   if(taps) return true;
   if(nparts<=0) idx=0; else if(idx<0||idx>=nparts) idx=0;
   bool ok;
@@ -415,7 +416,6 @@ bool playCurrent(){
   if(chronosNeedsScreen()){ chronosPreempt=true; return true; }
   playJpegClip(defIdx, 0);
   gif.close(); sdBusy=false; brandMark();
-  if(taps==0 && !chronosPreempt) nextPart();
   return true;
 }
 void sendCorsHeaders(){
@@ -680,7 +680,7 @@ void loop(){
     if(down&&!prevDown) downAt=millis();
     if(!down&&prevDown){
       uint32_t held=millis()-downAt;
-      if(held>=900){ soundOn=!soundOn; if(!soundOn) stopSfx(); else mochiDfSetVolume(volume, true); savePrefs(); menuDirty=true; }
+      if(held>=900){ paused=!paused; if(paused) stopSfx(); menuDirty=true; }
       else { taps++; lastTap=millis(); }
     }
     prevDown=down; finishTaps(); if(menuDirty){ drawMenu(); menuDirty=false; } delay(35); return;
