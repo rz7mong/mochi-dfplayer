@@ -5,7 +5,8 @@
 #ifndef MOCHI_AP_PASS  /* override: build_flags = -DMOCHI_AP_PASS=\"sandibaru123\" */
 #define MOCHI_AP_PASS "rzmong123"
 #endif
-#define MOCHI_VERSION "0.6.7"
+#define MOCHI_VERSION "0.6.8"
+/* v0.6.8: wajah dan mobil dihapus; 14 model (6 gundam, 5 mochi, 3 dasai); dasai semua frame 40 ms q80. */
 /* v0.6.7: gundam tinggal helm_hujan, helm_siaga (tahan), isyarat, kokpit, kokpit_2, pilot. */
 /* v0.6.6: gundam kembali ke 12 GIF rzmong, semua frame, 240x240 bersih (blur 1,2 + unsharp, q82). */
 /* v0.6.5: gundam 8 adegan 240x240 (huykhoong gundam.mp4), dasai tinggal video03, video07, video2. */

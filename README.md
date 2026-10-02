@@ -41,21 +41,17 @@ GPIO9 pin strap. Jangan tarik ke GND saat boot.
 - Tahan: klip terakhir tema itu berulang sampai dilepas. Di tema `mochi`: xoadau1 (mata hati). Gundam: helm_siaga. Dasai: video2.
 - Goyang tiga kali dalam 1 detik: klip lain di tema yang sama, sekali, lalu kembali. Di tema `mochi`: chongmat1 (mata pusing).
 
-Dua puluh delapan model di flash, urutan ketuk dua kali: 10 wajah, 6 gundam, 4 mobil, 5 mochi, 3 dasai. Semua klip JPEG penuh, lebar 240. Saat nyala langsung memutar `mochi/full1`. Kartu DFPlayer FAT32, berkas di root. Nomor trek tetap per klip (bukan urutan model). Volume 28.
+Empat belas model di flash, urutan ketuk dua kali: 6 gundam, 5 mochi, 3 dasai. Semua klip JPEG penuh, lebar 240. Saat nyala langsung memutar `mochi/full1`. Kartu DFPlayer FAT32, berkas di root. Nomor trek tetap per klip (bukan urutan model). Volume 28.
 
 | Model | Trek | Klip |
 |---|---|---|
-| 1–10 | `0001`–`0010` | wajah vid_00 … vid_41 |
-| 11–16 | `0026`–`0031` | gundam helm_hujan, helm_siaga (tahan), isyarat, kokpit, kokpit_2, pilot |
-| 17–20 | `0015`–`0018` | mobil car, turbo, headlights, speed_3 |
-| 21–25 | `0019`–`0023` | mochi full1, chongmat1, video17, video18, xoadau1 |
-| 26–28 | `0034`, `0038`, `0040` | dasai video03 (lampu sorot), video07 (spidometer), video2 (tahan) |
+| 1–6 | `0026`–`0031` | gundam helm_hujan, helm_siaga (tahan), isyarat, kokpit, kokpit_2, pilot |
+| 7–11 | `0019`–`0023` | mochi full1, chongmat1, video17, video18, xoadau1 |
+| 12–14 | `0034`, `0038`, `0040` | dasai video03 (lampu sorot), video07 (spidometer), video2 (tahan) |
 
-Trek 11–14, 24–25, 32–33, 35–37, 39, 41–46 tidak dipakai.
+Trek 1–18, 24–25, 32–33, 35–37, 39, 41–46 tidak dipakai.
 
-### Tema wajah dan mobil
-
-Semua frame GIF sumber (5–8 frame, sebelumnya dipotong jadi 6), 240×240, JPEG kualitas 80. Frame yang sama dipakai ulang.
+Tema wajah dan mobil sudah dihapus dari flash (`skip_builtins` di `meta.json`; GIF lamanya tetap di `assets/builtin/gif/` karena dibutuhkan `embed_assets.py`, tetapi tidak ikut tertanam).
 
 ### Tema mochi
 
@@ -67,7 +63,7 @@ full1 (558 frame) wajah utama, chongmat1 (44) saat goyang, video17 (132), video1
 
 ### Tema dasai
 
-Hanya 3 klip dari bangdc90/dasai_mochi_tft: dua yang berunsur mobil (video03 lampu sorot, video07 spidometer) dan video2 (ekspresi sentuh saat ditahan). Sumber 160×80 diperbesar Lanczos ke 240×120 (di tengah vertikal) dengan unsharp ringan, JPEG kualitas 75, 1 dari 3 frame (120 ms).
+Hanya 3 klip dari bangdc90/dasai_mochi_tft: dua yang berunsur mobil (video03 lampu sorot, video07 spidometer) dan video2 (ekspresi sentuh saat ditahan). Sumber 160×80 diperbesar Lanczos ke 240×120 (di tengah vertikal) dengan unsharp ringan, JPEG kualitas 80, semua frame (40 ms, 25 fps). video03 167 frame, video07 106, video2 38.
 
 ### Cara menambah klip
 

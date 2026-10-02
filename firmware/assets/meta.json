@@ -135,90 +135,6 @@
   ],
   "jpeg_clips": [
     [
-      "wajah",
-      "vid_00",
-      "",
-      1
-    ],
-    [
-      "wajah",
-      "vid_01",
-      "",
-      2
-    ],
-    [
-      "wajah",
-      "vid_10",
-      "",
-      3
-    ],
-    [
-      "wajah",
-      "vid_11",
-      "",
-      4
-    ],
-    [
-      "wajah",
-      "vid_20",
-      "",
-      5
-    ],
-    [
-      "wajah",
-      "vid_21",
-      "",
-      6
-    ],
-    [
-      "wajah",
-      "vid_30",
-      "",
-      7
-    ],
-    [
-      "wajah",
-      "vid_31",
-      "",
-      8
-    ],
-    [
-      "wajah",
-      "vid_40",
-      "",
-      9
-    ],
-    [
-      "wajah",
-      "vid_41",
-      "",
-      10
-    ],
-    [
-      "mobil",
-      "car",
-      "",
-      15
-    ],
-    [
-      "mobil",
-      "turbo",
-      "",
-      16
-    ],
-    [
-      "mobil",
-      "headlights",
-      "",
-      17
-    ],
-    [
-      "mobil",
-      "speed_3",
-      "",
-      18
-    ],
-    [
       "gundam",
       "helm_hujan",
       "",
@@ -308,6 +224,20 @@
     "gundam/blade",
     "gundam/titan",
     "gundam/hadouken_hit",
-    "gundam/mecha_doc"
+    "gundam/mecha_doc",
+    "wajah/vid_00",
+    "wajah/vid_01",
+    "wajah/vid_10",
+    "wajah/vid_11",
+    "wajah/vid_20",
+    "wajah/vid_21",
+    "wajah/vid_30",
+    "wajah/vid_31",
+    "wajah/vid_40",
+    "wajah/vid_41",
+    "mobil/car",
+    "mobil/turbo",
+    "mobil/headlights",
+    "mobil/speed_3"
   ]
 }
