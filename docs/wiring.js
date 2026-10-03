@@ -137,13 +137,13 @@ function wires(list, anim) {
   let s = '';
   list.forEach((c, i) => {
     const d = dpath(c), col = NET[c.net], dash = c.dash ? '7 5' : 'none';
-    s += el('path', {d, class: 'wire', stroke: '#fff', 'stroke-width': 9});
+    s += el('path', {d, class: 'wire', fill: 'none', stroke: '#fff', 'stroke-width': 6});
     if (anim) {
       const len = plen(c);
-      s += el('path', {d, class: 'halo', stroke: col, 'stroke-width': 14});
-      s += el('path', {d, class: 'wire draw', stroke: col, 'stroke-width': 5, style: `--len:${len};stroke-dasharray:${len};animation:drawin .8s ease-out both;animation-delay:${(i * .08).toFixed(2)}s`});
-      s += el('path', {d, stroke: '#fff', 'stroke-width': 4, 'stroke-linecap': 'butt', style: 'stroke-dasharray:22 18;animation:cableflow .4s linear infinite'});
-    } else s += el('path', {d, class: 'wire', stroke: col, 'stroke-width': 3, 'stroke-dasharray': dash});
+      s += el('path', {d, class: 'halo', fill: 'none', stroke: col, 'stroke-width': 9});
+      s += el('path', {d, class: 'wire draw', fill: 'none', stroke: col, 'stroke-width': 3.2, style: `--len:${len};stroke-dasharray:${len};animation:drawin .8s ease-out both;animation-delay:${(i * .08).toFixed(2)}s`});
+      s += el('path', {d, class: 'wire', fill: 'none', stroke: '#fff', 'stroke-width': 1.6, 'stroke-linecap': 'butt', style: 'stroke-dasharray:8 10;animation:cableflow .5s linear infinite'});
+    } else s += el('path', {d, class: 'wire', fill: 'none', stroke: col, 'stroke-width': 3, 'stroke-dasharray': dash});
     (c.j || []).forEach(p => s += el('circle', {cx: p[0], cy: p[1], r: 4.5, fill: col, stroke: '#fff', 'stroke-width': 1.5}));
     if (c.res) s += resistor(c.res, col);
   });
