@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="1200" height="980" viewBox="0 0 1200 980" xmlns="http://www.w3.org/2000/svg" font-family="Nunito,system-ui,sans-serif" role="img" aria-label="Rangkaian lengkap Mochi DFPlayer dengan baterai">
   <rect width="1200" height="980" fill="#fffafc" rx="14"/>
-  <text x="32" y="38" font-size="22" font-weight="800" fill="#2b2b2b">Rangkaian lengkap, baterai sampai speaker</text>
+  <text x="32" y="38" font-size="22" font-weight="800" fill="#2b2b2b">Rangkaian lengkap plus komponen tambahan</text>
   <text x="32" y="60" font-size="13" fill="#6b5b66">Diagram USB lama tidak diubah. Ini gabungan daya dan sinyal.</text>
 
   <g font-size="13" fill="#2b2b2b">
@@ -85,6 +85,7 @@
     <text x="44" y="736">5. Layar dan TTP223 dari 3V3 ESP, bukan dari 5 V. Pin sinyal seperti kotak ESP.</text>
     <text x="44" y="760">6. GPIO20 ke RX DFPlayer lewat 1 kΩ. TX DFPlayer ke GPIO21. Speaker di SPK_1/SPK_2.</text>
     <text x="44" y="784">7. MPU6050 opsional: SDA GPIO8, SCL GPIO9, VCC 3V3. Tanpa MPU, goyang mati, yang lain jalan.</text>
+    <text x="44" y="808">7b. Tambahan: saklar di jalur 5 V sesudah dioda, elko di DFPlayer, resistor 1 kΩ di GPIO20, kartu microSD di slot DFPlayer, BUSY opsional ke GPIO5.</text>
     <text x="44" y="808">8. Kartu microSD di DFPlayer: 0001.mp3 di root untuk animasi, folder 01 untuk musik.</text>
     <text x="44" y="832">9. Flash firmware 0.8.1 lewat USB-C ESP. Dioda menahan arus balik, USB boleh tertancap.</text>
     <text x="44" y="864" fill="#6b5b66">Firmware tidak berubah. Diagram USB lama: wiring-dfplayer.svg.</text>
