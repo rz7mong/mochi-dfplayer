@@ -142,7 +142,7 @@ function wires(list, anim) {
       const len = plen(c);
       s += el('path', {d, class: 'halo', stroke: col, 'stroke-width': 11});
       s += el('path', {d, class: 'wire draw', stroke: col, 'stroke-width': 3.4, style: `--len:${len};stroke-dasharray:${len};animation-delay:${(i * .15).toFixed(2)}s`});
-      s += el('path', {d, class: 'wire flow2', stroke: '#fff', 'stroke-width': 1.4, opacity: .8, style: `animation-delay:${(i * .15).toFixed(2)}s`});
+      s += el('path', {d, class: 'wire flow2', stroke: '#fff', 'stroke-width': 2.4, opacity: 1, style: `animation-delay:${(i * .12).toFixed(2)}s`});
     } else s += el('path', {d, class: 'wire', stroke: col, 'stroke-width': 3, 'stroke-dasharray': dash});
     (c.j || []).forEach(p => s += el('circle', {cx: p[0], cy: p[1], r: 4.5, fill: col, stroke: '#fff', 'stroke-width': 1.5}));
     if (c.res) s += resistor(c.res, col);
@@ -176,7 +176,7 @@ function svg(o) {
   const vb = o.full ? [0, 0, 1100, 745] : fit(o.show, cur.concat(prev));
   let s = `<svg viewBox="${vb.join(' ')}" xmlns="http://www.w3.org/2000/svg" font-family="Nunito,system-ui,sans-serif" role="img" aria-label="${o.title || 'Diagram kabel Mochi DFPlayer'}">` +
     '<style>.wire{fill:none;stroke-linecap:round;stroke-linejoin:round}.halo{fill:none;stroke-opacity:.25;stroke-linecap:round;stroke-linejoin:round}' +
-    '.wire.draw{animation:drawin 1.1s ease-out both}.wire.flow2{stroke-dasharray:8 10;animation:flow2 1.2s linear infinite}' +
+    '.wire.draw{animation:drawin 1.1s ease-out both}.wire.flow2{stroke-dasharray:14 16;animation:flow2 .55s linear infinite}' +
     '@keyframes drawin{from{stroke-dashoffset:var(--len)}to{stroke-dashoffset:0}}@keyframes flow2{to{stroke-dashoffset:-36}}' +
     '.pad-hi{animation:pulse 1.1s ease-in-out infinite}@keyframes pulse{0%,100%{stroke-opacity:1}50%{stroke-opacity:.3}}' +
     '.fadein{animation:fadein .6s ease both}@keyframes fadein{from{opacity:0}to{opacity:1}}' +
