@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1100" height="760" viewBox="0 0 1100 760" xmlns="http://www.w3.org/2000/svg" font-family="Nunito,system-ui,sans-serif">
+  <rect width="1100" height="760" fill="#fffafc"/>
+  <text x="28" y="36" font-size="22" font-weight="800" fill="#2b2b2b">Rangkaian berwarna</text>
+  <text x="28" y="58" font-size="14" fill="#6b5b66">Merah = 5 V. Hijau = 3,3 V. Hitam = ground. Oranye = speaker.</text>
+
+  <text x="28" y="96" font-size="16" font-weight="800" fill="#c2410c">Daya, kiri ke kanan</text>
+  <g font-size="14">
+    <rect x="24" y="112" width="150" height="92" rx="12" fill="#e8f8ee" stroke="#2bb24c" stroke-width="3"/>
+    <text x="99" y="146" text-anchor="middle" font-weight="800" fill="#166534">Baterai</text>
+    <text x="99" y="168" text-anchor="middle" fill="#166534">+ ke B+</text>
+    <text x="99" y="188" text-anchor="middle" fill="#166534">− ke B−</text>
+    <rect x="230" y="112" width="160" height="92" rx="12" fill="#fde8f0" stroke="#e85d8c" stroke-width="3"/>
+    <text x="310" y="146" text-anchor="middle" font-weight="800" fill="#9d174d">TP4056</text>
+    <text x="310" y="168" text-anchor="middle" fill="#9d174d">charge</text>
+    <text x="310" y="188" text-anchor="middle" fill="#9d174d">keluar 3,7 V</text>
+    <rect x="446" y="112" width="160" height="92" rx="12" fill="#f3e8ff" stroke="#7c3aed" stroke-width="3"/>
+    <text x="526" y="146" text-anchor="middle" font-weight="800" fill="#5b21b6">MT3608</text>
+    <text x="526" y="168" text-anchor="middle" fill="#5b21b6">boost</text>
+    <text x="526" y="188" text-anchor="middle" fill="#5b21b6">set 5 V</text>
+    <rect x="662" y="112" width="150" height="92" rx="12" fill="#ffedd5" stroke="#c2410c" stroke-width="3"/>
+    <text x="737" y="146" text-anchor="middle" font-weight="800" fill="#9a3412">1N5819</text>
+    <text x="737" y="168" text-anchor="middle" fill="#9a3412">garis ke kanan</text>
+    <text x="737" y="188" text-anchor="middle" fill="#9a3412">ke beban</text>
+    <rect x="868" y="112" width="200" height="92" rx="12" fill="#e0ecff" stroke="#2f6fe4" stroke-width="3"/>
+    <text x="968" y="146" text-anchor="middle" font-weight="800" fill="#1d4ed8">Pin 5V ESP</text>
+    <text x="968" y="168" text-anchor="middle" fill="#1d4ed8">dan VCC DFPlayer</text>
+    <text x="968" y="188" text-anchor="middle" fill="#1d4ed8">bukan ke GPIO</text>
+  </g>
+  <path d="M174 158 H230 M390 158 H446 M606 158 H662 M812 158 H868" stroke="#c2410c" stroke-width="4" fill="none"/>
+
+  <text x="28" y="244" font-size="16" font-weight="800" fill="#2f6fe4">Modul dan warnanya</text>
+  <g font-size="14">
+    <rect x="24" y="260" width="250" height="150" rx="12" fill="#e0ecff" stroke="#2f6fe4" stroke-width="3"/>
+    <text x="149" y="292" text-anchor="middle" font-weight="800" fill="#1d4ed8">ESP32-C3</text>
+    <text x="149" y="316" text-anchor="middle">5V dari dioda</text>
+    <text x="149" y="338" text-anchor="middle">3V3 ke layar dan sentuh</text>
+    <text x="149" y="360" text-anchor="middle">GND hitam, satu saja</text>
+    <text x="149" y="386" text-anchor="middle" fill="#1d4ed8">pusat semua sinyal</text>
+
+    <rect x="296" y="260" width="250" height="150" rx="12" fill="#e7f8fb" stroke="#14b8c4" stroke-width="3"/>
+    <text x="421" y="292" text-anchor="middle" font-weight="800" fill="#0e7490">Layar ST7789</text>
+    <text x="421" y="316" text-anchor="middle">VCC hijau, 3V3</text>
+    <text x="421" y="338" text-anchor="middle">SCL 4 · MOSI 6</text>
+    <text x="421" y="360" text-anchor="middle">DC 3 · RST 10 · BLK 7</text>
+    <text x="421" y="386" text-anchor="middle" fill="#c2410c">jangan kena 5 V</text>
+
+    <rect x="568" y="260" width="250" height="150" rx="12" fill="#e8f8ee" stroke="#2bb24c" stroke-width="3"/>
+    <text x="693" y="292" text-anchor="middle" font-weight="800" fill="#166534">Sentuh TTP223</text>
+    <text x="693" y="316" text-anchor="middle">VCC hijau, 3V3</text>
+    <text x="693" y="338" text-anchor="middle">OUT → GPIO1</text>
+    <text x="693" y="360" text-anchor="middle">GND hitam</text>
+    <text x="693" y="386" text-anchor="middle" fill="#c2410c">bukan ke speaker</text>
+
+    <rect x="840" y="260" width="228" height="150" rx="12" fill="#fff4e8" stroke="#ff7a00" stroke-width="3"/>
+    <text x="954" y="292" text-anchor="middle" font-weight="800" fill="#c2410c">DFPlayer</text>
+    <text x="954" y="316" text-anchor="middle">VCC merah, 5 V</text>
+    <text x="954" y="338" text-anchor="middle">RX lewat 1 kΩ</text>
+    <text x="954" y="360" text-anchor="middle">TX → GPIO21</text>
+    <text x="954" y="386" text-anchor="middle">elko di VCC–GND</text>
+  </g>
+
+  <rect x="24" y="432" width="1044" height="88" rx="12" fill="#fff4e8" stroke="#ff7a00" stroke-width="3"/>
+  <text x="48" y="468" font-size="16" font-weight="800" fill="#c2410c">Speaker, oranye</text>
+  <text x="48" y="494" font-size="15" fill="#2b2b2b">Hanya dua kabel: SPK_1 dan SPK_2. Tidak ke GND, tidak ke GPIO, tidak ke sentuh.</text>
+
+  <g font-size="15">
+    <rect x="24" y="540" width="1044" height="180" rx="12" fill="#fff" stroke="#c2410c" stroke-width="2"/>
+    <text x="44" y="574" font-weight="800" fill="#c2410c">Tiga hal yang merusak</text>
+    <text x="44" y="606" fill="#2b2b2b">1. Kabel merah 5 V menyentuh GPIO, kaki layar, atau OUT sentuh.</text>
+    <text x="44" y="634" fill="#2b2b2b">2. Baterai terbalik, atau 2 sel disambung seri.</text>
+    <text x="44" y="662" fill="#2b2b2b">3. Speaker disambung ke GND. Dioda terbalik juga berbahaya: garis harus di sisi ESP.</text>
+    <text x="44" y="694" fill="#6b5b66">Firmware tidak mengubah tegangan. Diagram USB lama tidak diubah.</text>
+  </g>
+</svg>
