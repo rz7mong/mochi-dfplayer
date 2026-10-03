@@ -4,22 +4,12 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>🧵 Perjalanan kabel — Mochi DFPlayer</title>
-<meta name="description" content="Perjalanan pemasangan kabel Mochi DFPlayer: modul digambar seperti bendanya, kabel bergerak per langkah."/>
+<meta name="description" content="Perjalanan pemasangan kabel Mochi DFPlayer mengikuti diagram baru: pin berwarna dan rangkaian baterai, MT3608, dioda."/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Quicksand:wght@500;700&display=swap"/>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E%F0%9F%8D%A1%3C/text%3E%3C/svg%3E"/>
 <link rel="stylesheet" href="./mochi.css?v=3"/>
-<style>
-.wire{fill:none;stroke-linecap:round;stroke-linejoin:round}
-.wire.draw{stroke-dasharray:900;animation:drawin .9s ease-out both}
-.wire.flow{stroke-dasharray:8 10;animation:flow 1.1s linear infinite}
-@keyframes drawin{from{stroke-dashoffset:900}to{stroke-dashoffset:0}}
-@keyframes flow{to{stroke-dashoffset:-36}}
-.pad-hi{animation:pulse 1.1s ease-in-out infinite}
-@keyframes pulse{0%,100%{stroke-opacity:1}50%{stroke-opacity:.25}}
-@media (prefers-reduced-motion:reduce){.wire.draw,.wire.flow,.pad-hi{animation:none}}
-</style>
 </head>
 <body>
 <header class="hero wrap">
@@ -31,14 +21,12 @@
   <svg class="mochi" viewBox="0 0 120 96" aria-hidden="true"><ellipse cx="60" cy="88" rx="36" ry="5" fill="#f6c6d9" opacity=".6"/><path d="M14 66c0-30 20-52 46-52s46 22 46 52c0 14-12 20-46 20S14 80 14 66z" fill="#fff" stroke="#ffb3cf" stroke-width="3"/><rect x="33" y="34" width="54" height="36" rx="10" fill="#2b2140"/><ellipse cx="49" cy="51" rx="5" ry="6.5" fill="#7ef0c8"/><ellipse cx="71" cy="51" rx="5" ry="6.5" fill="#7ef0c8"/><path d="M53 61q7 6 14 0" stroke="#ff8fb8" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
   <div class="kicker">perjalanan kabel · dfplayer · v0.7.1</div>
   <h1>🧵 Perjalanan <span>pemasangan kabel</span></h1>
-  <p class="sub">Sama caranya dengan demo kabel lepas: modul digambar seperti bendanya, emoji di daftar komponen, kabel baru bergerak. Pin mengikuti firmware 0.7.1. Daya baterai lewat TP4056 dan boost 5 V.</p>
-  <div class="chips" id="chips"></div>
+  <p class="sub">Gambarnya diagram baru, bukan skema kotak lama. Kabel sinyal sama dengan <a href="wiring-dfplayer.svg">wiring-dfplayer.svg</a>. Daya baterai sama dengan <a href="wiring-warna.svg">rangkaian berwarna</a>: TP4056, MT3608, dioda 1N5819.</p>
+  <div class="chips"><span class="chip">🧠 ESP32-C3</span><span class="chip">📺 ST7789</span><span class="chip">🎵 DFPlayer</span><span class="chip">👆 TTP223</span><span class="chip">🔋 TP4056</span><span class="chip">⚡ MT3608</span><span class="chip">🔶 1N5819</span></div>
 </header>
 <nav class="tabs"><div class="wrap">
   <a href="index.html">⚡ Instalasi firmware</a>
   <a href="panduan.html">📖 Cara pakai</a>
-  <a href="musik.html">🎧 Pilih trek</a>
-  <a href="instalasi.html">🔧 Rakit & kartu SD</a>
   <a href="pemasangan.html">🧩 Demo rakit</a>
   <a href="perjalanan.html" class="on" aria-current="page">🧵 Perjalanan kabel</a>
   <a href="pemasangan-kabel.html">🔌 Diagram kabel</a>
@@ -46,15 +34,12 @@
   <a href="https://github.com/rz7mong/mochi-dfplayer">🐙 GitHub</a>
 </div></nav>
 <main class="wrap">
-<section id="komponen">
-  <h2>🛒 Daftar komponen</h2>
-  <div class="grid" id="parts"></div>
-</section>
+<section id="komponen"><h2>🛒 Daftar komponen</h2><div class="grid" id="parts"></div></section>
 <section id="rakit">
   <h2>🔧 Langkah rakit</h2>
   <div class="stepper">
     <div>
-      <div class="stage card" style="padding:6px"><div id="svgwrap"></div></div>
+      <div class="stage card" style="padding:6px"><div id="svgwrap"></div><div class="legend" id="legend"></div></div>
       <div class="progress"><i id="prog"></i></div>
       <div class="dots" id="dots"></div>
     </div>
@@ -66,98 +51,108 @@
       <div class="ctl"><button class="btn" id="prev">◀ Sebelumnya</button><button class="btn primary" id="next">Berikutnya ▶</button></div>
     </div>
   </div>
-  <p class="hint">Panah ← → juga jalan. Tabel pin lengkap ada di <a href="pemasangan-kabel.html">Diagram kabel</a>. Tanpa baterai, pin 5V boleh langsung dari USB.</p>
+  <p class="hint">Panah ← → juga jalan. Merah = 5 V, oranye = 3V3, hitam = GND. Tiap GPIO sinyal punya warna sendiri, sama seperti diagram kabel.</p>
 </section>
 </main>
-<footer>© rzmong · MIT (kode) · Mochi DFPlayer 0.7.1 · proyek independen, terinspirasi Dasai Mochi, bukan produk resmi</footer>
+<footer>© rzmong · MIT (kode) · Mochi DFPlayer 0.7.1</footer>
+<script src="./wiring.js?v=1"></script>
 <script>
+const MW = MochiWiring, $ = id => document.getElementById(id);
+const PREV = ['esp','tft','ttp','df','dfpwr','spk','mpu'];
+const S = [
+{id:'prep', kick:'Langkah 0', title:'Siapkan bagian', show:[],
+ body:'<p>Ikuti diagram baru. Bagian sinyal dulu (layar, sentuh, DFPlayer, speaker). Bagian baterai di akhir, urutannya baterai → TP4056 → MT3608 → dioda → pin 5V.</p>'},
+{id:'esp', kick:'Langkah 1 · Otak', title:'ESP32-C3 Super Mini', show:['esp'], hi:MW.PADS.esp,
+ body:'<ul><li>Kiri: 5V, GND, 3V3, GPIO4, GPIO3, GPIO2, GPIO1, GPIO0.</li><li>Kanan: GPIO5, GPIO6, GPIO7, GPIO8, GPIO9, GPIO10, GPIO20, GPIO21.</li><li>GPIO0 dan GPIO2 kosong.</li></ul>'},
+{id:'tft', kick:'Langkah 2 · Layar', title:'ST7789', show:['esp','tft'],
+ body:'<ul><li>SCL → GPIO4, SDA → GPIO6, DC → GPIO3, RES → GPIO10, BLK → GPIO7.</li><li>VCC → 3V3, GND → GND. Modul 8 pin: CS ke GND.</li><li>Jangan kasih 5 V ke layar.</li></ul>'},
+{id:'ttp', kick:'Langkah 3 · Sentuh', title:'TTP223', show:['esp','tft','ttp'],
+ body:'<ul><li>I/O → GPIO1, VCC → 3V3, GND → GND.</li><li>Bukan ke speaker, bukan ke 5 V.</li></ul>'},
+{id:'df', kick:'Langkah 4 · Serial', title:'DFPlayer RX dan TX', show:['esp','tft','ttp','df'],
+ body:'<ul><li>GPIO20 → resistor 1 kΩ → RX.</li><li>TX → GPIO21. Resistor di sini opsional (garis putus di diagram).</li><li>BUSY → GPIO5 opsional, garis putus-putus.</li></ul>'},
+{id:'dfpwr', kick:'Langkah 5 · Daya modul', title:'VCC 5 V dan elko', show:['esp','tft','ttp','df','cap'],
+ body:'<ul><li>VCC DFPlayer ke pin 5V ESP, bukan 3V3. Tidak perlu resistor di VCC.</li><li>Elko 100–470 µF: plus di VCC, garis di GND, dekat modul.</li></ul>'},
+{id:'spk', kick:'Langkah 6 · Speaker', title:'SPK_1 dan SPK_2', show:['esp','tft','ttp','df','cap','spk'],
+ body:'<p>Hanya dua kabel oranye, SPK_1 dan SPK_2. Jangan ke GND.</p>'},
+{id:'mpu', kick:'Langkah 7 · Gyro', title:'MPU6050, boleh dilewati', show:['esp','tft','ttp','df','cap','spk','mpu'],
+ body:'<p>SDA GPIO8, SCL GPIO9, VCC 3V3. GPIO9 jangan ditarik ke GND saat boot.</p>'},
+{id:'bat', power:1, kick:'Langkah 8 · Baterai', title:'Sel ke TP4056',
+ body:'<p>Satu sel 3,7 V. Plus ke B+, minus ke B−. Keluar dari modul ini masih sekitar 3,7 V, belum boleh ke ESP.</p>',
+ rows:[['Baterai +','TP4056 B+'],['Baterai −','TP4056 B−']]},
+{id:'boost', power:2, kick:'Langkah 9 · Boost', title:'TP4056 ke MT3608',
+ body:'<p>OUT baterai TP4056 masuk ke IN MT3608. Putar trimpot sampai OUT 5,0–5,2 V, diukur tanpa beban. Di atas 5,5 V jangan disambung.</p>',
+ rows:[['TP4056 OUT','MT3608 IN']]},
+{id:'dioda', power:4, kick:'Langkah 10 · Dioda', title:'1N5819, garis ke beban',
+ body:'<p>Anoda (tanpa garis) di OUT+ MT3608. Katoda (garis) ke pin 5V ESP dan VCC DFPlayer. GND semua disatukan. USB ESP boleh tertancap karena ada dioda ini.</p>',
+ rows:[['MT3608 OUT+','anoda 1N5819'],['katoda 1N5819','pin 5V ESP dan VCC DFPlayer']]},
+{id:'done', kick:'Selesai', title:'Diagram sinyal lengkap', show:MW.ALL, all:true,
+ body:'<p>Cek 5V–GND dan 3V3–GND tidak short. Speaker tidak ke GND. Lanjut kartu SD dan flash.</p>'}
+];
 const PARTS=[
-['🧠','ESP32-C3 Super Mini','USB di atas. Kiri: 5V GND 3V3 4 3 2 1 0. Kanan: 5 6 7 8 9 10 20 21.'],
-['📺','ST7789 1,3 inci','VCC 3V3. SCL GPIO4, SDA GPIO6, DC GPIO3, RES GPIO10, BLK GPIO7. CS 8 pin ke GND.'],
-['🎵','DFPlayer Mini','VCC 5 V. GPIO20 lewat 1 kΩ ke RX. TX ke GPIO21.'],
-['🔊','Speaker 8 Ω','Hanya di antara SPK_1 dan SPK_2. Jangan ke GND.'],
-['👆','TTP223','VCC 3V3, I/O ke GPIO1.'],
-['🔋','TP4056 + proteksi','Satu sel ke B+ dan B−.'],
-['⚡','Boost 5 V','Jumper A dan B dilepas. Ukur dulu, bawaan sering 12 V.'],
-['🔌','Sakelar','Hanya di kabel plus, sesudah boost.'],
-['🟠','Elko 100–470 µF','Plus di VCC DFPlayer, garis di GND.'],
-['🟤','Resistor 1 kΩ','Wajib di GPIO20 ke RX.'],
-['🪫','Li-ion 1 sel','Sekitar 1000 mAh, 3,7 V.'],
-['🌀','MPU6050, opsional','SDA GPIO8, SCL GPIO9, VCC 3V3.']
+['🧠','ESP32-C3 Super Mini','1','Pusat sinyal. Pin 5V terima daya dari dioda.','wajib'],
+['📺','ST7789 1,3 inci','1','VCC 3V3. SCL 4, SDA 6, DC 3, RES 10, BLK 7.','wajib'],
+['🎵','DFPlayer Mini','1','VCC 5 V langsung, tanpa resistor di VCC.','wajib'],
+['🔊','Speaker 8 Ω','1','Hanya SPK_1 dan SPK_2.','wajib'],
+['👆','TTP223','1','VCC 3V3, I/O ke GPIO1.','wajib'],
+['🟫','Resistor 1 kΩ','1–2','Wajib di GPIO20 ke RX.','wajib'],
+['⚡','Elko 100–470 µF','1','Plus di VCC DFPlayer, garis di GND.','disarankan'],
+['🔋','TP4056 + proteksi','1','Satu sel. Keluaran masih 3,7 V.','baterai'],
+['🟣','MT3608','1','Boost. Set 5,0–5,2 V sebelum disambung.','baterai'],
+['🔶','Dioda 1N5819','1','Garis (katoda) menghadap pin 5V.','baterai'],
+['🪫','Li-ion 1 sel','1','Sekitar 1000 mAh. Bukan dua sel seri.','baterai'],
+['🌀','MPU6050','1','Opsional. SDA 8, SCL 9.','opsional']
 ];
-const S=[
-{k:'Langkah 0',t:'Siapkan bagian',show:[],text:'Kabel lepas, titik ke titik. Ini rangkaian DFPlayer, bukan amp I2S.'},
-{k:'Langkah 1',t:'Boost diset 5 V',show:['boost'],text:'Lepas jumper A dan B. Keduanya terbuka berarti 5 V. Jangan sambung ke ESP sebelum diukur.',rows:[]},
-{k:'Langkah 2',t:'Baterai ke TP4056',show:['bat','tp'],text:'Positif ke B+, negatif ke B−. Satu sel saja.',rows:[['Baterai +','TP4056 B+'],['Baterai −','TP4056 B−']]},
-{k:'Langkah 3',t:'TP4056 ke boost',show:['bat','tp','boost'],text:'OUT+ ke IN+ boost, OUT− ke IN−.',rows:[['OUT+','Boost IN+'],['OUT−','Boost IN−']]},
-{k:'Langkah 4',t:'Ukur OUT',show:['bat','tp','boost'],text:'Harus 5,0–5,2 V tanpa beban. Kalau 8 V atau 12 V, jumper belum lepas.'},
-{k:'Langkah 5',t:'Sakelar',show:['bat','tp','boost','sw'],text:'Sakelar hanya memutus kabel plus. GND tidak lewat sakelar.',rows:[['Boost OUT+','Sakelar masuk']]},
-{k:'Langkah 6',t:'5 V ke ESP dan DFPlayer',show:['bat','tp','boost','sw','esp','df','cap'],text:'Sesudah sakelar ke pin 5V ESP dan VCC DFPlayer, tanpa resistor. Elko plus di VCC.',rows:[['Sakelar','ESP 5V'],['Sakelar','DFPlayer VCC']]},
-{k:'Langkah 7',t:'GND bersama',show:['bat','tp','boost','sw','esp','df','cap','tft'],text:'Semua GND disatukan.',rows:[['Boost OUT−','ESP GND'],['ESP GND','Layar dan DFPlayer']]},
-{k:'Langkah 8',t:'Layar',show:['bat','tp','boost','sw','esp','df','cap','tft'],text:'VCC dari 3V3. SCL GPIO4, SDA GPIO6, DC GPIO3, RES GPIO10, BLK GPIO7.',rows:[['GPIO4','SCL'],['GPIO6','SDA'],['GPIO3','DC'],['GPIO10','RES'],['GPIO7','BLK']]},
-{k:'Langkah 9',t:'Sentuh',show:['bat','tp','boost','sw','esp','df','cap','tft','ttp'],text:'TTP223 VCC dari 3V3, I/O ke GPIO1.',rows:[['GPIO1','TTP223 I/O']]},
-{k:'Langkah 10',t:'Serial DFPlayer',show:['bat','tp','boost','sw','esp','df','cap','tft','ttp','r'],text:'GPIO20, resistor 1 kΩ, lalu RX. TX ke GPIO21 langsung. Resistor di TX boleh, tidak wajib.',rows:[['GPIO20','1 kΩ lalu RX'],['TX','GPIO21']]},
-{k:'Langkah 11',t:'Speaker',show:['bat','tp','boost','sw','esp','df','cap','tft','ttp','r','spk'],text:'Dua kaki speaker hanya ke SPK_1 dan SPK_2. Jangan salah satu kaki ke GND.',rows:[['SPK_1','Speaker'],['SPK_2','Speaker']]},
-{k:'Langkah 12',t:'Gyro, boleh dilewati',show:['bat','tp','boost','sw','esp','df','cap','tft','ttp','r','spk','gyro'],text:'SDA GPIO8, SCL GPIO9, VCC 3V3. GPIO9 jangan ke GND saat boot.',rows:[['GPIO8','SDA'],['GPIO9','SCL']]},
-{k:'Langkah 13',t:'Saat flash',show:['bat','tp','boost','sw','esp','df','cap','tft','ttp','r','spk'],text:'Matikan sakelar, baru colok USB ESP. Jangan 5 V boost dan USB hidup bersamaan.'},
-{k:'Selesai',t:'Semua tersambung',show:['bat','tp','boost','sw','esp','df','cap','tft','ttp','r','spk'],text:'Sakelar nyala untuk baterai. USB ESP dicabut. Volume jangan maksimal dulu. Lanjut isi kartu SD dan flash dari halaman instalasi.'}
-];
-const W=[
-{s:2,c:'#e11d48',d:'M78 118 L168 118'},{s:2,c:'#334155',d:'M108 118 L168 146'},
-{s:3,c:'#e11d48',d:'M300 110 L360 110'},{s:3,c:'#334155',d:'M300 150 L360 150'},
-{s:5,c:'#e11d48',d:'M500 120 L560 120'},
-{s:6,c:'#e11d48',d:'M650 120 L470 250'},{s:6,c:'#e11d48',d:'M650 120 L820 250'},
-{s:7,c:'#334155',d:'M430 170 L470 280'},{s:7,c:'#334155',d:'M450 300 L210 280'},{s:7,c:'#334155',d:'M620 340 L790 310'},
-{s:8,c:'#d97706',d:'M450 270 L180 250'},{s:8,c:'#16a34a',d:'M450 330 L150 300'},{s:8,c:'#16a34a',d:'M610 310 L180 320'},
-{s:8,c:'#16a34a',d:'M450 360 L160 340'},{s:8,c:'#16a34a',d:'M610 400 L190 360'},{s:8,c:'#16a34a',d:'M610 350 L200 370'},
-{s:9,c:'#d97706',d:'M450 500 L200 500'},{s:9,c:'#16a34a',d:'M450 530 L180 530'},
-{s:10,c:'#16a34a',d:'M620 430 L790 340'},{s:10,c:'#16a34a',d:'M790 370 L620 460'},
-{s:11,c:'#ff4fa3',d:'M900 360 L900 450'},{s:11,c:'#ff4fa3',d:'M860 380 L860 470'},
-{s:12,c:'#16a34a',d:'M620 380 L760 540'},{s:12,c:'#16a34a',d:'M620 400 L790 560'}
-];
-const $=id=>document.getElementById(id);
-document.getElementById('chips').innerHTML=PARTS.map(p=>`<span class="chip">${p[0]} ${p[1]}</span>`).join('');
-document.getElementById('parts').innerHTML=PARTS.map(p=>`<div class="part"><div style="font-size:42px;text-align:center;line-height:84px;height:84px;background:#fff5fa;border-radius:12px;margin-bottom:6px">${p[0]}</div><h3>${p[1]}</h3><p>${p[2]}</p></div>`).join('');
-function pad(x,y){return `<g><circle cx="${x}" cy="${y}" r="8" fill="none" stroke="#ff5c98" stroke-width="2" class="pad-hi"/><circle cx="${x}" cy="${y}" r="4.5" fill="#e6c35c" stroke="#7a5c12"/><circle cx="${x}" cy="${y}" r="1.8" fill="#fff8e7"/></g>`}
-function mods(show){
-  const h=k=>show.includes(k); let g='';
-  if(h('bat')) g+=`<g><rect x="28" y="70" width="90" height="150" rx="10" fill="#d5dae2" stroke="#9aa3b2"/>${pad(58,70)}${pad(88,70)}<rect x="28" y="70" width="90" height="22" rx="8" fill="#f6c945"/><text x="73" y="150" text-anchor="middle" font-size="13" font-weight="800" fill="#374151">3,7 V</text><text x="73" y="168" text-anchor="middle" font-size="11" fill="#374151">1000 mAh</text></g>`;
-  if(h('tp')) g+=`<g><rect x="168" y="78" width="140" height="100" rx="8" fill="#1e40af"/><rect x="150" y="108" width="24" height="28" rx="4" fill="#d1d5db"/><text x="238" y="128" text-anchor="middle" fill="#fff" font-size="14" font-weight="800">TP4056</text>${pad(300,110)}${pad(300,150)}</g>`;
-  if(h('boost')) g+=`<g><rect x="360" y="70" width="140" height="110" rx="8" fill="#111827"/><circle cx="430" cy="118" r="16" fill="none" stroke="#f59e0b" stroke-width="3"/><text x="430" y="168" text-anchor="middle" fill="#fff" font-size="12" font-weight="800">Boost 5V</text>${pad(360,110)}${pad(500,120)}</g>`;
-  if(h('sw')) g+=`<g><rect x="560" y="100" width="90" height="36" rx="8" fill="#111827"/><rect x="592" y="88" width="18" height="16" rx="3" fill="#d1d5db"/><text x="605" y="156" text-anchor="middle" font-size="11" font-weight="800" fill="#111">Sakelar</text>${pad(560,118)}${pad(650,118)}</g>`;
-  if(h('esp')) g+=`<g><rect x="430" y="230" width="190" height="280" rx="14" fill="#1d212b"/><rect x="490" y="214" width="70" height="22" rx="6" fill="#d1d5db"/><text x="525" y="208" text-anchor="middle" font-size="10" fill="#6b7280">USB-C</text><text x="525" y="490" text-anchor="middle" fill="#fff" font-size="12" font-weight="800">ESP32-C3</text>${['5V','GND','3V3','4','3','1'].map((n,i)=>pad(430,260+i*32)+`<text x="448" y="${264+i*32}" fill="#fde68a" font-size="9">${n}</text>`).join('')}${['6','7','8','10','20','21'].map((n,i)=>pad(620,300+i*28)+`<text x="590" y="${304+i*28}" fill="#fde68a" font-size="9" text-anchor="end">${n}</text>`).join('')}</g>`;
-  if(h('tft')) g+=`<g><rect x="30" y="230" width="170" height="180" rx="10" fill="#1d4fa8"/><rect x="46" y="268" width="138" height="110" rx="6" fill="#0b1020"/><ellipse cx="92" cy="318" rx="8" ry="11" fill="#7ef0c8"/><ellipse cx="138" cy="318" rx="8" ry="11" fill="#7ef0c8"/><path d="M104 340q13 10 26 0" stroke="#ff8fb8" stroke-width="3" fill="none"/><text x="115" y="400" text-anchor="middle" fill="#dbeafe" font-size="11" font-weight="800">ST7789</text>${pad(70,246)}${pad(110,246)}</g>`;
-  if(h('ttp')) g+=`<g><rect x="40" y="470" width="130" height="120" rx="10" fill="#e11d48"/><circle cx="105" cy="540" r="32" fill="none" stroke="#fecdd3" stroke-width="3"/><text x="105" y="546" text-anchor="middle" fill="#fff" font-size="13" font-weight="800">TTP223</text>${pad(70,486)}${pad(140,486)}</g>`;
-  if(h('df')) g+=`<g><rect x="760" y="230" width="200" height="160" rx="10" fill="#166534"/><rect x="820" y="250" width="70" height="54" rx="4" fill="#14532d" stroke="#86efac"/><text x="855" y="280" text-anchor="middle" fill="#bbf7d0" font-size="10">SD</text><text x="860" y="360" text-anchor="middle" fill="#fff" font-size="14" font-weight="800">DFPlayer</text>${pad(790,250)}${pad(790,340)}</g>`;
-  if(h('cap')) g+=`<g><rect x="700" y="150" width="22" height="48" rx="4" fill="#1e3a8a"/><rect x="718" y="150" width="8" height="48" fill="#94a3b8"/><text x="690" y="176" text-anchor="end" font-size="10" fill="#1e3a8a" font-weight="800">100µF</text></g>`;
-  if(h('r')) g+=`<g><rect x="690" y="400" width="46" height="16" rx="3" fill="#d6b48a" stroke="#92400e"/><rect x="700" y="400" width="5" height="16" fill="#8b4513"/><rect x="710" y="400" width="5" height="16" fill="#111"/><rect x="720" y="400" width="5" height="16" fill="#e11d48"/><text x="713" y="432" text-anchor="middle" font-size="10" font-weight="800">1 kΩ</text></g>`;
-  if(h('spk')) g+=`<g><circle cx="930" cy="500" r="48" fill="#1f1f1f"/><circle cx="930" cy="500" r="30" fill="#3a3a3a"/><circle cx="930" cy="500" r="10" fill="#111"/><text x="930" y="568" text-anchor="middle" font-size="11" font-weight="800" fill="#333">Speaker</text>${pad(900,470)}</g>`;
-  if(h('gyro')) g+=`<g><rect x="760" y="520" width="120" height="70" rx="8" fill="#312e81"/><text x="820" y="560" text-anchor="middle" fill="#fff" font-size="12" font-weight="800">MPU6050</text>${pad(760,545)}</g>`;
-  return g;
-}
-function wire(w,live,i){
-  if(!live) return `<path d="${w.d}" fill="none" stroke="${w.c}" stroke-width="3" opacity=".4" stroke-linecap="round"/>`;
-  return `<path d="${w.d}" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round"/><path d="${w.d}" class="wire draw" fill="none" stroke="${w.c}" stroke-width="3.4" style="animation-delay:${i*.12}s"/><path d="${w.d}" class="wire flow" fill="none" stroke="#fff" stroke-width="1.4" style="animation-delay:${i*.12}s"/>`;
+function powerSvg(n){
+  const boxes=[
+    [24,80,'#e8f8ee','#2bb24c','#166534','Baterai','+ ke B+','− ke B−'],
+    [250,80,'#fde8f0','#e85d8c','#9d174d','TP4056','charge','keluar 3,7 V'],
+    [476,80,'#f3e8ff','#7c3aed','#5b21b6','MT3608','boost','set 5 V'],
+    [702,80,'#ffedd5','#c2410c','#9a3412','1N5819','garis ke kanan','ke beban'],
+    [900,80,'#e0ecff','#2f6fe4','#1d4ed8','Pin 5V','ESP + DFPlayer','bukan GPIO']
+  ];
+  const show=n;
+  let g=boxes.map((b,i)=>`<g opacity="${i<=show?1:.28}"><rect x="${b[0]}" y="${b[1]}" width="160" height="100" rx="12" fill="${b[2]}" stroke="${b[3]}" stroke-width="3"/><text x="${b[0]+80}" y="118" text-anchor="middle" font-size="16" font-weight="800" fill="${b[4]}">${b[5]}</text><text x="${b[0]+80}" y="142" text-anchor="middle" font-size="13" fill="${b[4]}">${b[6]}</text><text x="${b[0]+80}" y="162" text-anchor="middle" font-size="13" fill="${b[4]}">${b[7]}</text></g>`).join('');
+  const segs=[[184,130,250,130],[410,130,476,130],[636,130,702,130],[862,130,900,130]];
+  segs.forEach((s,i)=>{
+    if(i>=show) return;
+    const live=i===show-1;
+    const d=`M${s[0]} ${s[1]} H${s[2]}`;
+    g+=`<path d="${d}" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round"/>`;
+    g+=`<path d="${d}" fill="none" stroke="#c2410c" stroke-width="4" stroke-linecap="round" ${live?'class="wire draw"':''}/>`;
+    if(live) g+=`<path d="${d}" fill="none" stroke="#fff" stroke-width="1.6" class="wire flow"/>`;
+  });
+  return `<svg viewBox="0 0 1100 240" style="width:100%;height:auto" font-family="Nunito,sans-serif"><style>.wire{fill:none}.wire.draw{stroke-dasharray:200;animation:drawin .8s ease-out both}@keyframes drawin{from{stroke-dashoffset:200}to{stroke-dashoffset:0}}.wire.flow{stroke-dasharray:8 10;animation:flow 1s linear infinite}@keyframes flow{to{stroke-dashoffset:-36}}</style><rect width="1100" height="240" rx="14" fill="#fffafc"/>${g}<text x="24" y="220" font-size="13" fill="#6b5b66">Sama dengan rangkaian berwarna: merah 5 V mengalir ke kanan, garis dioda di sisi beban.</text></svg>`;
 }
 let cur=0;
 function go(i){
   cur=Math.max(0,Math.min(S.length-1,i));
-  const st=S[cur], show=cur===0?['bat','tp','boost','sw','esp','df','cap','tft','ttp','r','spk']:st.show;
-  const prev=W.filter(w=>w.s<cur && w.s!==12), live=W.filter(w=>w.s===cur);
-  $('svgwrap').innerHTML=`<svg viewBox="0 0 1040 640" style="width:100%;height:auto;min-width:680px" font-family="Nunito,sans-serif"><rect width="1040" height="640" rx="16" fill="#fffafc"/><g opacity="${cur===0?.45:1}">${prev.map(w=>wire(w,false)).join('')}${mods(show)}${live.map((w,n)=>wire(w,cur!==S.length-1,n)).join('')}</g></svg>`;
-  $('kick').textContent=st.k+' · '+(cur+1)+'/'+S.length;
-  $('stitle').textContent=st.t;
-  $('sbody').innerHTML='<p>'+st.text+'</p>';
-  $('sconn').innerHTML=st.rows&&st.rows.length?'<table class="conn"><tr><th>Dari</th><th>Ke</th></tr>'+st.rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')+'</table>':'';
+  const st=S[cur];
+  if(st.power){
+    $('svgwrap').innerHTML=powerSvg(st.power);
+    $('legend').innerHTML='<span><span class="sw" style="background:#c2410c"></span>jalur 5 V sesudah boost</span>';
+    $('sconn').innerHTML=st.rows?'<table class="conn"><tr><th>Dari</th><th>Ke</th></tr>'+st.rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')+'</table>':'';
+  } else {
+    const k=PREV.indexOf(st.id);
+    const show=st.show||[];
+    const prv=k>=0?PREV.slice(0,k):[];
+    $('svgwrap').innerHTML=MW.svg({show, cur:k>=0?[st.id]:[], prev:prv, all:!!st.all, full:!!st.all||cur===0, static:!!st.all, hi:st.hi||(MW.PADS[st.id]||[]), title:st.title});
+    const nets=[...new Set(MW.W.filter(c=>c.step===st.id).map(c=>c.net))];
+    $('legend').innerHTML=st.all?MW.legend(Object.keys(MW.NETNAME)):MW.legend(nets);
+    $('sconn').innerHTML=MW.connTable(st.id);
+  }
+  $('kick').textContent=st.kick+' · '+(cur+1)+'/'+S.length;
+  $('stitle').textContent=st.title;
+  $('sbody').innerHTML=st.body.startsWith('<')?st.body:'<p>'+st.body+'</p>';
   $('prev').disabled=cur===0;
   $('next').textContent=cur===S.length-1?'↺ Ulangi':'Berikutnya ▶';
   $('prog').style.width=(cur/(S.length-1)*100)+'%';
-  [...$('dots').children].forEach((b,k)=>b.className=k===cur?'on':(k<cur?'done':''));
+  [...$('dots').children].forEach((b,j)=>b.className=j===cur?'on':(j<cur?'done':''));
 }
-S.forEach((s,k)=>{const b=document.createElement('button');b.textContent=k;b.title=s.t;b.onclick=()=>go(k);$('dots').appendChild(b)});
+$('parts').innerHTML=PARTS.map(p=>`<div class="part"><div class="ico" aria-hidden="true">${p[0]}</div><span class="q">×${p[2]}</span><h3>${p[1]}</h3><p>${p[3]}</p><span class="tag ${p[4]==='wajib'?'':'opt'}">${p[4]}</span></div>`).join('');
+S.forEach((s,j)=>{const b=document.createElement('button'); b.textContent=j; b.title=s.title; b.onclick=()=>go(j); $('dots').appendChild(b);});
 $('prev').onclick=()=>go(cur-1);
 $('next').onclick=()=>go(cur===S.length-1?0:cur+1);
-document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(cur+1);if(e.key==='ArrowLeft')go(cur-1)});
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(cur+1); if(e.key==='ArrowLeft')go(cur-1);});
 go(0);
 </script>
 </body>
