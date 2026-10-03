@@ -82,7 +82,7 @@ const S = [
 {id:'boost', power:2, kick:'Langkah 9 · Boost', title:'TP4056 ke MT3608',
  body:'<p>OUT baterai TP4056 masuk ke IN MT3608. Putar trimpot sampai OUT 5,0–5,2 V, diukur tanpa beban. Di atas 5,5 V jangan disambung.</p>',
  rows:[['TP4056 OUT','MT3608 IN']]},
-{id:'dioda', power:4, kick:'Langkah 10 · Dioda', title:'1N5819, garis ke beban',
+{id:'dioda', power:3, kick:'Langkah 10 · Dioda', title:'1N5819, garis ke beban',
  body:'<p>Anoda (tanpa garis) di OUT+ MT3608. Katoda (garis) ke pin 5V ESP dan VCC DFPlayer. GND semua disatukan. USB ESP boleh tertancap karena ada dioda ini.</p>',
  rows:[['MT3608 OUT+','anoda 1N5819'],['katoda 1N5819','pin 5V ESP dan VCC DFPlayer']]},
 {id:'done', kick:'Selesai', title:'Diagram sinyal lengkap', show:MW.ALL, all:true,
@@ -102,26 +102,34 @@ const PARTS=[
 ['🪫','Li-ion 1 sel','1','Sekitar 1000 mAh. Bukan dua sel seri.','baterai'],
 ['🌀','MPU6050','1','Opsional. SDA 8, SCL 9.','opsional']
 ];
+function pad(x,y){return `<g><circle cx="${x}" cy="${y}" r="8" fill="none" stroke="#ff5c98" stroke-width="2" class="pad-hi"/><circle cx="${x}" cy="${y}" r="4.5" fill="#e6c35c" stroke="#7a5c12"/><circle cx="${x}" cy="${y}" r="1.8" fill="#fff8e7"/></g>`;}
+function wire(d,col,live){
+  let s=`<path d="${d}" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>`;
+  s+=`<path d="${d}" fill="none" stroke="${col}" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" ${live?'class="wire draw"':''}/>`;
+  if(live) s+=`<path d="${d}" fill="none" stroke="#fff" stroke-width="1.5" class="wire flow" stroke-linecap="round"/>`;
+  return s;
+}
 function powerSvg(n){
-  const boxes=[
-    [24,80,'#e8f8ee','#2bb24c','#166534','Baterai','+ ke B+','− ke B−'],
-    [250,80,'#fde8f0','#e85d8c','#9d174d','TP4056','charge','keluar 3,7 V'],
-    [476,80,'#f3e8ff','#7c3aed','#5b21b6','MT3608','boost','set 5 V'],
-    [702,80,'#ffedd5','#c2410c','#9a3412','1N5819','garis ke kanan','ke beban'],
-    [900,80,'#e0ecff','#2f6fe4','#1d4ed8','Pin 5V','ESP + DFPlayer','bukan GPIO']
-  ];
-  const show=n;
-  let g=boxes.map((b,i)=>`<g opacity="${i<=show?1:.28}"><rect x="${b[0]}" y="${b[1]}" width="160" height="100" rx="12" fill="${b[2]}" stroke="${b[3]}" stroke-width="3"/><text x="${b[0]+80}" y="118" text-anchor="middle" font-size="16" font-weight="800" fill="${b[4]}">${b[5]}</text><text x="${b[0]+80}" y="142" text-anchor="middle" font-size="13" fill="${b[4]}">${b[6]}</text><text x="${b[0]+80}" y="162" text-anchor="middle" font-size="13" fill="${b[4]}">${b[7]}</text></g>`).join('');
-  const segs=[[184,130,250,130],[410,130,476,130],[636,130,702,130],[862,130,900,130]];
-  segs.forEach((s,i)=>{
-    if(i>=show) return;
-    const live=i===show-1;
-    const d=`M${s[0]} ${s[1]} H${s[2]}`;
-    g+=`<path d="${d}" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round"/>`;
-    g+=`<path d="${d}" fill="none" stroke="#c2410c" stroke-width="4" stroke-linecap="round" ${live?'class="wire draw"':''}/>`;
-    if(live) g+=`<path d="${d}" fill="none" stroke="#fff" stroke-width="1.6" class="wire flow"/>`;
-  });
-  return `<svg viewBox="0 0 1100 240" style="width:100%;height:auto" font-family="Nunito,sans-serif"><style>.wire{fill:none}.wire.draw{stroke-dasharray:200;animation:drawin .8s ease-out both}@keyframes drawin{from{stroke-dashoffset:200}to{stroke-dashoffset:0}}.wire.flow{stroke-dasharray:8 10;animation:flow 1s linear infinite}@keyframes flow{to{stroke-dashoffset:-36}}</style><rect width="1100" height="240" rx="14" fill="#fffafc"/>${g}<text x="24" y="220" font-size="13" fill="#6b5b66">Sama dengan rangkaian berwarna: merah 5 V mengalir ke kanan, garis dioda di sisi beban.</text></svg>`;
+  let g='';
+  g+=`<g><rect x="36" y="150" width="110" height="190" rx="12" fill="#d5dae2" stroke="#9aa3b2" stroke-width="2"/><rect x="36" y="150" width="110" height="26" rx="10" fill="#f6c945"/><text x="91" y="250" text-anchor="middle" font-size="16" font-weight="800" fill="#374151">3,7 V</text><text x="91" y="272" text-anchor="middle" font-size="13" fill="#374151">1 sel</text>${pad(70,150)}${pad(112,150)}<text x="70" y="142" text-anchor="middle" font-size="13" fill="#b91c1c" font-weight="800">+</text><text x="112" y="142" text-anchor="middle" font-size="13" font-weight="800">−</text></g>`;
+  g+=`<g><rect x="210" y="130" width="190" height="160" rx="10" fill="#1e40af"/><rect x="188" y="178" width="28" height="36" rx="6" fill="#d1d5db"/><rect x="268" y="168" width="70" height="46" rx="4" fill="#1e3a8a" stroke="#93c5fd"/><text x="305" y="250" text-anchor="middle" fill="#fff" font-size="16" font-weight="800">TP4056</text><text x="305" y="270" text-anchor="middle" fill="#dbeafe" font-size="12">+ proteksi</text>${pad(400,168)}${pad(400,210)}<text x="388" y="164" text-anchor="end" fill="#fecaca" font-size="11">B+</text><text x="388" y="206" text-anchor="end" fill="#e5e7eb" font-size="11">B−</text>${pad(400,250)}<text x="388" y="246" text-anchor="end" fill="#fecaca" font-size="11">OUT+</text></g>`;
+  if(n>=2) g+=`<g><rect x="500" y="120" width="190" height="180" rx="10" fill="#111827"/><circle cx="595" cy="175" r="22" fill="none" stroke="#f59e0b" stroke-width="4"/><circle cx="560" cy="230" r="10" fill="#374151" stroke="#9ca3af"/><text x="595" y="268" text-anchor="middle" fill="#fff" font-size="16" font-weight="800">MT3608</text><text x="595" y="286" text-anchor="middle" fill="#fde68a" font-size="12">set 5,0–5,2 V</text>${pad(500,160)}${pad(690,160)}<text x="512" y="154" fill="#e5e7eb" font-size="11">IN</text><text x="668" y="154" text-anchor="end" fill="#fecaca" font-size="11">OUT+</text></g>`;
+  if(n>=3){
+    g+=`<g><rect x="760" y="145" width="54" height="22" rx="8" fill="#fecaca" stroke="#b91c1c" stroke-width="2"/><rect x="798" y="145" width="10" height="22" fill="#111"/><text x="787" y="188" text-anchor="middle" font-size="12" font-weight="800" fill="#9a3412">1N5819</text><text x="787" y="204" text-anchor="middle" font-size="11" fill="#9a3412">garis = katoda</text></g>`;
+    g+=`<g><rect x="860" y="120" width="200" height="90" rx="12" fill="#1d212b"/><rect x="930" y="104" width="56" height="22" rx="6" fill="#d1d5db"/><text x="960" y="168" text-anchor="middle" fill="#fff" font-size="13" font-weight="800">ESP32-C3</text><text x="960" y="188" text-anchor="middle" fill="#fecaca" font-size="12">pin 5V</text>${pad(860,155)}</g>`;
+    g+=`<g><rect x="860" y="250" width="200" height="90" rx="12" fill="#166534"/><rect x="920" y="262" width="56" height="28" rx="4" fill="#14532d" stroke="#86efac"/><text x="960" y="314" text-anchor="middle" fill="#fff" font-size="13" font-weight="800">DFPlayer VCC</text>${pad(860,290)}</g>`;
+  }
+  if(n>=1){
+    g+=wire('M70 150 L70 110 L400 110 L400 168','#e11d48',n===1);
+    g+=wire('M112 150 L112 96 L400 96 L400 210','#334155',false);
+  }
+  if(n>=2) g+=wire('M400 250 L450 250 L450 160 L500 160','#e85d8c',n===2);
+  if(n>=3){
+    g+=wire('M690 160 L760 156','#c2410c',true);
+    g+=wire('M808 156 L834 156 L834 120 L960 120 L960 155','#c2410c',true);
+    g+=wire('M834 156 L834 290 L860 290','#c2410c',true);
+  }
+  return `<svg viewBox="0 0 1100 420" style="width:100%;height:auto" font-family="Nunito,sans-serif"><style>.wire{fill:none}.wire.draw{stroke-dasharray:500;animation:drawin .9s ease-out both}@keyframes drawin{from{stroke-dashoffset:500}to{stroke-dashoffset:0}}.wire.flow{stroke-dasharray:8 10;animation:flow 1.1s linear infinite}@keyframes flow{to{stroke-dashoffset:-36}}.pad-hi{animation:pulse 1.1s ease-in-out infinite}@keyframes pulse{0%,100%{stroke-opacity:1}50%{stroke-opacity:.25}}</style><rect width="1100" height="420" rx="14" fill="#fffafc"/>${g}</svg>`;
 }
 let cur=0;
 function go(i){
@@ -129,13 +137,11 @@ function go(i){
   const st=S[cur];
   if(st.power){
     $('svgwrap').innerHTML=powerSvg(st.power);
-    $('legend').innerHTML='<span><span class="sw" style="background:#c2410c"></span>jalur 5 V sesudah boost</span>';
+    $('legend').innerHTML=st.power<3?'<span><span class="sw" style="background:#e11d48"></span>baterai +</span><span><span class="sw" style="background:#334155"></span>baterai − / GND</span>':'<span><span class="sw" style="background:#c2410c"></span>5 V, garis dioda ke beban</span>';
     $('sconn').innerHTML=st.rows?'<table class="conn"><tr><th>Dari</th><th>Ke</th></tr>'+st.rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')+'</table>':'';
   } else {
     const k=PREV.indexOf(st.id);
-    const show=st.show||[];
-    const prv=k>=0?PREV.slice(0,k):[];
-    $('svgwrap').innerHTML=MW.svg({show, cur:k>=0?[st.id]:[], prev:prv, all:!!st.all, full:!!st.all||cur===0, static:!!st.all, hi:st.hi||(MW.PADS[st.id]||[]), title:st.title});
+    $('svgwrap').innerHTML=MW.svg({show:MW.ALL, cur:k>=0?[st.id]:[], prev:k>=0?PREV.slice(0,k):[], all:!!st.all, full:true, static:!!st.all, hi:st.hi||(MW.PADS[st.id]||[]), title:st.title});
     const nets=[...new Set(MW.W.filter(c=>c.step===st.id).map(c=>c.net))];
     $('legend').innerHTML=st.all?MW.legend(Object.keys(MW.NETNAME)):MW.legend(nets);
     $('sconn').innerHTML=MW.connTable(st.id);
