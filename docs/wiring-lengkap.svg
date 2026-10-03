@@ -1,94 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="1200" height="980" viewBox="0 0 1200 980" xmlns="http://www.w3.org/2000/svg" font-family="Nunito,system-ui,sans-serif" role="img" aria-label="Rangkaian lengkap Mochi DFPlayer dengan baterai">
-  <rect width="1200" height="980" fill="#fffafc" rx="14"/>
-  <text x="32" y="38" font-size="22" font-weight="800" fill="#2b2b2b">Rangkaian lengkap plus komponen tambahan</text>
-  <text x="32" y="60" font-size="13" fill="#6b5b66">Diagram USB lama tidak diubah. Ini gabungan daya dan sinyal.</text>
+<svg width="1100" height="640" viewBox="0 0 1100 640" xmlns="http://www.w3.org/2000/svg" font-family="Nunito,system-ui,sans-serif">
+  <rect width="1100" height="640" fill="#fffafc"/>
+  <text x="28" y="36" font-size="22" font-weight="800" fill="#2b2b2b">Rangkaian sederhana</text>
+  <text x="28" y="58" font-size="14" fill="#6b5b66">Ikuti dua baris ini saja. Jangan sambung speaker ke sensor sentuh.</text>
 
-  <g font-size="13" fill="#2b2b2b">
-    <rect x="24" y="84" width="150" height="78" rx="10" fill="#fff" stroke="#2b2b2b"/>
-    <text x="99" y="112" text-anchor="middle" font-weight="800">USB isi daya</text>
-    <text x="99" y="132" text-anchor="middle" fill="#6b5b66">5 V ke charge</text>
-    <rect x="24" y="176" width="150" height="78" rx="10" fill="#fff" stroke="#2bb24c"/>
-    <text x="99" y="204" text-anchor="middle" font-weight="800">Baterai 1 sel</text>
-    <text x="99" y="224" text-anchor="middle" fill="#6b5b66">3,7 V, B+ B−</text>
-    <rect x="196" y="110" width="170" height="120" rx="10" fill="#fff" stroke="#e85d8c" stroke-width="2"/>
-    <text x="281" y="140" text-anchor="middle" font-weight="800" fill="#e85d8c">TP4056</text>
-    <text x="281" y="160" text-anchor="middle">+ proteksi</text>
-    <text x="281" y="180" text-anchor="middle" fill="#6b5b66">OUT masih 3,7 V</text>
-    <text x="281" y="200" text-anchor="middle" fill="#c2410c">jangan ke ESP</text>
-    <rect x="390" y="110" width="160" height="120" rx="10" fill="#fff" stroke="#7c3aed" stroke-width="2"/>
-    <text x="470" y="140" text-anchor="middle" font-weight="800" fill="#7c3aed">MT3608</text>
-    <text x="470" y="160" text-anchor="middle">boost, set 5,2 V</text>
-    <text x="470" y="180" text-anchor="middle" fill="#6b5b66">ukur tanpa beban</text>
-    <text x="470" y="200" text-anchor="middle" fill="#c2410c">maks 5,5 V</text>
-    <rect x="574" y="124" width="150" height="92" rx="10" fill="#fff" stroke="#c2410c" stroke-width="2"/>
-    <text x="649" y="154" text-anchor="middle" font-weight="800" fill="#c2410c">1N5819</text>
-    <text x="649" y="174" text-anchor="middle">anoda ← boost</text>
-    <text x="649" y="194" text-anchor="middle">katoda → 5 V beban</text>
+  <text x="28" y="96" font-size="16" font-weight="800" fill="#c2410c">1. Daya, kiri ke kanan</text>
+  <g font-size="14" fill="#2b2b2b">
+    <rect x="28" y="112" width="140" height="64" rx="10" fill="#fff" stroke="#2bb24c" stroke-width="2"/>
+    <text x="98" y="140" text-anchor="middle" font-weight="800">Baterai</text>
+    <text x="98" y="160" text-anchor="middle">3,7 V</text>
+    <rect x="210" y="112" width="150" height="64" rx="10" fill="#fff" stroke="#e85d8c" stroke-width="2"/>
+    <text x="285" y="140" text-anchor="middle" font-weight="800">TP4056</text>
+    <text x="285" y="160" text-anchor="middle">masih 3,7 V</text>
+    <rect x="402" y="112" width="150" height="64" rx="10" fill="#fff" stroke="#7c3aed" stroke-width="2"/>
+    <text x="477" y="140" text-anchor="middle" font-weight="800">MT3608</text>
+    <text x="477" y="160" text-anchor="middle">jadi 5 V</text>
+    <rect x="594" y="112" width="140" height="64" rx="10" fill="#fff" stroke="#c2410c" stroke-width="2"/>
+    <text x="664" y="140" text-anchor="middle" font-weight="800">Dioda</text>
+    <text x="664" y="160" text-anchor="middle">garis ke kanan</text>
+    <rect x="776" y="112" width="290" height="64" rx="10" fill="#fff" stroke="#2f6fe4" stroke-width="2"/>
+    <text x="921" y="140" text-anchor="middle" font-weight="800">5V ESP dan VCC DFPlayer</text>
+    <text x="921" y="160" text-anchor="middle">GND semua disatukan</text>
   </g>
-  <path d="M174 123 H196" stroke="#2f6fe4" fill="none" stroke-width="3"/>
-  <path d="M174 215 H186 V170 H196" stroke="#2bb24c" fill="none" stroke-width="3"/>
-  <path d="M366 170 H390" stroke="#e85d8c" fill="none" stroke-width="3"/>
-  <path d="M550 170 H574" stroke="#7c3aed" fill="none" stroke-width="3"/>
-  <path d="M724 170 H760 V430 H430" stroke="#c2410c" fill="none" stroke-width="3"/>
+  <path d="M168 144 H210 M360 144 H402 M552 144 H594 M734 144 H776" stroke="#2b2b2b" stroke-width="3" fill="none"/>
 
-  <g font-size="13">
-    <rect x="300" y="300" width="280" height="250" rx="12" fill="#fff" stroke="#2f6fe4" stroke-width="2"/>
-    <text x="440" y="328" text-anchor="middle" font-size="16" font-weight="800" fill="#2f6fe4">ESP32-C3 Super Mini</text>
-    <text x="318" y="356" fill="#2b2b2b">5V ← katoda dioda</text>
-    <text x="318" y="376" fill="#2b2b2b">GND bersama semua modul</text>
-    <text x="318" y="396" fill="#2b2b2b">3V3 → layar, sentuh, MPU</text>
-    <text x="318" y="420" fill="#6b5b66">GPIO4 SCL layar</text>
-    <text x="318" y="440" fill="#6b5b66">GPIO6 MOSI layar</text>
-    <text x="318" y="460" fill="#6b5b66">GPIO3 DC · GPIO10 RST · GPIO7 BLK</text>
-    <text x="318" y="480" fill="#6b5b66">GPIO1 sentuh</text>
-    <text x="318" y="500" fill="#6b5b66">GPIO20 TX → RX DF lewat 1 kΩ</text>
-    <text x="318" y="520" fill="#6b5b66">GPIO21 RX ← TX DF · GPIO8/9 MPU</text>
+  <text x="28" y="220" font-size="16" font-weight="800" fill="#2f6fe4">2. Sinyal, dari ESP saja</text>
+  <g font-size="15" fill="#2b2b2b">
+    <rect x="28" y="236" width="1044" height="250" rx="12" fill="#fff" stroke="#f0d5e0"/>
+    <text x="48" y="270" font-weight="800">Layar, ambil 3V3</text>
+    <text x="280" y="270">SCL → GPIO4</text>
+    <text x="480" y="270">MOSI → GPIO6</text>
+    <text x="700" y="270">DC 3 · RST 10 · BLK 7</text>
+    <text x="48" y="312" font-weight="800">Sentuh, ambil 3V3</text>
+    <text x="280" y="312">OUT → GPIO1</text>
+    <text x="480" y="312" fill="#c2410c">bukan ke speaker</text>
+    <text x="48" y="354" font-weight="800">DFPlayer, VCC 5 V</text>
+    <text x="280" y="354">GPIO20 → 1 kΩ → RX</text>
+    <text x="560" y="354">TX → GPIO21</text>
+    <text x="48" y="396" font-weight="800">Speaker</text>
+    <text x="280" y="396">hanya SPK_1 dan SPK_2</text>
+    <text x="560" y="396" fill="#c2410c">jangan ke GND</text>
+    <text x="48" y="438" font-weight="800">Opsional</text>
+    <text x="280" y="438">MPU: SDA 8, SCL 9, 3V3</text>
+    <text x="620" y="438">elko di VCC–GND DFPlayer</text>
   </g>
-
-  <g font-size="13" fill="#2b2b2b">
-    <rect x="640" y="290" width="230" height="130" rx="10" fill="#fff" stroke="#14b8c4" stroke-width="2"/>
-    <text x="755" y="318" text-anchor="middle" font-weight="800" fill="#14b8c4">Layar ST7789</text>
-    <text x="755" y="340" text-anchor="middle">240×240, VCC ke 3V3</text>
-    <text x="755" y="360" text-anchor="middle">SCL 4 · MOSI 6 · DC 3</text>
-    <text x="755" y="380" text-anchor="middle">RST 10 · BLK 7 · GND</text>
-    <text x="755" y="400" text-anchor="middle" fill="#6b5b66">CS tidak dipakai</text>
-
-    <rect x="900" y="290" width="270" height="130" rx="10" fill="#fff" stroke="#ff7a00" stroke-width="2"/>
-    <text x="1035" y="318" text-anchor="middle" font-weight="800" fill="#ff7a00">DFPlayer Mini</text>
-    <text x="1035" y="340" text-anchor="middle">VCC 5 V sesudah dioda</text>
-    <text x="1035" y="360" text-anchor="middle">elko 100–470 µF VCC–GND</text>
-    <text x="1035" y="380" text-anchor="middle">RX ← GPIO20 lewat 1 kΩ</text>
-    <text x="1035" y="400" text-anchor="middle">TX → GPIO21 · GND</text>
-
-    <rect x="640" y="440" width="230" height="110" rx="10" fill="#fff" stroke="#2bb24c" stroke-width="2"/>
-    <text x="755" y="468" text-anchor="middle" font-weight="800" fill="#2bb24c">TTP223</text>
-    <text x="755" y="490" text-anchor="middle">VCC 3V3 · GND</text>
-    <text x="755" y="510" text-anchor="middle">OUT → GPIO1</text>
-    <text x="755" y="530" text-anchor="middle" fill="#6b5b66">polaritas otomatis 60 dtk</text>
-
-    <rect x="900" y="440" width="270" height="110" rx="10" fill="#fff" stroke="#2b2b2b" stroke-width="2"/>
-    <text x="1035" y="468" text-anchor="middle" font-weight="800">Speaker 4–8 Ω</text>
-    <text x="1035" y="490" text-anchor="middle">hanya SPK_1 dan SPK_2</text>
-    <text x="1035" y="510" text-anchor="middle" fill="#c2410c">jangan ke GND atau GPIO</text>
-    <text x="1035" y="530" text-anchor="middle" fill="#6b5b66">copotan HP / Bluetooth boleh</text>
-  </g>
-  <path d="M1035 420 V440" stroke="#ff7a00" fill="none" stroke-width="3"/>
-
-  <g font-size="13" fill="#2b2b2b">
-    <rect x="24" y="580" width="1146" height="360" rx="12" fill="#fff" stroke="#f0d5e0"/>
-    <text x="44" y="612" font-size="16" font-weight="800">Dari awal sampai bunyi</text>
-    <text x="44" y="640">1. Baterai ke B+ B− TP4056. USB isi daya hanya ke modul charge.</text>
-    <text x="44" y="664">2. OUT 3,7 V charge ke IN MT3608. Set 5,0–5,2 V, ukur dulu, cabut, baru lanjut.</text>
-    <text x="44" y="688">3. Anoda 1N5819 di OUT boost. Katoda ke pin 5V ESP dan VCC DFPlayer. GND satu.</text>
-    <text x="44" y="712">4. Elko di VCC–GND DFPlayer, kaki positif di VCC, sesudah dioda.</text>
-    <text x="44" y="736">5. Layar dan TTP223 dari 3V3 ESP, bukan dari 5 V. Pin sinyal seperti kotak ESP.</text>
-    <text x="44" y="760">6. GPIO20 ke RX DFPlayer lewat 1 kΩ. TX DFPlayer ke GPIO21. Speaker di SPK_1/SPK_2.</text>
-    <text x="44" y="784">7. MPU6050 opsional: SDA GPIO8, SCL GPIO9, VCC 3V3. Tanpa MPU, goyang mati, yang lain jalan.</text>
-    <text x="44" y="808">7b. Tambahan: saklar di jalur 5 V sesudah dioda, elko di DFPlayer, resistor 1 kΩ di GPIO20, kartu microSD di slot DFPlayer, BUSY opsional ke GPIO5.</text>
-    <text x="44" y="808">8. Kartu microSD di DFPlayer: 0001.mp3 di root untuk animasi, folder 01 untuk musik.</text>
-    <text x="44" y="832">9. Flash firmware 0.8.1 lewat USB-C ESP. Dioda menahan arus balik, USB boleh tertancap.</text>
-    <text x="44" y="864" fill="#6b5b66">Firmware tidak berubah. Diagram USB lama: wiring-dfplayer.svg.</text>
-    <text x="44" y="888" fill="#c2410c">Jangan sambung 5 V ke GPIO. Jangan sambung speaker ke GND. Jangan pakai baterai 2 sel.</text>
-  </g>
+  <text x="28" y="530" font-size="15" fill="#2b2b2b">USB isi daya hanya ke TP4056. USB ESP boleh tertancap karena ada dioda. Firmware tidak berubah.</text>
+  <text x="28" y="558" font-size="15" fill="#c2410c">Jangan sambung 5 V ke GPIO. Jangan pakai baterai 2 sel.</text>
+  <text x="28" y="600" font-size="13" fill="#6b5b66">Diagram USB lama tidak diubah.</text>
 </svg>
