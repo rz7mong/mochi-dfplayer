@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>🧵 Perjalanan kabel — Mochi DFPlayer</title>
-<meta name="description" content="Perjalanan pemasangan kabel Mochi DFPlayer mengikuti diagram baru: pin berwarna dan rangkaian baterai, MT3608, dioda."/>
+<meta name="description" content="Perjalanan pemasangan kabel Mochi DFPlayer: pin berwarna, baterai, MT3608, dan sakelar."/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Quicksand:wght@500;700&display=swap"/>
@@ -61,7 +61,7 @@ const MW = MochiWiring, $ = id => document.getElementById(id);
 const PREV = ['esp','tft','ttp','df','dfpwr','spk','mpu'];
 const S = [
 {id:'prep', kick:'Langkah 0', title:'Siapkan bagian', show:[],
- body:'<p>Ikuti diagram baru. Bagian sinyal dulu (layar, sentuh, DFPlayer, speaker). Bagian baterai di akhir, urutannya baterai → TP4056 → MT3608 → dioda → pin 5V.</p>'},
+ body:'<p>Ikuti diagram baru. Bagian sinyal dulu (layar, sentuh, DFPlayer, speaker). Bagian baterai di akhir: baterai, TP4056, MT3608, sakelar, lalu pin 5V.</p>'},
 {id:'esp', kick:'Langkah 1 · Otak', title:'ESP32-C3 Super Mini', show:['esp'], hi:MW.PADS.esp,
  body:'<ul><li>Kiri: 5V, GND, 3V3, GPIO4, GPIO3, GPIO2, GPIO1, GPIO0.</li><li>Kanan: GPIO5, GPIO6, GPIO7, GPIO8, GPIO9, GPIO10, GPIO20, GPIO21.</li><li>GPIO0 dan GPIO2 kosong.</li></ul>'},
 {id:'tft', kick:'Langkah 2 · Layar', title:'ST7789', show:['esp','tft'],
@@ -83,7 +83,7 @@ const S = [
  body:'<p>OUT baterai TP4056 masuk ke IN MT3608. Putar trimpot sampai OUT 5,0–5,2 V, diukur tanpa beban. Di atas 5,5 V jangan disambung.</p>',
  rows:[['TP4056 OUT','MT3608 IN']]},
 {id:'saklar', power:3, whole:true, kick:'Langkah 10 · Sakelar', title:'Sakelar hanya di kabel plus',
- body:'<p>Ganti dioda. Sakelar memutus kabel plus dari OUT+ MT3608 ke pin 5V ESP dan VCC DFPlayer. GND tidak lewat sakelar. Saat flash, sakelar dimatikan dulu, baru colok USB ESP. Jangan 5 V boost dan USB hidup bersamaan.</p>',
+ body:'<p>Sakelar memutus kabel plus dari OUT+ MT3608 ke pin 5V ESP dan VCC DFPlayer. GND tidak lewat sakelar. Saat flash, sakelar dimatikan dulu, baru colok USB ESP. Jangan 5 V boost dan USB hidup bersamaan.</p>',
  rows:[['MT3608 OUT+','kaki sakelar'],['kaki sakelar lain','pin 5V ESP dan VCC DFPlayer'],['OUT− boost','GND bersama']]},
 {id:'done', whole:true, kick:'Selesai', title:'Seluruh rangkaian', show:MW.ALL, all:true,
  body:'<p>Gambar ini utuh: baterai, TP4056, MT3608, sakelar, lalu semua kabel sinyal. Cek 5V–GND tidak short. Speaker tidak ke GND. Sakelar mati sebelum USB untuk flash.</p>'}

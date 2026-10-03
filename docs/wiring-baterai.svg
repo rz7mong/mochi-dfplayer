@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="1100" height="820" viewBox="0 0 1100 820" xmlns="http://www.w3.org/2000/svg" font-family="Nunito,system-ui,sans-serif" role="img" aria-label="Diagram baterai, charge, regulator, dan dioda">
+<svg width="1100" height="820" viewBox="0 0 1100 820" xmlns="http://www.w3.org/2000/svg" font-family="Nunito,system-ui,sans-serif" role="img" aria-label="Diagram baterai, charge, regulator, dan sakelar">
   <rect width="1100" height="820" fill="#fffafc" rx="14"/>
-  <text x="36" y="40" font-size="22" font-weight="800" fill="#2b2b2b">Baterai, charge, regulator 5 V, dan dioda</text>
-  <text x="36" y="64" font-size="14" fill="#6b5b66">Diagram USB lama tidak berubah. Kabel sinyal layar, sentuh, UART, dan MPU tetap seperti diagram utama.</text>
+  <text x="36" y="40" font-size="22" font-weight="800" fill="#2b2b2b">Baterai, charge, regulator 5 V, dan sakelar</text>
+  <text x="36" y="64" font-size="14" fill="#6b5b66">Tidak memakai dioda. Sakelar hanya memutus kabel plus. Kabel sinyal tetap seperti diagram utama.</text>
 
   <g>
     <rect x="36" y="96" width="180" height="100" rx="12" fill="#fff" stroke="#2b2b2b" stroke-width="2"/>
@@ -34,10 +34,10 @@
   </g>
   <g>
     <rect x="820" y="150" width="240" height="130" rx="12" fill="#fff" stroke="#c2410c" stroke-width="2.5"/>
-    <text x="940" y="182" text-anchor="middle" font-size="15" font-weight="800" fill="#c2410c">Dioda Schottky</text>
-    <text x="940" y="206" text-anchor="middle" font-size="13">1N5819 atau SS34</text>
-    <text x="940" y="230" text-anchor="middle" font-size="13" fill="#6b5b66">anoda ← 5 V boost</text>
-    <text x="940" y="250" text-anchor="middle" font-size="13" fill="#6b5b66">katoda → pin 5V beban</text>
+    <text x="940" y="182" text-anchor="middle" font-size="15" font-weight="800" fill="#c2410c">Sakelar</text>
+    <text x="940" y="206" text-anchor="middle" font-size="13">hanya kabel plus</text>
+    <text x="940" y="230" text-anchor="middle" font-size="13" fill="#6b5b66">masuk ← OUT+ boost</text>
+    <text x="940" y="250" text-anchor="middle" font-size="13" fill="#6b5b66">keluar → pin 5V beban</text>
   </g>
 
   <path d="M216 146 H280" fill="none" stroke="#2f6fe4" stroke-width="3"/>
@@ -48,23 +48,23 @@
   <g>
     <rect x="280" y="360" width="250" height="130" rx="12" fill="#fff" stroke="#2f6fe4" stroke-width="2"/>
     <text x="405" y="392" text-anchor="middle" font-size="15" font-weight="800" fill="#2f6fe4">ESP32-C3 Super Mini</text>
-    <text x="405" y="418" text-anchor="middle" font-size="13">pin 5V ← katoda dioda</text>
+    <text x="405" y="418" text-anchor="middle" font-size="13">pin 5V ← keluar sakelar</text>
     <text x="405" y="440" text-anchor="middle" font-size="13">GND bersama</text>
     <text x="405" y="464" text-anchor="middle" font-size="12" fill="#6b5b66">3V3 papan untuk layar, sentuh, MPU</text>
   </g>
   <g>
     <rect x="580" y="360" width="250" height="130" rx="12" fill="#fff" stroke="#ff7a00" stroke-width="2"/>
     <text x="705" y="392" text-anchor="middle" font-size="15" font-weight="800" fill="#ff7a00">DFPlayer Mini</text>
-    <text x="705" y="418" text-anchor="middle" font-size="13">VCC ← katoda dioda yang sama</text>
+    <text x="705" y="418" text-anchor="middle" font-size="13">VCC ← sakelar yang sama</text>
     <text x="705" y="440" text-anchor="middle" font-size="13">elko 100–470 µF di VCC–GND</text>
     <text x="705" y="464" text-anchor="middle" font-size="12" fill="#6b5b66">speaker hanya di SPK_1 dan SPK_2</text>
   </g>
   <g>
     <rect x="880" y="360" width="180" height="130" rx="12" fill="#fff" stroke="#2b2b2b" stroke-width="2"/>
     <text x="970" y="392" text-anchor="middle" font-size="15" font-weight="800">USB ESP</text>
-    <text x="970" y="418" text-anchor="middle" font-size="13" fill="#6b5b66">boleh tertancap</text>
-    <text x="970" y="440" text-anchor="middle" font-size="13" fill="#6b5b66">untuk flash</text>
-    <text x="970" y="464" text-anchor="middle" font-size="12" fill="#2bb24c">dioda menahan arus balik</text>
+    <text x="970" y="418" text-anchor="middle" font-size="13" fill="#6b5b66">untuk flash</text>
+    <text x="970" y="440" text-anchor="middle" font-size="13" fill="#c2410c">sakelar mati dulu</text>
+    <text x="970" y="464" text-anchor="middle" font-size="12" fill="#c2410c">jangan bareng boost</text>
   </g>
   <path d="M940 280 V330 H405 V360" fill="none" stroke="#c2410c" stroke-width="3"/>
   <path d="M705 330 V360" fill="none" stroke="#c2410c" stroke-width="3"/>
@@ -74,10 +74,10 @@
     <text x="56" y="562" font-size="16" font-weight="800">Urutan dan larangan</text>
     <text x="56" y="590">1. Charge dulu. Keluaran baterai modul charge masuk ke IN regulator boost, bukan ke ESP.</text>
     <text x="56" y="614">2. Putar trimpot MT3608 sampai keluar 5,0 V tanpa beban. Lebih dari 5,5 V jangan disambungkan.</text>
-    <text x="56" y="638">3. Anoda dioda di OUT+ boost. Katoda dioda ke pin 5V ESP dan VCC DFPlayer. GND semua disatukan.</text>
-    <text x="56" y="662">4. Jatuh tegangan dioda Schottky sekitar 0,3–0,4 V, jadi boost boleh diset 5,2 V supaya beban dapat sekitar 5 V.</text>
+    <text x="56" y="638">3. Sakelar hanya di kabel plus: OUT+ boost ke pin 5V ESP dan VCC DFPlayer. GND semua disatukan, tidak lewat sakelar.</text>
+    <text x="56" y="662">4. Tidak ada dioda. Boost yang sudah 5,0–5,2 V langsung menjadi tegangan beban.</text>
     <text x="56" y="686">5. UART tetap: GPIO20 ke RX DFPlayer lewat 1 kΩ, TX modul ke GPIO21. Jangan sambung 5 V ke GPIO.</text>
-    <text x="56" y="710">6. Dengan dioda ini, USB ESP boleh tertancap saat baterai menyala. Tanpa dioda, jangan.</text>
+    <text x="56" y="710">6. Saat flash, matikan sakelar, baru colok USB ESP. Jangan 5 V boost dan USB hidup bersamaan.</text>
     <text x="56" y="744" fill="#6b5b66">Firmware tidak berubah. Diagram utama: wiring-dfplayer.svg. Berkas ini tidak menggantikannya.</text>
   </g>
 </svg>

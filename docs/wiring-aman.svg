@@ -10,7 +10,7 @@
     <text x="48" y="150" font-weight="800">Daya 5 V</text>
     <text x="220" y="150">Baterai + → B+ TP4056. Baterai − → B−.</text>
     <text x="220" y="176">OUT 3,7 V charge → IN MT3608. Ukur dulu, set 5,0–5,2 V.</text>
-    <text x="220" y="202">Dioda: kaki tanpa garis di MT3608, kaki bergaris ke pin 5V ESP dan VCC DFPlayer.</text>
+    <text x="220" y="202">Sakelar hanya di kabel plus: OUT+ MT3608 ke pin 5V ESP dan VCC DFPlayer.</text>
     <text x="220" y="228">GND charge, boost, ESP, DFPlayer disatukan.</text>
     <text x="48" y="268" font-weight="800">Sinyal 3,3 V</text>
     <text x="220" y="268">Layar dan sentuh dari pin 3V3 ESP, bukan dari 5 V.</text>
@@ -26,7 +26,7 @@
     <text x="48" y="482">Jangan beri DFPlayer dari pin 3V3. Jangan beri layar dari 5 V.</text>
     <text x="48" y="510">Jangan balik baterai. Jangan pakai 2 sel seri.</text>
     <text x="48" y="538">Jangan sambung speaker ke GND atau ke GPIO.</text>
-    <text x="48" y="566">Jangan pasang dioda terbalik: garis harus di sisi ESP, bukan di sisi boost.</text>
+    <text x="48" y="566">Jangan hidupkan sakelar saat USB ESP masih tertancap untuk flash.</text>
     <text x="48" y="594">Jangan sambung OUT 3,7 V charge langsung ke pin 5V ESP.</text>
   </g>
   <text x="28" y="670" font-size="14" fill="#6b5b66">Firmware tidak mengubah tegangan. Yang melindungi adalah kabel yang benar.</text>

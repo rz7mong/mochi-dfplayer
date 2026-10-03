@@ -16,8 +16,8 @@
     <text x="477" y="140" text-anchor="middle" font-weight="800">MT3608</text>
     <text x="477" y="160" text-anchor="middle">jadi 5 V</text>
     <rect x="594" y="112" width="140" height="64" rx="10" fill="#fff" stroke="#c2410c" stroke-width="2"/>
-    <text x="664" y="140" text-anchor="middle" font-weight="800">Dioda</text>
-    <text x="664" y="160" text-anchor="middle">garis ke kanan</text>
+    <text x="664" y="140" text-anchor="middle" font-weight="800">Sakelar</text>
+    <text x="664" y="160" text-anchor="middle">hanya kabel +</text>
     <rect x="776" y="112" width="290" height="64" rx="10" fill="#fff" stroke="#2f6fe4" stroke-width="2"/>
     <text x="921" y="140" text-anchor="middle" font-weight="800">5V ESP dan VCC DFPlayer</text>
     <text x="921" y="160" text-anchor="middle">GND semua disatukan</text>
@@ -44,7 +44,7 @@
     <text x="280" y="438">MPU: SDA 8, SCL 9, 3V3</text>
     <text x="620" y="438">elko di VCC–GND DFPlayer</text>
   </g>
-  <text x="28" y="530" font-size="15" fill="#2b2b2b">USB isi daya hanya ke TP4056. USB ESP boleh tertancap karena ada dioda. Firmware tidak berubah.</text>
+  <text x="28" y="530" font-size="15" fill="#2b2b2b">USB isi daya hanya ke TP4056. Saat flash, matikan sakelar dulu. Firmware tidak berubah.</text>
   <text x="28" y="558" font-size="15" fill="#c2410c">Jangan sambung 5 V ke GPIO. Jangan pakai baterai 2 sel.</text>
   <text x="28" y="600" font-size="13" fill="#6b5b66">Diagram USB lama tidak diubah.</text>
 </svg>

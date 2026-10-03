@@ -19,8 +19,8 @@
     <text x="526" y="168" text-anchor="middle" fill="#5b21b6">boost</text>
     <text x="526" y="188" text-anchor="middle" fill="#5b21b6">set 5 V</text>
     <rect x="662" y="112" width="150" height="92" rx="12" fill="#ffedd5" stroke="#c2410c" stroke-width="3"/>
-    <text x="737" y="146" text-anchor="middle" font-weight="800" fill="#9a3412">1N5819</text>
-    <text x="737" y="168" text-anchor="middle" fill="#9a3412">garis ke kanan</text>
+    <text x="737" y="146" text-anchor="middle" font-weight="800" fill="#9a3412">Sakelar</text>
+    <text x="737" y="168" text-anchor="middle" fill="#9a3412">hanya kabel +</text>
     <text x="737" y="188" text-anchor="middle" fill="#9a3412">ke beban</text>
     <rect x="868" y="112" width="200" height="92" rx="12" fill="#e0ecff" stroke="#2f6fe4" stroke-width="3"/>
     <text x="968" y="146" text-anchor="middle" font-weight="800" fill="#1d4ed8">Pin 5V ESP</text>
@@ -33,7 +33,7 @@
   <g font-size="14">
     <rect x="24" y="260" width="250" height="150" rx="12" fill="#e0ecff" stroke="#2f6fe4" stroke-width="3"/>
     <text x="149" y="292" text-anchor="middle" font-weight="800" fill="#1d4ed8">ESP32-C3</text>
-    <text x="149" y="316" text-anchor="middle">5V dari dioda</text>
+    <text x="149" y="316" text-anchor="middle">5V dari sakelar</text>
     <text x="149" y="338" text-anchor="middle">3V3 ke layar dan sentuh</text>
     <text x="149" y="360" text-anchor="middle">GND hitam, satu saja</text>
     <text x="149" y="386" text-anchor="middle" fill="#1d4ed8">pusat semua sinyal</text>
@@ -69,7 +69,7 @@
     <text x="44" y="574" font-weight="800" fill="#c2410c">Tiga hal yang merusak</text>
     <text x="44" y="606" fill="#2b2b2b">1. Kabel merah 5 V menyentuh GPIO, kaki layar, atau OUT sentuh.</text>
     <text x="44" y="634" fill="#2b2b2b">2. Baterai terbalik, atau 2 sel disambung seri.</text>
-    <text x="44" y="662" fill="#2b2b2b">3. Speaker disambung ke GND. Dioda terbalik juga berbahaya: garis harus di sisi ESP.</text>
+    <text x="44" y="662" fill="#2b2b2b">3. Speaker disambung ke GND. Sakelar tidak boleh memutus GND.</text>
     <text x="44" y="694" fill="#6b5b66">Firmware tidak mengubah tegangan. Diagram USB lama tidak diubah.</text>
   </g>
 </svg>
