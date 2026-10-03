@@ -13,8 +13,10 @@
 
 enum class DfState : uint8_t { Unknown, Stopped, Playing, Paused };
 
-bool mochiDfInit();
-bool mochiDfReady();
+bool mochiDfInit();                    // true bila modul menjawab query status; false = tak menjawab (perintah tetap dikirim)
+bool mochiDfReady();                   // true bila perintah dikirim: kartu terpasang dan modul tidak sedang disiapkan ulang
+bool mochiDfPresent();                 // true bila modul menjawab query terakhir (init / setelah kartu dipasang)
+bool mochiDfCardOut();                 // true selama kartu SD dicabut (pesan 0x3B)
 void mochiDfService();                 // panggil tiap loop: baca pesan modul + pin BUSY
 void mochiDfVolume(int vol30);         // 0..30
 int mochiDfGetVolume();
@@ -27,5 +29,5 @@ int mochiDfMusicCount(bool refresh);   // jumlah file di /01, -1 jika modul tida
 bool mochiDfLoopTrack(uint16_t track); // trek diulang sampai stop (dering/cari/alarm Chronos)
 bool mochiDfTakeFinished();            // true sekali tiap trek selesai (pesan 0x3D atau BUSY naik)
 bool mochiDfTakeError(uint16_t *code); // true sekali tiap pesan error modul (mis. 6 = file tidak ada)
-DfState mochiDfQueryState();           // tanya status ke modul (memblok s/d ±200 ms)
+DfState mochiDfQueryState();           // tanya status ke modul (memblok s/d ±280 ms)
 bool mochiDfBusyPin();                 // true jika pin BUSY dipasang

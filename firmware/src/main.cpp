@@ -478,6 +478,18 @@ void overlayClosed() {
 
 static void serviceSound() {
   mochiDfService();
+  static bool cardWasOut = false;
+  bool cardOut = mochiDfCardOut();
+  if (cardOut != cardWasOut) {
+    cardWasOut = cardOut;
+    mCount = -1;                       // jumlah lagu ditanya ulang (kartu dicabut / diganti)
+    mEmpty = false;
+    if (cardOut) {                     // suara yang sedang jalan hilang bersama kartu
+      if (dfOwner != Owner::None) dfOwner = Owner::None;
+      if (mState != MState::Stopped) mState = MState::Stopped;
+    }
+    uiDirty = true;
+  }
   uint16_t err;
   if (mochiDfTakeError(&err)) {
     Serial.printf("DFPlayer error %u\n", err);
@@ -670,7 +682,8 @@ static void drawPlayer() {
     tft.drawFastHLine(dx, 90, 20, C_YEL);
   }
   tft.setTextColor(C_DIM, C_BG);
-  if (mEmpty) snprintf(b, sizeof(b), "folder /01 kosong");
+  if (mochiDfCardOut()) snprintf(b, sizeof(b), "kartu SD dicabut");
+  else if (mEmpty) snprintf(b, sizeof(b), "folder /01 kosong");
   else if (mCount > 0) snprintf(b, sizeof(b), "dari %d lagu", mCount);
   else snprintf(b, sizeof(b), "jumlah lagu ?");
   tft.drawString(b, 16, 98, 2);
@@ -818,6 +831,8 @@ static void showAbout() {
   snprintf(b, sizeof(b), "BLE: %s", MOCHI_BLE_NAME); line(b);
   snprintf(b, sizeof(b), "Chronos: %s", chronosOn ? (chronoConn ? "tersambung" : "menunggu HP") : "mati"); line(b);
   if (chronoConn) { snprintf(b, sizeof(b), "Baterai HP: %d%%", watch.getPhoneBattery()); line(b); }
+  snprintf(b, sizeof(b), "DFPlayer: %s",
+           mochiDfCardOut() ? "kartu dicabut" : (mochiDfPresent() ? "OK" : "tak menjawab")); line(b);
   snprintf(b, sizeof(b), "Trek animasi: %s",
 #ifdef MOCHI_DF_MP3_FOLDER
            "/MP3/000N.mp3"
@@ -933,7 +948,7 @@ void setup() {
     return true;
   });
   mochiDfVolume(volume);
-  mochiDfInit();
+  if (!mochiDfInit()) Serial.println("PERINGATAN: DFPlayer tidak menjawab. Cek kabel TX/RX, daya 5V, dan kartu SD.");
   mpuInit();
   randomSeed(esp_random());
   chronosSetupCallbacks();

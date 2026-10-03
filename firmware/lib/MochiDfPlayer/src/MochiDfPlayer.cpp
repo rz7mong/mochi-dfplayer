@@ -9,6 +9,11 @@
 static HardwareSerial dfSerial(1);
 static DFRobotDFPlayerMini dfPlayer;
 static bool dfOk = false;
+static bool dfPresent = false;   // modul menjawab query status (hasil mochiDfInit)
+static bool dfCardOut = false;   // pesan 0x3B: kartu SD dicabut
+static bool dfReinit = false;    // sedang menunggu / mencoba menyiapkan ulang modul setelah kartu masuk
+static uint8_t dfReinitTry = 0;
+static uint32_t dfReinitAt = 0;
 static uint32_t dfLastCmd = 0;
 static uint32_t dfLastPlay = 0;
 static int dfVolWanted = 28;
@@ -21,6 +26,11 @@ static bool busyWasPlaying = false;
 static int musicCount = -2;
 static uint16_t loopTrack = 0;  // != 0: trek yang sedang diulang  // -2 = belum ditanya
 static const uint32_t DF_BOOT_MS = 1200;
+static const uint32_t DF_CARD_MOUNT_MS = 1000;  // jeda setelah kartu masuk: modul butuh waktu membaca kartu
+static const uint32_t DF_COUNT_BUDGET_MS = 450; // batas total mochiDfMusicCount (tiap percobaan s/d ±280 ms)
+
+// Perintah hanya dikirim bila modul aktif, kartu terpasang, dan tidak sedang disiapkan ulang.
+static bool dfUsable() { return dfOk && !dfCardOut && !dfReinit; }
 
 static void dfGap() {
   uint32_t now = millis();
@@ -40,6 +50,41 @@ static void noteFinished() {
 static void handleMsg(uint8_t type, uint16_t value) {
   if (type == DFPlayerPlayFinished) noteFinished();
   else if (type == DFPlayerError && value != TimeOut) { errPending = true; errCode = value; }
+  else if (type == DFPlayerCardRemoved) {
+    Serial.println("DFPlayer: kartu SD dicabut");
+    dfCardOut = true;
+    dfReinit = false;
+    finished = false;
+    busyWasPlaying = false;
+    loopTrack = 0;
+    musicCount = -2;  // jumlah lagu bisa berubah bila kartu diganti
+  } else if (type == DFPlayerCardInserted || (type == DFPlayerCardOnline && dfCardOut)) {
+    Serial.println("DFPlayer: kartu SD dipasang, menyiapkan ulang");
+    dfCardOut = false;
+    dfReinit = true;
+    dfReinitTry = 0;
+    dfReinitAt = millis() + DF_CARD_MOUNT_MS;
+    musicCount = -2;
+  }
+}
+
+// Baca semua pesan yang sudah masuk (tiap pesan diproses). Dipanggil sebelum query agar pesan lama
+// (atau flag TimeOut sisa) tidak dikira jawaban query. Selalu berhenti: available() mengosongkan flag.
+static void dfDrain() {
+  for (uint8_t i = 0; i < 8 && dfPlayer.available(); i++) handleMsg(dfPlayer.readType(), dfPlayer.read());
+}
+
+// Dipanggil hanya setelah query GAGAL: library sudah menerima pesan lain (mis. trek selesai, kartu dicabut)
+// atau mengisi TimeOut. Karena dfDrain() dijalankan sebelum query, isinya pasti baru. TimeOut diabaikan handleMsg.
+static void dfTakeLastReply() { handleMsg(dfPlayer.readType(), dfPlayer.read()); }
+
+// Query status (0x42) dengan antrian bersih. Memblok maks. dfGap() + setTimeOut (±280 ms). -1 = tak menjawab.
+static int dfReadState() {
+  dfDrain();
+  dfGap();
+  int s = dfPlayer.readState();
+  if (s < 0) dfTakeLastReply();
+  return s;
 }
 
 static void sendVolumeIfNeeded() {
@@ -70,17 +115,56 @@ bool mochiDfInit() {
   dfGap();
   dfPlayer.outputDevice(DFPLAYER_DEVICE_SD);
   sendVolumeIfNeeded();
-  dfGap();
-  int st = dfPlayer.readState();
-  Serial.printf("DFPlayer %s (status %d)\n", st >= 0 ? "menjawab" : "tidak menjawab, perintah tetap dikirim", st);
-  return dfOk;
+  int st = dfReadState();
+  if (st < 0) st = dfReadState();  // modul kadang baru menjawab pada percobaan kedua
+  dfPresent = st >= 0;
+  Serial.printf("DFPlayer %s (status %d)\n", dfPresent ? "menjawab" : "tidak menjawab, perintah tetap dikirim", st);
+  // dfOk tetap true walau tidak menjawab: TX modul bisa saja tidak tersambung sementara suara tetap jalan.
+  // Hasil nyata dikembalikan ke pemanggil dan tersedia lewat mochiDfPresent().
+  return dfPresent;
 }
 
-bool mochiDfReady() { return dfOk; }
+bool mochiDfReady() { return dfUsable(); }
+bool mochiDfPresent() { return dfPresent; }
+bool mochiDfCardOut() { return dfCardOut; }
+
+// Siapkan ulang modul setelah kartu dipasang. Tanpa blokir panjang: tiap langkah dijadwalkan ulang
+// dengan backoff (1 dtk, 2 dtk); percobaan ke-3 memakai reset 0x0C lalu menunggu modul menyala kembali.
+static void serviceReinit() {
+  if (!dfReinit || (int32_t)(millis() - dfReinitAt) < 0) return;
+  if (dfReinitTry == 2) {
+    Serial.println("DFPlayer: reset modul (0x0C)");
+    dfGap();
+    dfPlayer.reset();
+    dfVolSent = -1;
+    dfReinitTry++;
+    dfReinitAt = millis() + 2500;  // modul butuh ±1,5 dtk untuk menyala dan membaca kartu
+    return;
+  }
+  dfGap();
+  dfPlayer.outputDevice(DFPLAYER_DEVICE_SD);
+  dfVolSent = -1;
+  dfGap();
+  dfPlayer.volume(dfVolWanted);
+  dfVolSent = dfVolWanted;
+  int st = dfReadState();
+  if (st >= 0) {
+    dfPresent = true;
+    dfReinit = false;
+    Serial.println("DFPlayer: siap kembali");
+  } else if (++dfReinitTry > 3) {
+    dfPresent = false;
+    dfReinit = false;  // menyerah; perintah dikirim lagi seperti pada init yang tidak dijawab
+    Serial.println("DFPlayer: tidak menjawab setelah kartu dipasang");
+  } else {
+    dfReinitAt = millis() + (500u << dfReinitTry);
+  }
+}
 
 void mochiDfService() {
   if (!dfOk) return;
   while (dfSerial.available() && dfPlayer.available()) handleMsg(dfPlayer.readType(), dfPlayer.read());
+  serviceReinit();
 #if MOCHI_PIN_DF_BUSY >= 0
   bool playing = digitalRead(MOCHI_PIN_DF_BUSY) == LOW;
   if (playing && millis() - dfLastPlay > 150) busyWasPlaying = true;
@@ -95,12 +179,12 @@ void mochiDfVolume(int v) {
   if (v < 0) v = 0;
   if (v > 30) v = 30;
   dfVolWanted = v;
-  if (dfOk) sendVolumeIfNeeded();
+  if (dfUsable()) sendVolumeIfNeeded();
 }
 int mochiDfGetVolume() { return dfVolWanted; }
 
 void mochiDfStop() {
-  if (!dfOk) return;
+  if (!dfUsable()) return;
   dfGap();
   dfPlayer.stop();
   loopTrack = 0;
@@ -108,20 +192,20 @@ void mochiDfStop() {
   busyWasPlaying = false;
 }
 void mochiDfPause() {
-  if (!dfOk) return;
+  if (!dfUsable()) return;
   dfGap();
   dfPlayer.pause();
   busyWasPlaying = false;  // BUSY naik saat jeda; jangan dianggap selesai
 }
 void mochiDfResume() {
-  if (!dfOk) return;
+  if (!dfUsable()) return;
   dfGap();
   dfPlayer.start();
   markPlay();
 }
 
 bool mochiDfPlayTrack(uint16_t track) {
-  if (!dfOk || track == 0) return false;
+  if (!dfUsable() || track == 0) return false;
   sendVolumeIfNeeded();
   dfGap();
 #ifdef MOCHI_DF_MP3_FOLDER
@@ -136,7 +220,7 @@ bool mochiDfPlayTrack(uint16_t track) {
 
 // Trek diulang terus sampai mochiDfStop() / trek lain (dering panggilan, cari perangkat, alarm).
 bool mochiDfLoopTrack(uint16_t track) {
-  if (!dfOk || track == 0) return false;
+  if (!dfUsable() || track == 0) return false;
   sendVolumeIfNeeded();
   dfGap();
 #ifdef MOCHI_DF_MP3_FOLDER
@@ -150,7 +234,7 @@ bool mochiDfLoopTrack(uint16_t track) {
 }
 
 bool mochiDfPlayMusic(uint16_t file) {
-  if (!dfOk || file < 1 || file > 255) return false;
+  if (!dfUsable() || file < 1 || file > 255) return false;
   sendVolumeIfNeeded();
   dfGap();
   dfPlayer.playFolder(MOCHI_DF_FOLDER_MUSIC, file);
@@ -160,14 +244,17 @@ bool mochiDfPlayMusic(uint16_t file) {
 }
 
 int mochiDfMusicCount(bool refresh) {
-  if (!dfOk) return -1;
+  if (!dfUsable()) return -1;
   if (musicCount >= 0 && !refresh) return musicCount;
   int n = -1;
   // Query folder sering tidak dijawab pada percobaan pertama. Kegagalan tidak di-cache.
-  for (int i = 0; i < 4 && n < 0; i++) {
+  // Total waktu dibatasi (DF_COUNT_BUDGET_MS) agar UI tidak macet ±1 dtk bila modul diam.
+  uint32_t t0 = millis();
+  for (int i = 0; i < 4 && n < 0 && millis() - t0 < DF_COUNT_BUDGET_MS; i++) {
+    dfDrain();
     dfGap();
     n = dfPlayer.readFileCountsInFolder(MOCHI_DF_FOLDER_MUSIC);
-    if (n < 0) handleMsg(dfPlayer.readType(), dfPlayer.read());
+    if (n < 0) dfTakeLastReply();
   }
   if (n >= 0) musicCount = n;
   return n;
@@ -194,13 +281,9 @@ bool mochiDfTakeError(uint16_t *code) {
 }
 
 DfState mochiDfQueryState() {
-  if (!dfOk) return DfState::Unknown;
-  dfGap();
-  int s = dfPlayer.readState();
-  if (s < 0) {  // bisa jadi yang datang pesan lain (mis. trek selesai): jangan sampai hilang
-    handleMsg(dfPlayer.readType(), dfPlayer.read());
-    return DfState::Unknown;
-  }
+  if (!dfUsable()) return DfState::Unknown;
+  int s = dfReadState();  // bila yang datang pesan lain (mis. trek selesai), tetap diproses, tidak hilang
+  if (s < 0) return DfState::Unknown;
   switch (s & 0x0F) {
     case 1: return DfState::Playing;
     case 2: return DfState::Paused;
