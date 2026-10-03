@@ -137,12 +137,12 @@ function wires(list, anim) {
   let s = '';
   list.forEach((c, i) => {
     const d = dpath(c), col = NET[c.net], dash = c.dash ? '7 5' : 'none';
-    s += el('path', {d, class: 'wire', stroke: '#fff', 'stroke-width': anim ? 7 : 6});
+    s += el('path', {d, class: 'wire', stroke: '#fff', 'stroke-width': 9});
     if (anim) {
       const len = plen(c);
-      s += el('path', {d, class: 'halo', stroke: col, 'stroke-width': 11});
-      s += el('path', {d, class: 'wire draw', stroke: col, 'stroke-width': 3.4, style: `--len:${len};stroke-dasharray:${len};animation-delay:${(i * .15).toFixed(2)}s`});
-      s += el('path', {d, class: 'wire flow2', stroke: '#fff', 'stroke-width': 2.4, opacity: 1, style: `animation-delay:${(i * .12).toFixed(2)}s`});
+      s += el('path', {d, class: 'halo', stroke: col, 'stroke-width': 14});
+      s += el('path', {d, class: 'wire draw', stroke: col, 'stroke-width': 5, style: `--len:${len};stroke-dasharray:${len};animation:drawin .8s ease-out both;animation-delay:${(i * .08).toFixed(2)}s`});
+      s += el('path', {d, stroke: '#fff', 'stroke-width': 4, 'stroke-linecap': 'butt', style: 'stroke-dasharray:22 18;animation:cableflow .4s linear infinite'});
     } else s += el('path', {d, class: 'wire', stroke: col, 'stroke-width': 3, 'stroke-dasharray': dash});
     (c.j || []).forEach(p => s += el('circle', {cx: p[0], cy: p[1], r: 4.5, fill: col, stroke: '#fff', 'stroke-width': 1.5}));
     if (c.res) s += resistor(c.res, col);
@@ -180,7 +180,7 @@ function svg(o) {
     '@keyframes drawin{from{stroke-dashoffset:var(--len)}to{stroke-dashoffset:0}}@keyframes flow2{to{stroke-dashoffset:-36}}' +
     '.pad-hi{animation:pulse 1.1s ease-in-out infinite}@keyframes pulse{0%,100%{stroke-opacity:1}50%{stroke-opacity:.3}}' +
     '.fadein{animation:fadein .6s ease both}@keyframes fadein{from{opacity:0}to{opacity:1}}' +
-    '@media (prefers-reduced-motion:reduce){.wire.draw,.wire.flow2,.pad-hi,.fadein{animation:none}}</style>';
+    '@media (prefers-reduced-motion:reduce){.pad-hi,.fadein{animation:none}}</style>';
   s += el('rect', {x: vb[0], y: vb[1], width: vb[2], height: vb[3], fill: '#fffafc', rx: 14});
   s += `<g opacity="${o.all ? 1 : .33}">` + wires(prev, false) + railDots(o.all ? Object.keys(RAILJ) : (o.prev || [])) + '</g>';
   s += mods(o.show, hi);

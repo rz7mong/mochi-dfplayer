@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Quicksand:wght@500;700&display=swap"/>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E%F0%9F%8D%A1%3C/text%3E%3C/svg%3E"/>
-<link rel="stylesheet" href="./mochi.css?v=3"/>
+<link rel="stylesheet" href="./mochi.css?v=4"/>
 </head>
 <body>
 <header class="hero wrap">
@@ -55,7 +55,7 @@
 </section>
 </main>
 <footer>© rzmong · MIT (kode) · Mochi DFPlayer 0.7.1</footer>
-<script src="./wiring.js?v=2"></script>
+<script src="./wiring.js?v=3"></script>
 <script>
 const MW = MochiWiring, $ = id => document.getElementById(id);
 const PREV = ['esp','tft','ttp','df','dfpwr','spk','mpu'];
@@ -105,8 +105,8 @@ const PARTS=[
 function pad(x,y){return `<g><circle cx="${x}" cy="${y}" r="8" fill="none" stroke="#ff5c98" stroke-width="2" class="pad-hi"/><circle cx="${x}" cy="${y}" r="4.5" fill="#e6c35c" stroke="#7a5c12"/><circle cx="${x}" cy="${y}" r="1.8" fill="#fff8e7"/></g>`;}
 function wire(d,col){
   let s=`<path d="${d}" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>`;
-  s+=`<path d="${d}" fill="none" stroke="${col}" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" class="wire draw"/>`;
-  s+=`<path d="${d}" fill="none" stroke="#fff" stroke-width="1.6" class="wire flow" stroke-linecap="round"/>`;
+  s+=`<path d="${d}" fill="none" stroke="${col}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" class="wire draw" style="stroke-dasharray:800;animation:drawin .8s ease-out both"/>`;
+  s+=`<path d="${d}" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="butt" stroke-linejoin="round" style="stroke-dasharray:22 18;animation:cableflow .4s linear infinite"/>`;
   return s;
 }
 function powerSvg(n, brief){
