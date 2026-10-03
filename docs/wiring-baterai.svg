@@ -1,60 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="1100" height="720" viewBox="0 0 1100 720" xmlns="http://www.w3.org/2000/svg" font-family="Nunito,system-ui,sans-serif" role="img" aria-label="Diagram baterai dan modul charge Mochi DFPlayer">
-  <rect width="1100" height="720" fill="#fffafc" rx="14"/>
-  <text x="36" y="42" font-size="22" font-weight="800" fill="#2b2b2b">Baterai + modul charge (tambahan, opsional)</text>
-  <text x="36" y="66" font-size="14" fill="#6b5b66">Diagram USB lama tidak berubah. Ini hanya jalur daya. Kabel sinyal layar, sentuh, UART, dan MPU tetap seperti diagram utama.</text>
+<svg width="1100" height="820" viewBox="0 0 1100 820" xmlns="http://www.w3.org/2000/svg" font-family="Nunito,system-ui,sans-serif" role="img" aria-label="Diagram baterai, charge, regulator, dan dioda">
+  <rect width="1100" height="820" fill="#fffafc" rx="14"/>
+  <text x="36" y="40" font-size="22" font-weight="800" fill="#2b2b2b">Baterai, charge, regulator 5 V, dan dioda</text>
+  <text x="36" y="64" font-size="14" fill="#6b5b66">Diagram USB lama tidak berubah. Kabel sinyal layar, sentuh, UART, dan MPU tetap seperti diagram utama.</text>
 
   <g>
-    <rect x="40" y="110" width="200" height="120" rx="12" fill="#fff" stroke="#2b2b2b" stroke-width="2"/>
-    <text x="140" y="146" text-anchor="middle" font-size="16" font-weight="800" fill="#2b2b2b">USB charge</text>
-    <text x="140" y="170" text-anchor="middle" font-size="13" fill="#6b5b66">5 V, hanya ke modul</text>
-    <text x="140" y="190" text-anchor="middle" font-size="13" fill="#6b5b66">bukan ke GPIO</text>
+    <rect x="36" y="96" width="180" height="100" rx="12" fill="#fff" stroke="#2b2b2b" stroke-width="2"/>
+    <text x="126" y="132" text-anchor="middle" font-size="15" font-weight="800">USB isi daya</text>
+    <text x="126" y="156" text-anchor="middle" font-size="13" fill="#6b5b66">hanya ke modul charge</text>
+    <text x="126" y="176" text-anchor="middle" font-size="13" fill="#6b5b66">5 V, bukan ke GPIO</text>
   </g>
   <g>
-    <rect x="320" y="96" width="250" height="168" rx="12" fill="#fff" stroke="#e85d8c" stroke-width="2.5"/>
-    <text x="445" y="128" text-anchor="middle" font-size="16" font-weight="800" fill="#e85d8c">Modul charge + boost</text>
-    <text x="445" y="152" text-anchor="middle" font-size="13" fill="#2b2b2b">TP4056 + booster 5 V</text>
-    <text x="445" y="172" text-anchor="middle" font-size="13" fill="#2b2b2b">atau modul power bank 5 V</text>
-    <text x="445" y="202" text-anchor="middle" font-size="13" fill="#6b5b66">IN: USB dan B+/B−</text>
-    <text x="445" y="222" text-anchor="middle" font-size="13" fill="#6b5b66">OUT: 5 V dan GND</text>
-    <text x="445" y="242" text-anchor="middle" font-size="12" fill="#c2410c">OUT baterai mentah jangan dipakai</text>
+    <rect x="36" y="230" width="180" height="100" rx="12" fill="#fff" stroke="#2bb24c" stroke-width="2"/>
+    <text x="126" y="266" text-anchor="middle" font-size="15" font-weight="800">Baterai 1 sel</text>
+    <text x="126" y="290" text-anchor="middle" font-size="13" fill="#6b5b66">Li-ion 3,7 V</text>
+    <text x="126" y="310" text-anchor="middle" font-size="13" fill="#6b5b66">B+ dan B−</text>
   </g>
   <g>
-    <rect x="40" y="300" width="200" height="120" rx="12" fill="#fff" stroke="#2bb24c" stroke-width="2"/>
-    <text x="140" y="338" text-anchor="middle" font-size="16" font-weight="800" fill="#2b2b2b">Baterai 1 sel</text>
-    <text x="140" y="362" text-anchor="middle" font-size="13" fill="#6b5b66">Li-ion 3,7 V</text>
-    <text x="140" y="382" text-anchor="middle" font-size="13" fill="#6b5b66">B+ / B− saja</text>
+    <rect x="280" y="140" width="210" height="150" rx="12" fill="#fff" stroke="#e85d8c" stroke-width="2.5"/>
+    <text x="385" y="172" text-anchor="middle" font-size="15" font-weight="800" fill="#e85d8c">Modul charge</text>
+    <text x="385" y="196" text-anchor="middle" font-size="13">TP4056 + proteksi</text>
+    <text x="385" y="218" text-anchor="middle" font-size="13" fill="#6b5b66">IN: USB</text>
+    <text x="385" y="238" text-anchor="middle" font-size="13" fill="#6b5b66">BAT: B+ / B−</text>
+    <text x="385" y="262" text-anchor="middle" font-size="12" fill="#c2410c">OUT di sini masih 3,7 V</text>
   </g>
   <g>
-    <rect x="680" y="110" width="370" height="150" rx="12" fill="#fff" stroke="#2f6fe4" stroke-width="2"/>
-    <text x="865" y="142" text-anchor="middle" font-size="16" font-weight="800" fill="#2f6fe4">ESP32-C3 Super Mini</text>
-    <text x="865" y="170" text-anchor="middle" font-size="14" fill="#2b2b2b">pin 5V ← 5 V modul</text>
-    <text x="865" y="192" text-anchor="middle" font-size="14" fill="#2b2b2b">GND ← GND modul</text>
-    <text x="865" y="214" text-anchor="middle" font-size="13" fill="#6b5b66">3V3 tetap untuk layar, sentuh, MPU</text>
-    <text x="865" y="236" text-anchor="middle" font-size="12" fill="#c2410c">jangan colok USB papan saat boost nyala</text>
+    <rect x="550" y="140" width="210" height="150" rx="12" fill="#fff" stroke="#7c3aed" stroke-width="2.5"/>
+    <text x="655" y="172" text-anchor="middle" font-size="15" font-weight="800" fill="#7c3aed">Regulator boost</text>
+    <text x="655" y="196" text-anchor="middle" font-size="13">MT3608, diset 5,0 V</text>
+    <text x="655" y="218" text-anchor="middle" font-size="13" fill="#6b5b66">IN: 3,7 V charge</text>
+    <text x="655" y="238" text-anchor="middle" font-size="13" fill="#6b5b66">OUT: 5 V</text>
+    <text x="655" y="262" text-anchor="middle" font-size="12" fill="#c2410c">ukur dulu sebelum disambung</text>
   </g>
   <g>
-    <rect x="680" y="300" width="370" height="150" rx="12" fill="#fff" stroke="#ff7a00" stroke-width="2"/>
-    <text x="865" y="332" text-anchor="middle" font-size="16" font-weight="800" fill="#ff7a00">DFPlayer Mini</text>
-    <text x="865" y="360" text-anchor="middle" font-size="14" fill="#2b2b2b">VCC ← 5 V yang sama</text>
-    <text x="865" y="382" text-anchor="middle" font-size="14" fill="#2b2b2b">GND ← GND yang sama</text>
-    <text x="865" y="406" text-anchor="middle" font-size="13" fill="#6b5b66">elko 100–470 µF di VCC–GND</text>
-    <text x="865" y="426" text-anchor="middle" font-size="12" fill="#c2410c">bukan dari 3,7 V baterai</text>
+    <rect x="820" y="150" width="240" height="130" rx="12" fill="#fff" stroke="#c2410c" stroke-width="2.5"/>
+    <text x="940" y="182" text-anchor="middle" font-size="15" font-weight="800" fill="#c2410c">Dioda Schottky</text>
+    <text x="940" y="206" text-anchor="middle" font-size="13">1N5819 atau SS34</text>
+    <text x="940" y="230" text-anchor="middle" font-size="13" fill="#6b5b66">anoda ← 5 V boost</text>
+    <text x="940" y="250" text-anchor="middle" font-size="13" fill="#6b5b66">katoda → pin 5V beban</text>
   </g>
 
-  <path d="M240 160 H320" fill="none" stroke="#2f6fe4" stroke-width="3"/>
-  <path d="M240 360 H300 V200 H320" fill="none" stroke="#2bb24c" stroke-width="3"/>
-  <path d="M570 160 H680" fill="none" stroke="#e85d8c" stroke-width="3"/>
-  <path d="M570 210 H640 V375 H680" fill="none" stroke="#ff7a00" stroke-width="3"/>
+  <path d="M216 146 H280" fill="none" stroke="#2f6fe4" stroke-width="3"/>
+  <path d="M216 280 H248 V215 H280" fill="none" stroke="#2bb24c" stroke-width="3"/>
+  <path d="M490 215 H550" fill="none" stroke="#e85d8c" stroke-width="3"/>
+  <path d="M760 215 H820" fill="none" stroke="#7c3aed" stroke-width="3"/>
+
+  <g>
+    <rect x="280" y="360" width="250" height="130" rx="12" fill="#fff" stroke="#2f6fe4" stroke-width="2"/>
+    <text x="405" y="392" text-anchor="middle" font-size="15" font-weight="800" fill="#2f6fe4">ESP32-C3 Super Mini</text>
+    <text x="405" y="418" text-anchor="middle" font-size="13">pin 5V ← katoda dioda</text>
+    <text x="405" y="440" text-anchor="middle" font-size="13">GND bersama</text>
+    <text x="405" y="464" text-anchor="middle" font-size="12" fill="#6b5b66">3V3 papan untuk layar, sentuh, MPU</text>
+  </g>
+  <g>
+    <rect x="580" y="360" width="250" height="130" rx="12" fill="#fff" stroke="#ff7a00" stroke-width="2"/>
+    <text x="705" y="392" text-anchor="middle" font-size="15" font-weight="800" fill="#ff7a00">DFPlayer Mini</text>
+    <text x="705" y="418" text-anchor="middle" font-size="13">VCC ← katoda dioda yang sama</text>
+    <text x="705" y="440" text-anchor="middle" font-size="13">elko 100–470 µF di VCC–GND</text>
+    <text x="705" y="464" text-anchor="middle" font-size="12" fill="#6b5b66">speaker hanya di SPK_1 dan SPK_2</text>
+  </g>
+  <g>
+    <rect x="880" y="360" width="180" height="130" rx="12" fill="#fff" stroke="#2b2b2b" stroke-width="2"/>
+    <text x="970" y="392" text-anchor="middle" font-size="15" font-weight="800">USB ESP</text>
+    <text x="970" y="418" text-anchor="middle" font-size="13" fill="#6b5b66">boleh tertancap</text>
+    <text x="970" y="440" text-anchor="middle" font-size="13" fill="#6b5b66">untuk flash</text>
+    <text x="970" y="464" text-anchor="middle" font-size="12" fill="#2bb24c">dioda menahan arus balik</text>
+  </g>
+  <path d="M940 280 V330 H405 V360" fill="none" stroke="#c2410c" stroke-width="3"/>
+  <path d="M705 330 V360" fill="none" stroke="#c2410c" stroke-width="3"/>
 
   <g font-size="13" fill="#2b2b2b">
-    <rect x="40" y="470" width="1020" height="210" rx="12" fill="#fff" stroke="#f0d5e0"/>
-    <text x="60" y="502" font-size="16" font-weight="800">Yang wajib</text>
-    <text x="60" y="530">• Satu ground. Baterai, modul, ESP, DFPlayer, layar, dan speaker-ground tidak dicampur ke kaki SPK.</text>
-    <text x="60" y="554">• DFPlayer butuh 5 V. Keluaran B+ modul charge (3,7 V) tidak cukup dan tidak disambungkan ke VCC.</text>
-    <text x="60" y="578">• 5 V hanya ke pin 5V ESP dan VCC DFPlayer. Jangan ke GPIO20, GPIO21, atau pin sinyal layar.</text>
-    <text x="60" y="602">• UART tetap: GPIO20 → RX modul lewat 1 kΩ, TX modul → GPIO21. Speaker tetap hanya di SPK_1 dan SPK_2.</text>
-    <text x="60" y="626">• Firmware tidak berubah. Isi lewat USB modul charge. Cabut USB ESP32 saat keluaran 5 V baterai menyala.</text>
-    <text x="60" y="654" fill="#6b5b66">Diagram utama USB: wiring-dfplayer.svg. Berkas ini tidak menggantikannya.</text>
+    <rect x="36" y="530" width="1024" height="250" rx="12" fill="#fff" stroke="#f0d5e0"/>
+    <text x="56" y="562" font-size="16" font-weight="800">Urutan dan larangan</text>
+    <text x="56" y="590">1. Charge dulu. Keluaran baterai modul charge masuk ke IN regulator boost, bukan ke ESP.</text>
+    <text x="56" y="614">2. Putar trimpot MT3608 sampai keluar 5,0 V tanpa beban. Lebih dari 5,5 V jangan disambungkan.</text>
+    <text x="56" y="638">3. Anoda dioda di OUT+ boost. Katoda dioda ke pin 5V ESP dan VCC DFPlayer. GND semua disatukan.</text>
+    <text x="56" y="662">4. Jatuh tegangan dioda Schottky sekitar 0,3–0,4 V, jadi boost boleh diset 5,2 V supaya beban dapat sekitar 5 V.</text>
+    <text x="56" y="686">5. UART tetap: GPIO20 ke RX DFPlayer lewat 1 kΩ, TX modul ke GPIO21. Jangan sambung 5 V ke GPIO.</text>
+    <text x="56" y="710">6. Dengan dioda ini, USB ESP boleh tertancap saat baterai menyala. Tanpa dioda, jangan.</text>
+    <text x="56" y="744" fill="#6b5b66">Firmware tidak berubah. Diagram utama: wiring-dfplayer.svg. Berkas ini tidak menggantikannya.</text>
   </g>
 </svg>

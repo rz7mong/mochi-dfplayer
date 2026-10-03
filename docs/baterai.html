@@ -23,23 +23,24 @@
 <nav class="tabs"><div class="wrap "><a href="index.html">⚡ Instalasi firmware</a><a href="panduan.html">📖 Cara pakai</a><a href="musik.html">🎧 Pilih trek</a><a href="instalasi.html">🔧 Rakit &amp; kartu SD</a><a href="pemasangan.html">🧩 Demo rakit</a><a href="pemasangan-kabel.html">🔌 Diagram kabel</a><a href="baterai.html" class="on" aria-current="page">🔋 Baterai</a><a href="kelola.html">🎵 Animasi &amp; suara</a><a href="animasi.html">🎞️ Tambah animasi</a><a href="https://rz7mong.github.io/mochi-rzmong/">💗 Mochi rzmong (GIF)</a><a href="https://github.com/rz7mong/mochi-dfplayer">🐙 GitHub</a></div></nav>
 <main class="wrap">
 <section>
-  <h2>🔋 Baterai dan modul charge</h2>
+  <h2>🔋 Baterai, regulator, dan dioda</h2>
   <div class="card">
-    <img src="wiring-baterai.svg" alt="Diagram baterai dan modul charge" style="width:100%;height:auto">
-    <p class="hint">Diagram USB utama tidak diubah: <a href="pemasangan-kabel.html">diagram kabel</a> · berkas <a href="wiring-dfplayer.svg">wiring-dfplayer.svg</a>. Berkas gambar ini: <a href="wiring-baterai.svg">wiring-baterai.svg</a>.</p>
+    <img src="wiring-baterai.svg" alt="Diagram baterai, charge, regulator, dan dioda" style="width:100%;height:auto">
+    <p class="hint">Diagram USB utama tidak diubah: <a href="pemasangan-kabel.html">diagram kabel</a> · <a href="wiring-dfplayer.svg">wiring-dfplayer.svg</a>. Gambar ini: <a href="wiring-baterai.svg">wiring-baterai.svg</a>.</p>
   </div>
 </section>
 <section>
   <h2>Sambungan</h2>
   <div class="card">
     <ul>
-      <li>Baterai Li-ion 1 sel ke B+ dan B− modul charge. Jangan dibalik.</li>
-      <li>USB isi daya masuk ke modul charge, bukan ke pin GPIO.</li>
-      <li>Keluaran 5 V modul (bukan kaki baterai mentah) ke pin 5V ESP32-C3 dan ke VCC DFPlayer.</li>
-      <li>GND baterai, modul, ESP, dan DFPlayer disatukan.</li>
-      <li>Elko 100–470 µF tetap di VCC–GND DFPlayer.</li>
-      <li>Layar, TTP223, dan MPU6050 tetap di 3V3 papan.</li>
-      <li>Jangan colok USB ESP bersamaan dengan keluaran 5 V baterai. Cabut salah satu.</li>
+      <li>Baterai Li-ion 1 sel ke B+ dan B− modul charge TP4056. Jangan dibalik.</li>
+      <li>USB isi daya masuk ke modul charge, bukan ke GPIO.</li>
+      <li>Keluaran baterai modul charge (sekitar 3,7 V) masuk ke IN regulator boost MT3608. Jangan langsung ke ESP atau DFPlayer.</li>
+      <li>Ukur OUT boost tanpa beban. Set ke 5,0–5,2 V. Di atas 5,5 V jangan disambungkan.</li>
+      <li>Dioda Schottky 1N5819 atau SS34: anoda di OUT+ boost, katoda ke pin 5V ESP dan VCC DFPlayer.</li>
+      <li>GND baterai, charge, boost, ESP, dan DFPlayer disatukan. Elko 100–470 µF di VCC–GND DFPlayer, sesudah dioda.</li>
+      <li>Layar, TTP223, dan MPU6050 tetap di 3V3 papan. 3V3 itu sudah regulator di ESP, tidak perlu AMS1117 lagi.</li>
+      <li>Dengan dioda ini, USB ESP boleh tertancap untuk flash saat baterai menyala. Tanpa dioda, jangan.</li>
     </ul>
     <p class="hint">Firmware tidak perlu diubah. DFPlayer tidak jalan dari 3,7 V.</p>
   </div>
