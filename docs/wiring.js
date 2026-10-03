@@ -1,5 +1,5 @@
 /* Mochi DFPlayer: model kabel bersama untuk pemasangan.html (langkah demi langkah) dan pemasangan-kabel.html (diagram akhir).
- * Pin dicek terhadap firmware/include/MochiRzmong.h dan firmware/include/User_Setup_ST7789.h (firmware 0.7.0).
+ * Pin dicek terhadap firmware/include/MochiRzmong.h dan firmware/include/User_Setup_ST7789.h (firmware 0.8.1).
  * Koordinat dalam unit SVG (viewBox 0 0 1100 745). Rute kabel hanya ilustrasi; yang penting pin ke pin. */
 (function (g) {
 'use strict';

@@ -266,7 +266,7 @@ Pemasang browser memakai `docs/firmware/firmware.bin`, yang tidak di-commit oleh
 | `-DMOCHI_DEFAULT_ROTATION=0` | Rotasi awal layar (0–3, bawaan 2 = pin LCD di bawah, tatakan GMT130). Menu "Putar layar" menimpanya |
 | `-DMOCHI_BLE_NAME=\"nama\"` | Nama perangkat di aplikasi Chronos |
 
-**Ukuran flash.** App 0x3F0000 (4.128.768 B, partisi terbesar di flash 4 MB). Build 0.7.1: **94,7%** flash (3.910.770 B), RAM 12,9%. Klip JPEG mentah 3,43 MB (14 klip) tidak muat bersama BLE, jadi `embed_jpeg.py` punya **anggaran** (`custom_jpeg_budget = 3300000` di `platformio.ini`). Jika total klip melebihinya, frame yang **nyaris sama** dengan frame sebelumnya (saat ini ≤ 0,3% piksel berbeda, jadi 3,26 MB) dipakai ulang. Jumlah frame dan tempo tetap; file aset tidak diubah. Hasilnya tercetak saat build (`ANGGARAN: …`).
+**Ukuran flash.** App 0x3F0000 (4.128.768 B, partisi terbesar di flash 4 MB). Installer 0.8.1: aplikasi sekitar **3.949.136 B**, **±95,6%** dari partisi, sisa sekitar **180 KB**. Angka ini dari ukuran `docs/firmware/firmware.bin` (bukan laporan build). RAM tidak diukur ulang. Klip JPEG mentah 3,43 MB (14 klip) tidak muat bersama BLE, jadi `embed_jpeg.py` punya **anggaran** (`custom_jpeg_budget = 3300000` di `platformio.ini`). Jika total klip melebihinya, frame yang **nyaris sama** dengan frame sebelumnya (saat ini ≤ 0,3% piksel berbeda, jadi 3,26 MB) dipakai ulang. Jumlah frame dan tempo tetap; file aset tidak diubah. Hasilnya tercetak saat build (`ANGGARAN: …`).
 
 **Perbarui `docs/firmware/firmware.bin` setelah build:**
 
