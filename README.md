@@ -73,6 +73,10 @@ Sumber: [`firmware/include/MochiRzmong.h`](firmware/include/MochiRzmong.h) dan [
 
 Rakit langkah demi langkah: [Demo rakit](https://rz7mong.github.io/mochi-dfplayer/pemasangan.html) · tabel lengkap: [Diagram kabel](https://rz7mong.github.io/mochi-dfplayer/pemasangan-kabel.html).
 
+Diagram USB di atas tidak berubah. Tambahan baterai (opsional, firmware tetap sama): [baterai.html](https://rz7mong.github.io/mochi-dfplayer/baterai.html) · [`docs/wiring-baterai.svg`](docs/wiring-baterai.svg).
+
+<p align="center"><img src="docs/wiring-baterai.svg" width="720" alt="Diagram baterai dan modul charge"></p>
+
 | Kaki modul | ESP32-C3 | Catatan |
 |---|---|---|
 | TFT SCL / SCLK | GPIO4 | |
